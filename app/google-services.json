@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "734673080299",
+    "project_id": "pokemap-ff778",
+    "storage_bucket": "pokemap-ff778.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734673080299:android:60f30100c0b71b2d87d3ae",
+        "android_client_info": {
+          "package_name": "cat.copernic.pokemap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA0IzYD5wRgpwBWkpT0vHNOv1a_tHJmAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
