@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -61,6 +62,7 @@ fun Login(navController: NavController) {
         Spacer(modifier = Modifier.height(15.dp))
 
         ErrorMessage(errorMessage)
+        RegisterButton(navController)
         Spacer(modifier = Modifier.height(15.dp))
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
@@ -107,11 +109,11 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
 }
 
 @Composable
-fun PasswordInput(password: String, onPasswordChange: (String) -> Unit) {
+fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPassword: String = "Contraseña") {
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Contraseña") },
+        label = { Text(labelPassword) },
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
@@ -119,6 +121,17 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit) {
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp)
     )
+}
+
+@Composable
+fun RegisterButton(navController: NavController) {
+    Button(
+        onClick = {
+            navController.navigate(AppScreens.Register.rute)
+        }
+    ){
+        Text(text = "Registrarse")
+    }
 }
 
 @Composable
@@ -143,6 +156,10 @@ fun ButtonLogin(
                 .clickable {
                     if (email.isBlank() || password.isBlank()) {
                         onErrorMessageChange("Correo y contraseña no pueden estar vacíos")
+                        return@clickable
+                    }
+                    if (!isValidEmail(email)) {
+                        onErrorMessageChange("Correo electrónico no válido")
                         return@clickable
                     }
                     onLoadingChange(true)
@@ -177,6 +194,11 @@ suspend fun loginWithEmail(
 //      onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    return email.matches(Regex(emailPattern))
 }
 
 @Composable

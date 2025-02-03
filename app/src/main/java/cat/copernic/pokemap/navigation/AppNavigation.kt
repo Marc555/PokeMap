@@ -6,12 +6,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cat.copernic.pokemap.screens.Home
 import cat.copernic.pokemap.screens.Login
+import cat.copernic.pokemap.screens.Register
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = AppScreens.Login.rute) {
         composable(AppScreens.Login.rute) { Login(navController) }
+        composable(AppScreens.Register.rute) { Register(navController) }
         composable(AppScreens.Home.rute) { Home(navController) }
     }
 }
