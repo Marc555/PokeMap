@@ -1,91 +1,173 @@
 package cat.copernic.pokemap.screens
 
+import RegisterViewModel
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import cat.copernic.pokemap.ViewModel.AuthViewModel
 import cat.copernic.pokemap.navigation.AppScreens
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Register(navController: NavController) {
-
-    var orden: Int by remember { mutableStateOf(1) }
-    var email by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var usurname by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var messageError by remember { mutableStateOf("") }
-    var ifError by remember { mutableStateOf(true) }
-
-    Column(
+fun Register(navController: NavController, viewModel: RegisterViewModel = viewModel()) {
+    Box (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Logo()
-        when (orden) {
-            1 -> PantallaRegistro1(email, onEmailChange = { email = it }, onMensajeErrorChange = { messageError = it }, ifError, onIfErrorChange = { ifError = it }) { orden = 2 }
-            2 -> PantallaRegistro2(name, surname, onNameChange = { name = it }, onSurnameChange = { surname = it }, onMensajeErrorChange = { messageError = it }, ifError, onIfErrorChange = { ifError = it }) { orden = 3 }
-            3 -> PantallaRegistro3(usurname, onUsurnameChange = { usurname = it }, onMensajeErrorChange = { messageError = it }, ifError, onIfErrorChange = { ifError = it }) { orden = 4 }
-            4 -> PantallaRegistro4(password, onPasswordChange = { password = it }, confirmPassword, onConfirmPasswordChange = { confirmPassword = it }, onMensajeErrorChange = { messageError = it }, ifError, onIfErrorChange = { ifError = it }) { orden = 5 }
+        // Botón "Atrás" en la esquina superior izquierda
+        BotonAtras(
+            navController = navController,
+            modifier = Modifier
+                .align(Alignment.TopStart) // Alinea el botón en la esquina superior izquierda
+                .padding(16.dp) // Añade un padding para que no esté pegado al borde
+        )
+
+        // Contenido principal centrado
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Logo()
+            when (viewModel.orden) {
+                1 -> PantallaRegistro1(
+                    viewModel.email,
+                    onEmailChange = { viewModel.email = it },
+                    onMensajeErrorChange = { viewModel.messageError = it }
+                ) { viewModel.orden = 2 }
+
+                2 -> PantallaRegistro2(
+                    viewModel.name,
+                    viewModel.surname,
+                    onNameChange = { viewModel.name = it },
+                    onSurnameChange = { viewModel.surname = it },
+                    onMensajeErrorChange = { viewModel.messageError = it }
+                ) { viewModel.orden = 3 }
+
+                3 -> PantallaRegistro3(
+                    viewModel.usurname,
+                    onUsurnameChange = { viewModel.usurname = it },
+                    onMensajeErrorChange = { viewModel.messageError = it }
+                ) { viewModel.orden = 4 }
+
+                4 -> PantallaRegistro4(
+                    viewModel.password,
+                    onPasswordChange = { viewModel.password = it },
+                    viewModel.confirmPassword,
+                    onConfirmPasswordChange = { viewModel.confirmPassword = it },
+                    onMensajeErrorChange = { viewModel.messageError = it }
+                ) { viewModel.orden = 5 }
+
+                5 -> PantallaRegistroFinal(
+                    viewModel.email,
+                    viewModel.password,
+                    viewModel.usurname,
+                    viewModel.name,
+                    viewModel.surname,
+                    onMensajeErrorChange = { viewModel.messageError = it },
+                    navController = navController
+                )
+            }
+            ErrorMessage(viewModel.messageError)
         }
-        ErrorMessage(messageError)
     }
+}
+
+@Composable
+fun BotonAtras(navController: NavController,modifier: Modifier = Modifier, viewModel: RegisterViewModel = viewModel()) {
+    Text(
+        text = "<-- Atrás",
+        color = MaterialTheme.colorScheme.onBackground, // Color del texto
+        modifier = modifier
+            .clickable {
+                viewModel.orden--
+                if (viewModel.orden < 1) {
+                    navController.navigate(AppScreens.Login.rute)
+                }
+            }
+            .padding(8.dp) // Añade un padding para que sea más fácil de tocar
+    )
 }
 
 @Composable
 fun TextoTitulo(text: String){
-    Text(text)
+    Text(text, color = MaterialTheme.colorScheme.onBackground)
 }
 
 @Composable
-fun PantallaRegistro1(email: String, onEmailChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, ifError: Boolean, onIfErrorChange: (Boolean) -> Unit, onClick: () -> Unit){
+fun PantallaRegistro1(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    onMensajeErrorChange: (String) -> Unit,
+    onClick: () -> Unit
+) {
+    var isChecking by remember { mutableStateOf(false) }
+
     TextoTitulo("Ingresa tu email:")
     EmailInput(email, onEmailChange)
-    if (email.isEmpty()) {
-        onMensajeErrorChange("")
-        onIfErrorChange(true)
-    }else if (!isValidEmail(email)) {
-        onMensajeErrorChange("Correo electrónico no válido")
-        onIfErrorChange(true)
-    }else{onIfErrorChange(false)
-        onMensajeErrorChange("")
-    }
-    BotonSiguiente(onClick = onClick, ifError)
+
+    BotonSiguiente(
+        onClick = {
+            if (email.isEmpty()) {
+                onMensajeErrorChange("El correo no puede estar vacío")
+            } else if (!isValidEmail(email)) {
+                onMensajeErrorChange("Correo electrónico no válido")
+            } else {
+                isChecking = true // Indica que estamos verificando
+                isRepeatingEmail(email) { existe ->
+                    isChecking = false // La verificación ha terminado
+                    if (existe) {
+                        onMensajeErrorChange("Este correo ya está registrado")
+                    } else {
+                        onMensajeErrorChange("") // Limpia el mensaje de error
+                        onClick() // Continúa con el flujo normal
+                    }
+                }
+            }
+        },
+        isChecking = isChecking // Deshabilitar el botón mientras se verifica
+    )
 }
 
 @Composable
-fun PantallaRegistro2(name: String, surname: String, onNameChange: (String) -> Unit, onSurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, ifError: Boolean, onIfErrorChange: (Boolean) -> Unit, onClick: () -> Unit){
-    TextoTitulo("Ahora dinos como te llamas::")
+fun PantallaRegistro2(name: String, surname: String, onNameChange: (String) -> Unit, onSurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
+    TextoTitulo("Ahora dinos como te llamas:")
     NameInput(name, onNameChange)
     SurnameInput(surname, onSurnameChange)
-    if (name.isEmpty() || surname.isEmpty()) {
-        onMensajeErrorChange("")
-        onIfErrorChange(true)
-    } else{onIfErrorChange(false)
-        onMensajeErrorChange("")
-    }
-    BotonSiguiente(onClick = onClick, ifError)
+    BotonSiguiente(onClick = {
+        if (name.isEmpty() || surname.isEmpty()) {
+            onMensajeErrorChange("")
+        } else{
+            onMensajeErrorChange("")
+            onClick()
+        }
+    })
 }
 
 @Composable
@@ -115,16 +197,17 @@ fun SurnameInput(surname: String, onSurnameChange: (String) -> Unit){
 }
 
 @Composable
-fun PantallaRegistro3(usurname: String, onUsurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, ifError: Boolean, onIfErrorChange: (Boolean) -> Unit, onClick: () -> Unit){
+fun PantallaRegistro3(usurname: String, onUsurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
     TextoTitulo("Elige un nombre de usuario:")
-        UsernameInput(usurname, onUsurnameChange)
-    if (usurname.isEmpty()) {
-        onMensajeErrorChange("")
-        onIfErrorChange(true)
-    } else{onIfErrorChange(false)
-        onMensajeErrorChange("")
-    }
-    BotonSiguiente(onClick = onClick, ifError)
+    UsernameInput(usurname, onUsurnameChange)
+    BotonSiguiente(onClick = {
+        if (usurname.isEmpty()) {
+            onMensajeErrorChange("")
+        } else{
+            onMensajeErrorChange("")
+            onClick()
+        }
+    })
 }
 
 @Composable
@@ -141,31 +224,94 @@ fun UsernameInput(usurname: String, onUsurnameChange: (String) -> Unit){
 }
 
 @Composable
-fun PantallaRegistro4(password: String, onPasswordChange: (String) -> Unit, confirmPassword: String, onConfirmPasswordChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, ifError: Boolean, onIfErrorChange: (Boolean) -> Unit, onClick: () -> Unit
+fun PantallaRegistro4(password: String, onPasswordChange: (String) -> Unit, confirmPassword: String, onConfirmPasswordChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit
 ){
     TextoTitulo("Elige una contraseña:")
     PasswordInput(password, onPasswordChange, "Contraseña")
     PasswordInput(confirmPassword, onConfirmPasswordChange, "Confirmar contraseña")
-    if (password.isEmpty() || confirmPassword.isEmpty()) {
-        onMensajeErrorChange("")
-        onIfErrorChange(true)
-    } else if (password != confirmPassword) {
-        onIfErrorChange(true)
-        onMensajeErrorChange("Las contraseñas no coinciden")
-    } else{onIfErrorChange(false)
-        onMensajeErrorChange("")
-    }
-    BotonSiguiente(onClick = onClick, ifError)
+    BotonSiguiente(onClick = {
+        if (password.isEmpty() || confirmPassword.isEmpty()) {
+            onMensajeErrorChange("")
+        } else if (password != confirmPassword) {
+            onMensajeErrorChange("Las contraseñas no coinciden")
+        } else{
+            onMensajeErrorChange("")
+            onClick()
+        }
+    })
 }
 
 @Composable
-fun BotonSiguiente(onClick: () -> Unit, ifError: Boolean){
-    Button(onClick = {
-        if (!ifError) {
-            onClick()
+fun PantallaRegistroFinal(
+    email: String,
+    password: String,
+    username: String,
+    name: String,
+    surname: String,
+    viewModel: AuthViewModel = viewModel(),
+    onMensajeErrorChange: (String) -> Unit,
+    navController: NavController
+) {
+    var registroExitoso by remember { mutableStateOf<Boolean?>(null) }
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.registerUser(
+            email,
+            password,
+            username,
+            name,
+            surname
+        ) { success -> registroExitoso = success }
+    }
+
+    if (isLoading) {
+        CircularProgressIndicator() // Indicador de carga
+    } else {
+        when (registroExitoso) {
+            true -> {
+                // Registro exitoso, navegar a la siguiente pantalla
+                TextoTitulo("Tu cuenta ha sido creada con éxito!")
+                TextoTitulo("Gracias por registrarte")
+                BotonSiguiente(
+                    onClick = { navController.navigate(AppScreens.Home.rute) },
+                    text = "Finalizar"
+                )
+            }
+            false -> {
+                // Mostrar mensaje de error
+                onMensajeErrorChange("Error desconocido")
+                BotonSiguiente(
+                    onClick = { navController.navigate(AppScreens.Login.rute) },
+                    text = "Volver a intentar"
+                )
+            }
+            null -> {
+                // Estado inicial, no hacer nada
+            }
         }
     }
+}
+
+fun isRepeatingEmail(email: String, onResult: (Boolean) -> Unit) {
+    val auth = FirebaseAuth.getInstance()
+    auth.fetchSignInMethodsForEmail(email)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val signInMethods = task.result?.signInMethods ?: emptyList()
+                onResult(signInMethods.isNotEmpty()) // true si el email existe, false si no
+            } else {
+                onResult(true) // En caso de error, asumimos que el correo no está registrado
+            }
+        }
+}
+
+@Composable
+fun BotonSiguiente(onClick: () -> Unit, text: String = "Siguiente", isChecking: Boolean = false) {
+    Button(
+        onClick = onClick,
+        enabled = !isChecking // Deshabilitar mientras se verifica
     ) {
-        Text(text = "Siguiente")
+        Text(if (isChecking) "Verificando..." else "Siguiente")
     }
 }
