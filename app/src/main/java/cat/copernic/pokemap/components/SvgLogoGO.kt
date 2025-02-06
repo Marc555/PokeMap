@@ -6,9 +6,9 @@ import androidx.compose.ui.res.painterResource
 import cat.copernic.pokemap.R
 
 @Composable
-fun SvgLogo() {
+fun SvgLogoGO() {
     Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "Logo"
+        painter = painterResource(id = R.drawable.go),
+        contentDescription = "LogoGO"
     )
 }

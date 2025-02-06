@@ -79,7 +79,7 @@ fun Login(navController: NavController) {
 @Composable
 fun Logo() {
     Image(
-        painter = painterResource(R.drawable.logo),
+        painter = painterResource(id = R.drawable.logo),
         contentDescription = "Logo de la aplicación",
         modifier = Modifier
             .fillMaxWidth()
@@ -149,7 +149,7 @@ fun ButtonLogin(
         CircularProgressIndicator()
     } else {
         Image(
-            painter = painterResource(R.drawable.go),
+            painter = painterResource(id = R.drawable.go),
             contentDescription = "Botón de inicio de sesión",
             modifier = Modifier
                 .height(90.dp).width(180.dp)
