@@ -31,6 +31,7 @@ class AuthViewModel : ViewModel() {
         authRepository.registerUser(email, password) { success, uid ->
             if (success && uid != null) {
                 val user = Users(
+                    email = email,
                     username = username,
                     name = name,
                     surname = surname,

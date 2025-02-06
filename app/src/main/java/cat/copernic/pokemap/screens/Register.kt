@@ -25,11 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cat.copernic.pokemap.ViewModel.AuthViewModel
+import cat.copernic.pokemap.ViewModel.UsersViewModel
+import cat.copernic.pokemap.data.Repository.UsersRepository
 import cat.copernic.pokemap.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 @Composable
 fun Register(navController: NavController, viewModel: RegisterViewModel = viewModel()) {
@@ -125,6 +129,7 @@ fun PantallaRegistro1(
     email: String,
     onEmailChange: (String) -> Unit,
     onMensajeErrorChange: (String) -> Unit,
+    viewModel: UsersViewModel = viewModel(),
     onClick: () -> Unit
 ) {
     var isChecking by remember { mutableStateOf(false) }
@@ -140,7 +145,8 @@ fun PantallaRegistro1(
                 onMensajeErrorChange("Correo electrónico no válido")
             } else {
                 isChecking = true // Indica que estamos verificando
-                isRepeatingEmail(email) { existe ->
+                viewModel.viewModelScope.launch {
+                    val existe = isRepeatingEmail(email)
                     isChecking = false // La verificación ha terminado
                     if (existe) {
                         onMensajeErrorChange("Este correo ya está registrado")
@@ -154,6 +160,7 @@ fun PantallaRegistro1(
         isChecking = isChecking // Deshabilitar el botón mientras se verifica
     )
 }
+
 
 @Composable
 fun PantallaRegistro2(name: String, surname: String, onNameChange: (String) -> Unit, onSurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
@@ -293,17 +300,13 @@ fun PantallaRegistroFinal(
     }
 }
 
-fun isRepeatingEmail(email: String, onResult: (Boolean) -> Unit) {
-    val auth = FirebaseAuth.getInstance()
-    auth.fetchSignInMethodsForEmail(email)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val signInMethods = task.result?.signInMethods ?: emptyList()
-                onResult(signInMethods.isNotEmpty()) // true si el email existe, false si no
-            } else {
-                onResult(true) // En caso de error, asumimos que el correo no está registrado
-            }
-        }
+suspend fun isRepeatingEmail(email: String, userRepository: UsersRepository = UsersRepository()): Boolean {
+    return try {
+        val users = userRepository.getUsers()
+        users.any { it.email.equals(email, ignoreCase = true) }
+    } catch (e: Exception) {
+        false
+    }
 }
 
 @Composable
