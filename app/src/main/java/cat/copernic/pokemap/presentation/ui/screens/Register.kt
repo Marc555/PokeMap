@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import RegisterViewModel
 import androidx.compose.foundation.background
@@ -23,16 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import cat.copernic.pokemap.ViewModel.AuthViewModel
-import cat.copernic.pokemap.ViewModel.UsersViewModel
+import cat.copernic.pokemap.presentation.viewModel.AuthViewModel
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.data.Repository.UsersRepository
-import cat.copernic.pokemap.navigation.AppScreens
-import com.google.firebase.auth.FirebaseAuth
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import kotlinx.coroutines.launch
 
 @Composable

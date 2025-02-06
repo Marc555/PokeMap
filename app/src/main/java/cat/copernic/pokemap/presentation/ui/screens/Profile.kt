@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun Settings(navController: NavController){
+fun Profile(navController: NavController){
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -25,7 +25,7 @@ fun Settings(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            "Configuraciones", color = Color.White
+            "Perfil", color = Color.White
         )
     }
 }

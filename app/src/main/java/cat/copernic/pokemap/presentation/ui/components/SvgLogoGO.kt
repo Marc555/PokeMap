@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.components
+package cat.copernic.pokemap.presentation.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

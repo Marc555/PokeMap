@@ -1,21 +1,20 @@
-package cat.copernic.pokemap.navigation
+package cat.copernic.pokemap.presentation.ui.navigation
 
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
-import cat.copernic.pokemap.components.Hamburger
-import cat.copernic.pokemap.screens.Home
-import cat.copernic.pokemap.screens.Login
-import cat.copernic.pokemap.screens.Notifications
-import cat.copernic.pokemap.screens.Profile
-import cat.copernic.pokemap.screens.Rankings
-import cat.copernic.pokemap.screens.Register
-import cat.copernic.pokemap.screens.Settings
+import cat.copernic.pokemap.presentation.ui.components.Hamburger
+import cat.copernic.pokemap.presentation.ui.screens.Home
+import cat.copernic.pokemap.presentation.ui.screens.Login
+import cat.copernic.pokemap.presentation.ui.screens.Notifications
+import cat.copernic.pokemap.presentation.ui.screens.Profile
+import cat.copernic.pokemap.presentation.ui.screens.Rankings
+import cat.copernic.pokemap.presentation.ui.screens.Register
+import cat.copernic.pokemap.presentation.ui.screens.Settings
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -59,7 +58,7 @@ fun AppNavigation() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "home",
+                startDestination = "login",
                 modifier = Modifier.padding(innerPadding),
             ) {
                 composable("home") { Home(navController) }

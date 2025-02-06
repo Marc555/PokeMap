@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,18 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import cat.copernic.pokemap.ViewModel.UsersViewModel
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.data.DTO.Users
-import cat.copernic.pokemap.navigation.AppScreens
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -39,8 +35,7 @@ fun Home(navController: NavController) {
     val usersViewModel: UsersViewModel = viewModel()
 
     // Obtén el estado de los usuarios
-    val users = usersViewModel.users.collectAsState(initial = emptyList()).value
-    var isMenuExpanded by remember { mutableStateOf(false) }
+    val users = usersViewModel.users.collectAsState().value
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)

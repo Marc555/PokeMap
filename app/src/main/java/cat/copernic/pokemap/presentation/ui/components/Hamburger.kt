@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.components
+package cat.copernic.pokemap.presentation.ui.components
 
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon

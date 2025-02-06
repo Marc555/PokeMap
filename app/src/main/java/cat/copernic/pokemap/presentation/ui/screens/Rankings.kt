@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun Notifications(navController: NavController){
+fun Rankings(navController: NavController){
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -25,7 +25,7 @@ fun Notifications(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            "Notificaciones", color = Color.White
+            "Rankings", color = Color.White
         )
     }
 }

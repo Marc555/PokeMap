@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,12 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
-import cat.copernic.pokemap.navigation.AppScreens
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -125,13 +126,17 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPas
 
 @Composable
 fun RegisterButton(navController: NavController) {
-    Button(
-        onClick = {
-            navController.navigate(AppScreens.Register.rute)
-        }
-    ){
-        Text(text = "Registrarse")
-    }
+    Text(
+        text = "Crear Cuenta",
+        modifier = Modifier
+            .clickable {
+                navController.navigate(AppScreens.Register.rute)
+            },
+        color = MaterialTheme.colorScheme.onBackground,
+        style = TextStyle(
+            textDecoration = TextDecoration.Underline
+        )
+    )
 }
 
 @Composable
