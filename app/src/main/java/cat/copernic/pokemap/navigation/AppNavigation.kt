@@ -34,7 +34,7 @@ fun AppNavigation() {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = true, // Allow swipe gestures
+        gesturesEnabled = currentRoute !in hideMenuScreens, // Allow swipe gestures
         drawerContent = {
             if (currentRoute !in hideMenuScreens) {
                 DrawerMenu({
@@ -59,7 +59,7 @@ fun AppNavigation() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login",
+                startDestination = "home",
                 modifier = Modifier.padding(innerPadding),
             ) {
                 composable("home") { Home(navController) }

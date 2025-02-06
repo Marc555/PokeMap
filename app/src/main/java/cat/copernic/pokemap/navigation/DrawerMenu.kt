@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.components.SvgLogo
@@ -105,19 +106,21 @@ fun MenuItem(
                 onClose()
             }
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.Center,
-
-        ) {
+        horizontalArrangement = Arrangement.Center
+    ) {
         Box(
             modifier = Modifier
-                .background(bgColor, shape = RoundedCornerShape(12.dp)) // Rounded Corners
-                .padding(horizontal = 24.dp, vertical = 12.dp) // Padding inside box
+                .fillMaxWidth(1f) // Ensures all buttons have the same width
+                .background(bgColor, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
             Text(
                 text = title,
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(), // Ensures text stays centered
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis // Prevents text from breaking into multiple lines
             )
         }
     }
