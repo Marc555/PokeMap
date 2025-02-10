@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,12 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
-import cat.copernic.pokemap.navigation.AppScreens
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -42,6 +44,7 @@ fun Login(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var showResetPasswordDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -61,6 +64,8 @@ fun Login(navController: NavController) {
         Spacer(modifier = Modifier.height(15.dp))
 
         ErrorMessage(errorMessage)
+        RegisterButton(navController)
+        RestonePaswordButton(onClick = { showResetPasswordDialog = true })
         Spacer(modifier = Modifier.height(15.dp))
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
@@ -71,13 +76,20 @@ fun Login(navController: NavController) {
         }, onLoadingChange = {
             isLoading = it
         })
+
+        if (showResetPasswordDialog) {
+            RestonePasword(
+                email = email,
+                onDismissRequest = { showResetPasswordDialog = false }
+            )
+        }
     }
 }
 
 @Composable
 fun Logo() {
     Image(
-        painter = painterResource(R.drawable.logo),
+        painter = painterResource(id = R.drawable.logo),
         contentDescription = "Logo de la aplicación",
         modifier = Modifier
             .fillMaxWidth()
@@ -107,17 +119,49 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
 }
 
 @Composable
-fun PasswordInput(password: String, onPasswordChange: (String) -> Unit) {
+fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPassword: String = "Contraseña") {
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Contraseña") },
+        label = { Text(labelPassword) },
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp)
+    )
+}
+
+@Composable
+fun RegisterButton(navController: NavController) {
+    Text(
+        text = "Crear Cuenta",
+        modifier = Modifier
+            .clickable {
+                navController.navigate(AppScreens.Register.rute)
+            }
+            .padding(6.dp),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = TextStyle(
+            textDecoration = TextDecoration.Underline,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+        )
+    )
+}
+
+@Composable
+fun RestonePaswordButton(onClick: () -> Unit) {
+    Text(
+        text = "Recuperar Contraseña",
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(6.dp),
+        color = Color.Red,
+        style = TextStyle(
+            textDecoration = TextDecoration.Underline,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+        )
     )
 }
 
@@ -136,13 +180,17 @@ fun ButtonLogin(
         CircularProgressIndicator()
     } else {
         Image(
-            painter = painterResource(R.drawable.go),
+            painter = painterResource(id = R.drawable.go),
             contentDescription = "Botón de inicio de sesión",
             modifier = Modifier
                 .height(90.dp).width(180.dp)
                 .clickable {
                     if (email.isBlank() || password.isBlank()) {
                         onErrorMessageChange("Correo y contraseña no pueden estar vacíos")
+                        return@clickable
+                    }
+                    if (!isValidEmail(email)) {
+                        onErrorMessageChange("Correo electrónico no válido")
                         return@clickable
                     }
                     onLoadingChange(true)
@@ -177,6 +225,11 @@ suspend fun loginWithEmail(
 //      onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    return email.matches(Regex(emailPattern))
 }
 
 @Composable

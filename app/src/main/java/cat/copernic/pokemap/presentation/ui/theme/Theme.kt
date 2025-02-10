@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.ui.theme
+package cat.copernic.pokemap.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,15 +15,20 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    onBackground = Black,
+    background = Color.Black,  // Fondo oscuro
+    onBackground = Color.White,  // Texto sobre el fondo oscuro
+    surface = Color.Black,  // Superficie oscura
+    onSurface = Color.White,  // Texto sobre la superficie oscura
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = Color(0xFFE2E9FF),
-    onBackground = White,
+    background = Color(0xFFE2E9FF),  // Fondo claro
+    onBackground = Color.Black,  // Texto sobre el fondo claro
+    surface = Color.White,  // Superficie clara
+    onSurface = Color.Black,  // Texto sobre la superficie clara
 )
 
 @Composable
