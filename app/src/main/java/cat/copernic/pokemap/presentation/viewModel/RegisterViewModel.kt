@@ -10,7 +10,7 @@ class RegisterViewModel : ViewModel() {
     var email by mutableStateOf("")
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
-    var usurname by mutableStateOf("")
+    var username by mutableStateOf("")
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")
     var messageError by mutableStateOf("")

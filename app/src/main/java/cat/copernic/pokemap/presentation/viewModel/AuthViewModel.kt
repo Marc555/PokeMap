@@ -31,10 +31,10 @@ class AuthViewModel : ViewModel() {
         authRepository.registerUser(email, password) { success, uid ->
             if (success && uid != null) {
                 val user = Users(
-                    email = email,
-                    username = username,
-                    name = name,
-                    surname = surname,
+                    email = email.trim(),
+                    username = username.trim(),
+                    name = name.trim(),
+                    surname = surname.trim(),
                     rol = Rol.USER
                 )
 
