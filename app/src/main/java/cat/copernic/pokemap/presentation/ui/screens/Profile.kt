@@ -10,12 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cat.copernic.pokemap.data.DTO.Users
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Profile(navController: NavController){
+fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel()){
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userEmail = currentUser?.email
+    val user =  viewModel.users.value.find { it.email == userEmail }
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -24,8 +32,17 @@ fun Profile(navController: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text(
-            "Perfil", color = Color.White
-        )
+        if (user != null) {
+            Nombres(user = user)
+        } else {
+            Text(text = "Error al cargar los datos del usuario")
+        }
     }
+}
+
+@Composable
+fun Nombres(user: Users) {
+    Text(text = "${user.name} ${user.surname}")
+    Text(text = "@${user.username}")
+    Text(text = "${user.codeFriend}")
 }

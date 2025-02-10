@@ -5,5 +5,6 @@ data class Users(
     val username: String = "",
     val name: String = "",
     val surname: String = "",
+    val codeFriend: String = "",
     val rol: Rol = Rol.USER,
 )
