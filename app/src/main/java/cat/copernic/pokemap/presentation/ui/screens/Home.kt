@@ -16,10 +16,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -228,14 +233,9 @@ fun CategoryItem(
 
 @Composable
 fun EditCategoryImage(onClick: () -> Unit){
-    Image(
-        painter = painterResource(R.drawable.edit_icon),
-        contentDescription = "Botón de editar categoria",
-        modifier = Modifier
-            .height(20.dp)
-            .width(20.dp)
-            .clickable { onClick() },
-    )
+    IconButton(onClick = onClick) {
+        Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar categoria")
+    }
 }
 
 @Composable

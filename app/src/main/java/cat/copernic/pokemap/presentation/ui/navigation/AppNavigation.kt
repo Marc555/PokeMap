@@ -2,6 +2,9 @@ package cat.copernic.pokemap.presentation.ui.navigation
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -67,9 +70,8 @@ fun AppNavigation() {
                             if (currentRoute in showAddCategory) {
                                 IconButton(onClick = { showAddCategoryDialog = true }) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.add_category_icon), // Replace with your drawable
+                                        imageVector = Icons.Default.AddCircle, // Replace with your drawable
                                         contentDescription = "Add category",
-                                        tint = Color.Unspecified // Ensures original colors are used
                                     )
                                 }
                             }
