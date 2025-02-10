@@ -44,6 +44,7 @@ fun Login(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var showResetPasswordDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -64,6 +65,7 @@ fun Login(navController: NavController) {
 
         ErrorMessage(errorMessage)
         RegisterButton(navController)
+        RestonePaswordButton(onClick = { showResetPasswordDialog = true })
         Spacer(modifier = Modifier.height(15.dp))
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
@@ -74,6 +76,13 @@ fun Login(navController: NavController) {
         }, onLoadingChange = {
             isLoading = it
         })
+
+        if (showResetPasswordDialog) {
+            RestonePasword(
+                email = email,
+                onDismissRequest = { showResetPasswordDialog = false }
+            )
+        }
     }
 }
 
@@ -131,10 +140,27 @@ fun RegisterButton(navController: NavController) {
         modifier = Modifier
             .clickable {
                 navController.navigate(AppScreens.Register.rute)
-            },
+            }
+            .padding(6.dp),
         color = MaterialTheme.colorScheme.onBackground,
         style = TextStyle(
-            textDecoration = TextDecoration.Underline
+            textDecoration = TextDecoration.Underline,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+        )
+    )
+}
+
+@Composable
+fun RestonePaswordButton(onClick: () -> Unit) {
+    Text(
+        text = "Recuperar Contraseña",
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(6.dp),
+        color = Color.Red,
+        style = TextStyle(
+            textDecoration = TextDecoration.Underline,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize
         )
     )
 }

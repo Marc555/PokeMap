@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.presentation.ui.navigation
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
