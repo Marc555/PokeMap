@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -61,6 +62,13 @@ fun Home(navController: NavController) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ){
+        IconButton(onClick = { showAddCategoryDialog = true }) {
+            Icon(
+                imageVector = Icons.Default.AddCircle, // Replace with your drawable
+                contentDescription = "Add category",
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -87,8 +95,14 @@ fun Home(navController: NavController) {
     if (showAddCategoryDialog) {
         AddCategoryDialog(
             onDismiss = { showAddCategoryDialog = false },
-            onConfirm = { newCategory ->
-                categoryViewModel.addCategory(newCategory)
+            onConfirm = { categoryName, description ->
+                if (!nameExists(categoryName, categories)) {
+                    val newCategory = Category(name = categoryName, description = description)
+                    categoryViewModel.addCategory(newCategory)
+                    showAddCategoryDialog = false
+                }else{
+                    //Buscar forma de poner el error
+                }
             }
         )
     }
@@ -168,12 +182,16 @@ fun CategoryList(
     categories: List<Category>,
     onEditCategory: (Category) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.wrapContentHeight()) {
-        itemsIndexed(categories) { _, category ->
-            CategoryItem(
-                category = category,
-                onEditCategory = onEditCategory
-            )
+    if (categories.isEmpty()) {
+        Text(text = "No hay categorías disponibles")
+    } else {
+        LazyColumn(modifier = Modifier.wrapContentHeight()) {
+            itemsIndexed(categories) { _, category ->
+                CategoryItem(
+                    category = category,
+                    onEditCategory = onEditCategory
+                )
+            }
         }
     }
 }
@@ -191,16 +209,6 @@ fun CategoryItem(
     ) {
         Column {
             // Imagen de la categoría
-            /*category.imageUrl?.let { imageUrl ->
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "Imagen de la categoría",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp), // Ajusta la altura según sea necesario
-                    contentScale = ContentScale.Crop
-                )
-            }*/
 
             // Titulo y descripción
             Row(
@@ -226,8 +234,6 @@ fun CategoryItem(
     }
 }
 
-
-
 @Composable
 fun EditCategoryImage(onClick: () -> Unit){
     IconButton(onClick = onClick) {
@@ -244,4 +250,8 @@ fun Titulo() {
             .fillMaxWidth()
             .height(100.dp)
     )
+}
+
+fun nameExists(name: String, categories: List<Category>): Boolean {
+    return categories.any { it.name == name }
 }

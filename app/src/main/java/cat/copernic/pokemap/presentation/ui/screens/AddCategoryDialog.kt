@@ -13,21 +13,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import cat.copernic.pokemap.data.DTO.Category
 
 @Composable
 fun AddCategoryDialog(
     onDismiss: () -> Unit,
-    onConfirm: (Category) -> Unit
+    onConfirm: (String, String) -> Unit
 ) {
     var categoryName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    val navController = rememberNavController()
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Agregar categoría") },
+        title = { Text(text = "Añadir nueva categoría") },
         text = {
             Column {
                 TextField(
@@ -39,7 +36,7 @@ fun AddCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Describe la categoría") },
+                    label = { Text("Descripción de la categoría") },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -47,12 +44,11 @@ fun AddCategoryDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val newCategory = Category(name = categoryName, description = description)
-                    onConfirm(newCategory)
-                    onDismiss()
-                }
+                    onConfirm(categoryName, description)
+                },
+                enabled = categoryName.isNotBlank() && description.isNotBlank()
             ) {
-                Text("Agregar")
+                Text("Añadir categoría")
             }
         },
         dismissButton = {

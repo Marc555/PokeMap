@@ -15,13 +15,9 @@ class CategoryViewModel : ViewModel() {
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories = _categories.asStateFlow()
 
-    private val _operationStatus = MutableStateFlow<Result<Unit>?>(null)
-    val operationStatus = _operationStatus.asStateFlow()
-
     fun fetchCategories() {
         viewModelScope.launch {
-            val getCategories = repository.getCategories()
-            _categories.value = getCategories // ✅ Updates with all records
+            _categories.value = repository.getCategories()
         }
     }
 
@@ -29,10 +25,9 @@ class CategoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.addCategory(category)
-                fetchCategories() // ✅ Refreshes the full list
-                _operationStatus.value = Result.success(Unit) // Notify success
+                fetchCategories()
             } catch (e: Exception) {
-                _operationStatus.value = Result.failure(e) // Notify failure
+                e.printStackTrace()
             }
         }
     }
@@ -41,10 +36,9 @@ class CategoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.updateCategory(id, category)
-                fetchCategories() // ✅ Refreshes the full list
-                _operationStatus.value = Result.success(Unit) // Notify success
+                fetchCategories()
             } catch (e: Exception) {
-                _operationStatus.value = Result.failure(e) // Notify failure
+                e.printStackTrace()
             }
         }
     }
@@ -53,10 +47,9 @@ class CategoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.deleteCategory(id)
-                fetchCategories() // ✅ Refreshes the full list
-                _operationStatus.value = Result.success(Unit) // Notify success
+                fetchCategories()
             } catch (e: Exception) {
-                _operationStatus.value = Result.failure(e) // Notify failure
+                e.printStackTrace()
             }
         }
     }

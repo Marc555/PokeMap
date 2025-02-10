@@ -60,16 +60,6 @@ fun AppNavigation() {
                             Hamburger {
                                 scope.launch { drawerState.open() }
                             }
-                        },
-                        actions = { // Add actions to the right
-                            if (currentRoute in showAddCategory) {
-                                IconButton(onClick = { showAddCategoryDialog = true }) {
-                                    Icon(
-                                        imageVector = Icons.Default.AddCircle, // Replace with your drawable
-                                        contentDescription = "Add category",
-                                    )
-                                }
-                            }
                         }
                     )
                 }
@@ -93,15 +83,6 @@ fun AppNavigation() {
                     navController.navigate(AppScreens.Login.rute)
                 }
                 composable(AppScreens.Register.rute) { Register(navController) }
-            }
-
-            if (showAddCategoryDialog) {
-                AddCategoryDialog(
-                    onDismiss = { showAddCategoryDialog = false },
-                    onConfirm = { newCategory ->
-                        categoryViewModel.addCategory(newCategory)
-                    }
-                )
             }
         }
     }
