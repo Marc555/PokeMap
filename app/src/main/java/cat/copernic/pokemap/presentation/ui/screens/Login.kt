@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
-import cat.copernic.pokemap.navigation.AppScreens
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await

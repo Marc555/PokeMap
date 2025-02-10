@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.ui.theme
+package cat.copernic.pokemap.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

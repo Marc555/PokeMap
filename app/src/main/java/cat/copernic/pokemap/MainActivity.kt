@@ -11,8 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import cat.copernic.pokemap.navigation.AppNavigation
-import cat.copernic.pokemap.ui.theme.PokeMapTheme
+import cat.copernic.pokemap.presentation.ui.navigation.AppNavigation
+import cat.copernic.pokemap.presentation.ui.theme.PokeMapTheme
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {

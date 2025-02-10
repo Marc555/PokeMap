@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.ViewModel
+package cat.copernic.pokemap.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
