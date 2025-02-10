@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.screens
+package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,10 +59,6 @@ fun Home(navController: NavController) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ){
-        AddCategoryButton(onClick = { showAddCategoryDialog = true },
-            modifier = Modifier.align(Alignment.TopEnd).padding(top = 25.dp, end = 15.dp))
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,64 +102,6 @@ fun Home(navController: NavController) {
             }
         )
     }
-}
-
-@Composable
-fun AddCategoryButton(onClick: () -> Unit, modifier: Modifier) {
-    Image(
-        painter = painterResource(R.drawable.add_category_icon),
-        contentDescription = "Botón de agregar categoria",
-        modifier = modifier
-            .height(30.dp)
-            .width(30.dp)
-            .clickable { onClick() },
-        )
-}
-
-@Composable
-fun AddCategoryDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (Category) -> Unit
-) {
-    var categoryName by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Agregar categoría") },
-        text = {
-            Column {
-                TextField(
-                    value = categoryName,
-                    onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Describe la categoría") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    val newCategory = Category(name = categoryName, description = description)
-                    onConfirm(newCategory)
-                    onDismiss()
-                }
-            ) {
-                Text("Agregar")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancelar")
-            }
-        }
-    )
 }
 
 @Composable

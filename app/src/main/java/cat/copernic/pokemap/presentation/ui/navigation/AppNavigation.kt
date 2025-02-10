@@ -4,10 +4,17 @@ package cat.copernic.pokemap.presentation.ui.navigation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
+import cat.copernic.pokemap.R
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
+import cat.copernic.pokemap.presentation.ui.screens.AddCategoryDialog
 import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
@@ -16,6 +23,8 @@ import cat.copernic.pokemap.presentation.ui.screens.Profile
 import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.Settings
+import cat.copernic.pokemap.presentation.ui.screens.Home
+import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -25,12 +34,13 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
+    val categoryViewModel: CategoryViewModel = viewModel()
     val currentRoute = getCurrentRoute(navController)
-
-
+    var showAddCategoryDialog by remember { mutableStateOf(false) }
     // List of screens where the menu should NOT be shown
     val hideMenuScreens = listOf("login", "register")
+
+    val showAddCategory = listOf("home")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -47,16 +57,28 @@ fun AppNavigation() {
             topBar = {
                 if (currentRoute !in hideMenuScreens) {
                     TopAppBar(
-                        title = {},
+                        title = {}, // Empty title
                         navigationIcon = {
                             Hamburger {
                                 scope.launch { drawerState.open() }
+                            }
+                        },
+                        actions = { // Add actions to the right
+                            if (currentRoute in showAddCategory) {
+                                IconButton(onClick = { showAddCategoryDialog = true }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.add_category_icon), // Replace with your drawable
+                                        contentDescription = "Add category",
+                                        tint = Color.Unspecified // Ensures original colors are used
+                                    )
+                                }
                             }
                         }
                     )
                 }
             }
-        ) { innerPadding ->
+        )
+        { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = "login",
@@ -74,6 +96,15 @@ fun AppNavigation() {
                     navController.navigate(AppScreens.Login.rute)
                 }
                 composable(AppScreens.Register.rute) { Register(navController) }
+            }
+
+            if (showAddCategoryDialog) {
+                AddCategoryDialog(
+                    onDismiss = { showAddCategoryDialog = false },
+                    onConfirm = { newCategory ->
+                        categoryViewModel.addCategory(newCategory)
+                    }
+                )
             }
         }
     }
