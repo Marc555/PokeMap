@@ -26,7 +26,7 @@ import androidx.compose.ui.window.Dialog
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun RestonePasword(
+fun RestorePassword(
     email: String,
     onDismissRequest: () -> Unit
 ) {

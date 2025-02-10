@@ -65,7 +65,7 @@ fun Login(navController: NavController) {
 
         ErrorMessage(errorMessage)
         RegisterButton(navController)
-        RestonePaswordButton(onClick = { showResetPasswordDialog = true })
+        RestorePasswordButton(onClick = { showResetPasswordDialog = true })
         Spacer(modifier = Modifier.height(15.dp))
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
@@ -78,7 +78,7 @@ fun Login(navController: NavController) {
         })
 
         if (showResetPasswordDialog) {
-            RestonePasword(
+            RestorePassword(
                 email = email,
                 onDismissRequest = { showResetPasswordDialog = false }
             )
@@ -151,7 +151,7 @@ fun RegisterButton(navController: NavController) {
 }
 
 @Composable
-fun RestonePaswordButton(onClick: () -> Unit) {
+fun RestorePasswordButton(onClick: () -> Unit) {
     Text(
         text = "Recuperar Contraseña",
         modifier = Modifier
