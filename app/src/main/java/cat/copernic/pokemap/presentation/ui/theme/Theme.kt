@@ -12,7 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = Purple80, // Color principal del botón (habilitado)
+    onPrimary = Color.White, // Color del contenido del botón (habilitado)
+    surfaceVariant = Color.Gray, // Color de fondo del botón (deshabilitado)
+    onSurfaceVariant = Color.White, // Color del contenido del botón (deshabilitado)
     secondary = PurpleGrey80,
     tertiary = Pink80,
     background = Color.Black,  // Fondo oscuro
@@ -22,7 +25,10 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Purple40, // Color principal del botón (habilitado)
+    onPrimary = Color.White, // Color del contenido del botón (habilitado)
+    surfaceVariant = Color.LightGray, // Color de fondo del botón (deshabilitado)
+    onSurfaceVariant = Color.Black, // Color del contenido del botón (deshabilitado)
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = Color(0xFFE2E9FF),  // Fondo claro

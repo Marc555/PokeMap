@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -336,6 +337,11 @@ suspend fun isRepeatingUsername(username: String, userRepository: UsersRepositor
 fun BotonSiguiente(onClick: () -> Unit, text: String = "Siguiente", isChecking: Boolean = false) {
     Button(
         onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary),
         enabled = !isChecking // Deshabilitar mientras se verifica
     ) {
         Text(if (isChecking) "Verificando..." else "Siguiente")
