@@ -1,10 +1,10 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun AddCategoryDialog(
+    errorMessage: String?,
     onDismiss: () -> Unit,
     onConfirm: (String, String) -> Unit
 ) {
@@ -33,6 +34,9 @@ fun AddCategoryDialog(
                     label = { Text("Nombre de la categoría") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                errorMessage?.let {
+                    Text(text = it, color = MaterialTheme.colorScheme.error)
+                }
                 TextField(
                     value = description,
                     onValueChange = { description = it },
@@ -46,14 +50,10 @@ fun AddCategoryDialog(
                 onClick = {
                     onConfirm(categoryName, description)
                 },
-                enabled = categoryName.isNotBlank() && description.isNotBlank()
+                enabled = categoryName.isNotBlank() && description.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Añadir categoría")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancelar")
             }
         }
     )

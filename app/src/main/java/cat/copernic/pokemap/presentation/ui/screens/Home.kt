@@ -17,15 +17,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,29 +53,27 @@ fun Home(navController: NavController) {
     var showAddCategoryDialog by remember { mutableStateOf(false) }
     var showEditCategoryDialog by remember { mutableStateOf(false) }
     var categoryToEdit by remember { mutableStateOf<Category?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ){
-        IconButton(onClick = { showAddCategoryDialog = true }) {
-            Icon(
-                imageVector = Icons.Default.AddCircle, // Replace with your drawable
-                contentDescription = "Add category",
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 100.dp, start = 16.dp, end = 16.dp),
+                .padding(start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             Titulo()
 
-            Spacer(modifier = Modifier.height(25.dp))
+            IconButton(onClick = { showAddCategoryDialog = true }, modifier = Modifier.align(Alignment.Start)) {
+                Icon(
+                    imageVector = Icons.Default.AddCircle, // Replace with your drawable
+                    contentDescription = "Add category",
+                )
+            }
 
             CategoryList(
                 categories = categories,
@@ -94,14 +89,19 @@ fun Home(navController: NavController) {
 
     if (showAddCategoryDialog) {
         AddCategoryDialog(
-            onDismiss = { showAddCategoryDialog = false },
+            errorMessage = errorMessage,
+            onDismiss = {
+                showAddCategoryDialog = false
+                errorMessage = null
+            },
             onConfirm = { categoryName, description ->
-                if (!nameExists(categoryName, categories)) {
+                if (!nameExistsAdd(categoryName, categories)) {
                     val newCategory = Category(name = categoryName, description = description)
                     categoryViewModel.addCategory(newCategory)
                     showAddCategoryDialog = false
+                    errorMessage = null
                 }else{
-                    //Buscar forma de poner el error
+                    errorMessage = "Este nombre ya está en uso"
                 }
             }
         )
@@ -109,72 +109,23 @@ fun Home(navController: NavController) {
 
     if (showEditCategoryDialog && categoryToEdit != null) {
         EditCategoryDialog(
+            errorMessage = errorMessage,
             category = categoryToEdit!!,
             categoryViewModel = categoryViewModel,
-            onDismiss = { showEditCategoryDialog = false },
-            onConfirm = { updatedCategory ->
-                categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
+            onDismiss = {
                 showEditCategoryDialog = false
+                errorMessage = null
+            },
+            onConfirm = { updatedCategory ->
+                if (!nameExistsEdit(updatedCategory.name, categories, updatedCategory.id)) {
+                    categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
+                    showEditCategoryDialog = false
+                } else {
+                    errorMessage = "Este nombre ya está en uso"
+                }
             }
         )
     }
-}
-
-@Composable
-fun EditCategoryDialog(
-    category: Category,
-    categoryViewModel: CategoryViewModel,
-    onDismiss: () -> Unit,
-    onConfirm: (Category) -> Unit
-) {
-    var categoryName by remember { mutableStateOf(category.name) }
-    var description by remember { mutableStateOf(category.description) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Editar categoría") },
-        text = {
-            Column {
-                TextField(
-                    value = categoryName,
-                    onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Describe la categoría") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        categoryViewModel.deleteCategory(category.id)
-                        onDismiss()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Eliminar categoría")
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    val updatedCategory = category.copy(name = categoryName, description = description)
-                    onConfirm(updatedCategory)
-                }
-            ) {
-                Text("Guardar cambios")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancelar")
-            }
-        }
-    )
 }
 
 @Composable
@@ -252,6 +203,10 @@ fun Titulo() {
     )
 }
 
-fun nameExists(name: String, categories: List<Category>): Boolean {
+fun nameExistsAdd(name: String, categories: List<Category>): Boolean {
     return categories.any { it.name == name }
+}
+
+fun nameExistsEdit(name: String, categories: List<Category>, currentCategoryId: String): Boolean {
+    return categories.any { it.id != currentCategoryId && it.name == name }
 }

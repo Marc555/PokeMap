@@ -37,9 +37,9 @@ fun RestorePassword(
         Box(
             modifier = Modifier
                 .size(300.dp)  // Tamaño del contenedor del diálogo
-                .background(MaterialTheme.colorScheme.background)
                 .clip(RoundedCornerShape(16.dp))
-                .border(width = 1.dp, color = Color.Red, shape = RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.onBackground, shape = RoundedCornerShape(16.dp))
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
