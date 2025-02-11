@@ -2,8 +2,6 @@ package cat.copernic.pokemap.presentation.ui.navigation
 
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -11,7 +9,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
-import cat.copernic.pokemap.presentation.ui.screens.AddCategoryDialog
 import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
@@ -77,11 +74,6 @@ fun AppNavigation() {
                 composable(AppScreens.Notifications.rute) { Notifications(navController) }
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
-                composable(AppScreens.Logout.rute) {
-                    val auth = FirebaseAuth.getInstance()
-                    auth.signOut()
-                    navController.navigate(AppScreens.Login.rute)
-                }
                 composable(AppScreens.Register.rute) { Register(navController) }
             }
         }
