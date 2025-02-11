@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 
@@ -29,14 +30,15 @@ fun EditCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Editar categoría") },
+        title = { Text(text = "Editar categoría", color = MaterialTheme.colorScheme.onBackground) },
         text = {
             Column {
                 TextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
                     label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -45,7 +47,8 @@ fun EditCategoryDialog(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Describe la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
             }
         },
@@ -76,6 +79,6 @@ fun EditCategoryDialog(
                     Text(text = "Eliminar categoria", color = MaterialTheme.colorScheme.onError)
                 }
             }
-        }
+        }, containerColor = MaterialTheme.colorScheme.background
     )
 }

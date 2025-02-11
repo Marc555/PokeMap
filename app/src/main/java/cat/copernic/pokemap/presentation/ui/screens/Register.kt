@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -184,7 +185,8 @@ fun NameInput(name: String, onNameChange: (String) -> Unit){
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
     )
 }
 
@@ -197,7 +199,8 @@ fun SurnameInput(surname: String, onSurnameChange: (String) -> Unit){
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
     )
 }
 
@@ -236,7 +239,8 @@ fun UsernameInput(username: String, onUsernameChange: (String) -> Unit){
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
     )
 }
 

@@ -115,7 +115,8 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
     )
 }
 
@@ -130,7 +131,8 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPas
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
     )
 }
 

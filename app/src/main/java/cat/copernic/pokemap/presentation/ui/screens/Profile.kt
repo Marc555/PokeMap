@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.data.DTO.Users
@@ -35,7 +38,7 @@ fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel(
     val userEmail = currentUser?.email
     val user =  viewModel.users.value.find { it.email == userEmail }
 
-    Box (
+    Column (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
@@ -53,6 +56,29 @@ fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel(
 
                 Nombres(user = user)
             }
+
+            Row (
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SeguidosSeguidores()
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row (
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                PublicationsNumber()
+            }
+
         } else {
             Text(text = "Error al cargar los datos del usuario")
         }
@@ -74,9 +100,47 @@ fun ImageProfile(){
         painter = painterResource(id = R.drawable.logo),
         contentDescription = "Imagen de parfil",
         modifier = Modifier
-            .size(100.dp) // Ajusta el tamaño de la imagen
+            .size(150.dp) // Ajusta el tamaño de la imagen
             .clip(CircleShape) // Redondea la imagen
             .border(2.dp, color = MaterialTheme.colorScheme.onBackground, CircleShape)
 
     )
+}
+
+@Composable
+fun SeguidosSeguidores() {
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+    ) {
+        Text(text = "Seguidores 344", modifier = Modifier.padding(5.dp))
+    }
+
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+    ) {
+        Text(text = "Seguidos 238", modifier = Modifier.padding(5.dp))
+    }
+}
+
+@Composable
+fun PublicationsNumber() {
+    Text(text = "Numero de publicaciones: ")
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        Text(text = "12", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(3.dp),)
+    }
+}
+
+@Preview
+@Composable
+fun ProfilePreview() {
+    PublicationsNumber()
 }

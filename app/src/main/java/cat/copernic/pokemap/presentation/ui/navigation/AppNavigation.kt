@@ -1,8 +1,10 @@
 package cat.copernic.pokemap.presentation.ui.navigation
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +53,7 @@ fun AppNavigation() {
             topBar = {
                 if (currentRoute !in hideMenuScreens) {
                     TopAppBar(
+                        colors = topAppBarColors(MaterialTheme.colorScheme.background),
                         title = {}, // Empty title
                         navigationIcon = {
                             Hamburger {

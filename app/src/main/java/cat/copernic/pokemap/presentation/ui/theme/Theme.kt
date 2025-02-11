@@ -17,8 +17,8 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink80,
     background = Color.Black,  // Fondo oscuro
     onBackground = Color.White,  // Texto sobre el fondo oscuro
-    surface = Color.Black,  // Superficie oscura
-    onSurface = Color.White,  // Texto sobre la superficie oscura
+    surface = Color.White,
+    onSurface = Color.Black,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -27,15 +27,15 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40,
     background = Color(0xFFE2E9FF),  // Fondo claro
     onBackground = Color.Black,  // Texto sobre el fondo claro
-    surface = Color.White,  // Superficie clara
-    onSurface = Color.Black,  // Texto sobre la superficie clara
+    surface = Color.Black,
+    onSurface = Color.White,
 )
 
 @Composable
 fun PokeMapTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
