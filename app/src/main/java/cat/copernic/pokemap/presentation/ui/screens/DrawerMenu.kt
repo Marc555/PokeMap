@@ -84,7 +84,7 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MenuItem("Configuración", "settings", Color(0xFF555555), navController, onClose)
-                    SiginOutItem("Cerrar sesión", Color(0xFFD32F2F), navController)
+                    SiginOutItem("Cerrar sesión", Color(0xFFD32F2F), navController, onClose)
                 }
             }
         }
@@ -131,12 +131,14 @@ fun MenuItem(
 fun SiginOutItem(
     title: String,
     bgColor: Color,
-    navController: NavController
+    navController: NavController,
+    onClose: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
+                onClose()
                 navController.navigate(AppScreens.Login.rute){
                     popUpTo(AppScreens.Login.rute) { inclusive = true }
                 }
