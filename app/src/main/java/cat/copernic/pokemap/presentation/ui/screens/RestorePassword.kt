@@ -101,7 +101,7 @@ fun sendPasswordResetEmail(
     callback: (Boolean) -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
-    auth.sendPasswordResetEmail(email)
+    auth.sendPasswordResetEmail(email.trim())
         .addOnCompleteListener { task ->
             callback(task.isSuccessful)
         }

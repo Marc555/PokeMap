@@ -73,8 +73,8 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = viewMo
                 ) { viewModel.orden = 3 }
 
                 3 -> PantallaRegistro3(
-                    viewModel.usurname,
-                    onUsurnameChange = { viewModel.usurname = it },
+                    viewModel.username,
+                    onUsernameChange = { viewModel.username = it },
                     onMensajeErrorChange = { viewModel.messageError = it }
                 ) { viewModel.orden = 4 }
 
@@ -89,7 +89,7 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = viewMo
                 5 -> PantallaRegistroFinal(
                     viewModel.email,
                     viewModel.password,
-                    viewModel.usurname,
+                    viewModel.username,
                     viewModel.name,
                     viewModel.surname,
                     onMensajeErrorChange = { viewModel.messageError = it },
@@ -202,24 +202,36 @@ fun SurnameInput(surname: String, onSurnameChange: (String) -> Unit){
 }
 
 @Composable
-fun PantallaRegistro3(usurname: String, onUsurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
+fun PantallaRegistro3(username: String, viewModel: UsersViewModel = viewModel(), onUsernameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
     TextoTitulo("Elige un nombre de usuario:")
-    UsernameInput(usurname, onUsurnameChange)
+    UsernameInput(username, onUsernameChange)
+
+    var isChecking by remember { mutableStateOf(false) }
+
     BotonSiguiente(onClick = {
-        if (usurname.isEmpty()) {
+        if (username.isEmpty()) {
             onMensajeErrorChange("")
         } else{
-            onMensajeErrorChange("")
-            onClick()
+            isChecking = true // Indica que estamos verificando
+            viewModel.viewModelScope.launch {
+                val existe = isRepeatingUsername(username)
+                isChecking = false // La verificación ha terminado
+                if (existe) {
+                    onMensajeErrorChange("Este Username ya está registrado")
+                } else {
+                    onMensajeErrorChange("") // Limpia el mensaje de error
+                    onClick() // Continúa con el flujo normal
+                }
+            }
         }
-    })
+    },isChecking = isChecking)
 }
 
 @Composable
-fun UsernameInput(usurname: String, onUsurnameChange: (String) -> Unit){
+fun UsernameInput(username: String, onUsernameChange: (String) -> Unit){
     OutlinedTextField(
-        value = usurname,
-        onValueChange = onUsurnameChange,
+        value = username,
+        onValueChange = onUsernameChange,
         label = { Text("Nombre de usuario") },
         singleLine = true,
         modifier = Modifier
@@ -302,6 +314,15 @@ suspend fun isRepeatingEmail(email: String, userRepository: UsersRepository = Us
     return try {
         val users = userRepository.getUsers()
         users.any { it.email.equals(email, ignoreCase = true) }
+    } catch (e: Exception) {
+        false
+    }
+}
+
+suspend fun isRepeatingUsername(username: String, userRepository: UsersRepository = UsersRepository()): Boolean {
+    return try {
+        val users = userRepository.getUsers()
+        users.any { it.username.equals(username, ignoreCase = true) }
     } catch (e: Exception) {
         false
     }
