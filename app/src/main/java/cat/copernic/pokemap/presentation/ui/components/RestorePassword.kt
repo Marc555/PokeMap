@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.presentation.ui.screens
+package cat.copernic.pokemap.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,13 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import cat.copernic.pokemap.presentation.ui.screens.EmailInput
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun RestonePasword(
+fun RestorePassword(
     email: String,
     onDismissRequest: () -> Unit
 ) {
@@ -37,9 +37,9 @@ fun RestonePasword(
         Box(
             modifier = Modifier
                 .size(300.dp)  // Tamaño del contenedor del diálogo
-                .background(MaterialTheme.colorScheme.background)
                 .clip(RoundedCornerShape(16.dp))
-                .border(width = 1.dp, color = Color.Red, shape = RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.onBackground, shape = RoundedCornerShape(16.dp))
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -101,7 +101,7 @@ fun sendPasswordResetEmail(
     callback: (Boolean) -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
-    auth.sendPasswordResetEmail(email)
+    auth.sendPasswordResetEmail(email.trim())
         .addOnCompleteListener { task ->
             callback(task.isSuccessful)
         }

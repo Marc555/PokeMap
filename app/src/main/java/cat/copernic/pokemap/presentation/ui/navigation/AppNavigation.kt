@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
-import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
@@ -16,21 +17,24 @@ import cat.copernic.pokemap.presentation.ui.screens.Profile
 import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.Settings
-import com.google.firebase.auth.FirebaseAuth
+import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
+
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
+    val categoryViewModel: CategoryViewModel = viewModel()
     val currentRoute = getCurrentRoute(navController)
-
+    var showAddCategoryDialog by remember { mutableStateOf(false) }
 
     // List of screens where the menu should NOT be shown
     val hideMenuScreens = listOf("login", "register")
+
+    val showAddCategory = listOf("home")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -47,7 +51,7 @@ fun AppNavigation() {
             topBar = {
                 if (currentRoute !in hideMenuScreens) {
                     TopAppBar(
-                        title = {},
+                        title = {}, // Empty title
                         navigationIcon = {
                             Hamburger {
                                 scope.launch { drawerState.open() }
@@ -56,7 +60,8 @@ fun AppNavigation() {
                     )
                 }
             }
-        ) { innerPadding ->
+        )
+        { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = "login",
@@ -68,11 +73,6 @@ fun AppNavigation() {
                 composable(AppScreens.Notifications.rute) { Notifications(navController) }
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
-                composable(AppScreens.Logout.rute) {
-                    val auth = FirebaseAuth.getInstance()
-                    auth.signOut()
-                    navController.navigate(AppScreens.Login.rute)
-                }
                 composable(AppScreens.Register.rute) { Register(navController) }
             }
         }

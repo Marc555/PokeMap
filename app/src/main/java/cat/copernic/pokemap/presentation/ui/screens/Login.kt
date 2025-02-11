@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.presentation.ui.components.RestorePassword
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ fun Login(navController: NavController) {
 
         ErrorMessage(errorMessage)
         RegisterButton(navController)
-        RestonePaswordButton(onClick = { showResetPasswordDialog = true })
+        RestorePasswordButton(onClick = { showResetPasswordDialog = true })
         Spacer(modifier = Modifier.height(15.dp))
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
@@ -78,7 +79,7 @@ fun Login(navController: NavController) {
         })
 
         if (showResetPasswordDialog) {
-            RestonePasword(
+            RestorePassword(
                 email = email,
                 onDismissRequest = { showResetPasswordDialog = false }
             )
@@ -151,7 +152,7 @@ fun RegisterButton(navController: NavController) {
 }
 
 @Composable
-fun RestonePaswordButton(onClick: () -> Unit) {
+fun RestorePasswordButton(onClick: () -> Unit) {
     Text(
         text = "Recuperar Contraseña",
         modifier = Modifier
@@ -216,7 +217,7 @@ suspend fun loginWithEmail(
             throw IllegalStateException("FirebaseAuth no está inicializado")
         }
 
-        auth.signInWithEmailAndPassword(email, password).await()
+        auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
         onLoginSuccess()
     } catch (e: Exception) {

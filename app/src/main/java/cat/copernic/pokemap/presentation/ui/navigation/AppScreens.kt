@@ -8,7 +8,4 @@ sealed class AppScreens(val rute: String) {
     object Rankings: AppScreens("rankings")
     object Notifications: AppScreens("notifications")
     object Settings: AppScreens("settings")
-    object Logout: AppScreens("logout")
-
-
 }

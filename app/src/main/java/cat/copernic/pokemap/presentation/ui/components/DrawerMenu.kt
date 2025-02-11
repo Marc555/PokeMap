@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.presentation.ui.screens
+package cat.copernic.pokemap.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cat.copernic.pokemap.presentation.ui.components.SvgLogo
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 
 @Composable
 fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
@@ -83,7 +83,7 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MenuItem("Configuración", "settings", Color(0xFF555555), navController, onClose)
-                    MenuItem("Cerrar sesión", "login", Color(0xFFD32F2F), navController, onClose)
+                    SiginOutItem("Cerrar sesión", Color(0xFFD32F2F), navController, onClose)
                 }
             }
         }
@@ -104,6 +104,43 @@ fun MenuItem(
             .clickable {
                 navController.navigate(route)
                 onClose()
+            }
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(1f) // Ensures all buttons have the same width
+                .background(bgColor, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(), // Ensures text stays centered
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis // Prevents text from breaking into multiple lines
+            )
+        }
+    }
+}
+
+@Composable
+fun SiginOutItem(
+    title: String,
+    bgColor: Color,
+    navController: NavController,
+    onClose: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClose()
+                navController.navigate(AppScreens.Login.rute){
+                    popUpTo(AppScreens.Login.rute) { inclusive = true }
+                }
             }
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.Center
