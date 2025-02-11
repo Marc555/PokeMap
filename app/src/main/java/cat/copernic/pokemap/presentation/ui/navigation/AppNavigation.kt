@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
-import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
@@ -18,7 +18,6 @@ import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.Settings
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,4 +1,4 @@
-package cat.copernic.pokemap.presentation.ui.screens
+package cat.copernic.pokemap.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cat.copernic.pokemap.presentation.ui.components.SvgLogo
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 
 @Composable

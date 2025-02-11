@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.presentation.ui.components.RestorePassword
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -216,7 +217,7 @@ suspend fun loginWithEmail(
             throw IllegalStateException("FirebaseAuth no está inicializado")
         }
 
-        auth.signInWithEmailAndPassword(email, password).await()
+        auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
         onLoginSuccess()
     } catch (e: Exception) {

@@ -38,6 +38,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
 import cat.copernic.pokemap.data.DTO.Category
+import cat.copernic.pokemap.presentation.ui.components.AddCategoryDialog
+import cat.copernic.pokemap.presentation.ui.components.EditCategoryDialog
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 
 @Composable
