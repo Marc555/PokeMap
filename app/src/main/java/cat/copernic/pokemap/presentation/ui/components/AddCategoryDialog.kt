@@ -30,7 +30,7 @@ fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = LanguageManager.getText("add category")) },
+        title = { Text(text = LanguageManager.getText("add category",),color = MaterialTheme.colorScheme.onBackground) },
         text = {
             Column {
                 TextField(

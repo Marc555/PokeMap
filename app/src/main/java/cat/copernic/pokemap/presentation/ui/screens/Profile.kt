@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Profile(navController: NavController){
@@ -25,7 +26,7 @@ fun Profile(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            "Perfil", color = Color.White
+            LanguageManager.getText("profile"), color = Color.White
         )
     }
 }

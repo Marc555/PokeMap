@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Rankings(navController: NavController){
@@ -25,7 +26,7 @@ fun Rankings(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            "Rankings", color = Color.White
+            LanguageManager.getText("rankings"), color = Color.White
         )
     }
 }
