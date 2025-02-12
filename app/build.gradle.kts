@@ -70,4 +70,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // Auth
     implementation("com.google.firebase:firebase-auth-ktx")
+
+    //Real time translate
+    implementation("com.google.code.gson:gson:2.10.1")
 }

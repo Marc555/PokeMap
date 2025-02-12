@@ -1,15 +1,16 @@
 package cat.copernic.pokemap.presentation.ui.navigation
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
-import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
@@ -52,6 +53,7 @@ fun AppNavigation() {
             topBar = {
                 if (currentRoute !in hideMenuScreens) {
                     TopAppBar(
+                        colors = topAppBarColors(MaterialTheme.colorScheme.background),
                         title = {}, // Empty title
                         navigationIcon = {
                             Hamburger {
@@ -84,6 +86,7 @@ fun AppNavigation() {
             }
         }
     }
+
 }
 
 // Function to get the current route
