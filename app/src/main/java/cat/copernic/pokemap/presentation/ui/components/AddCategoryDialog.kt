@@ -1,6 +1,5 @@
 package cat.copernic.pokemap.presentation.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
@@ -18,9 +17,6 @@ import androidx.compose.ui.Modifier
 import cat.copernic.pokemap.utils.LanguageManager
 import androidx.compose.ui.text.TextStyle
 
-
-import androidx.compose.ui.text.TextStyle
-
 @Composable
 fun AddCategoryDialog(
     errorMessage: String?,
@@ -33,15 +29,11 @@ fun AddCategoryDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = LanguageManager.getText("add category",),color = MaterialTheme.colorScheme.onBackground) },
-        title = { Text(text = "Añadir nueva categoría", color = MaterialTheme.colorScheme.onBackground) },
         text = {
             Column {
                 TextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                     label = { Text(LanguageManager.getText("name")) },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
@@ -52,9 +44,6 @@ fun AddCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text(LanguageManager.getText("description")) },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                     label = { Text("Descripción de la categoría") },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)

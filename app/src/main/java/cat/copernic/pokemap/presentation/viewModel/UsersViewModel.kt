@@ -17,6 +17,9 @@ class UsersViewModel: ViewModel(){
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _user = MutableStateFlow<Users?>(null)
+    val user: StateFlow<Users?> = _user
+
     init {
         fetchUsers()
     }
@@ -25,6 +28,14 @@ class UsersViewModel: ViewModel(){
         viewModelScope.launch {
             _isLoading.value = true
             _users.value = repository.getUsers()
+            _isLoading.value = false
+        }
+    }
+
+    fun fetchUserByUid(uid: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _user.value = repository.getUserByUid(uid)
             _isLoading.value = false
         }
     }

@@ -42,9 +42,6 @@ fun EditCategoryDialog(
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
 
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -52,9 +49,6 @@ fun EditCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Describe la categoría") },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                     label = { Text(LanguageManager.getText("description")) },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
@@ -69,9 +63,6 @@ fun EditCategoryDialog(
                         val updatedCategory = category.copy(name = categoryName, description = description)
                         onConfirm(updatedCategory)
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors()
-
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors()
                 ) {

@@ -36,8 +36,11 @@ import cat.copernic.pokemap.utils.LanguageManager
 fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel()){
 
     val currentUser = FirebaseAuth.getInstance().currentUser
-    val userEmail = currentUser?.email
-    val user =  viewModel.users.value.find { it.email == userEmail }
+    val userUid = currentUser?.uid
+    if (userUid != null) {
+        viewModel.fetchUserByUid(userUid)
+    }
+    val user =  viewModel.user.value
 
     Column (
         modifier = Modifier
@@ -81,7 +84,7 @@ fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel(
             }
 
         } else {
-            Text(text = "Error al cargar los datos del usuario")
+            Text(text = "Cargando datos del usuario...")
         }
     }
 }
@@ -115,7 +118,7 @@ fun SeguidosSeguidores() {
             .wrapContentSize()
             .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
     ) {
-        Text(text = "Seguidores 344", modifier = Modifier.padding(5.dp))
+        Text(text = "${LanguageManager.getText("followers")} 344", modifier = Modifier.padding(5.dp))
     }
 
     Box(
@@ -123,13 +126,13 @@ fun SeguidosSeguidores() {
             .wrapContentSize()
             .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
     ) {
-        Text(text = "Seguidos 238", modifier = Modifier.padding(5.dp))
+        Text(text = "${LanguageManager.getText("following")} 238", modifier = Modifier.padding(5.dp))
     }
 }
 
 @Composable
 fun PublicationsNumber() {
-    Text(text = "Numero de publicaciones: ")
+    Text(text = "${LanguageManager.getText("publications")} ")
     Box(
         modifier = Modifier
             .wrapContentSize()
@@ -138,4 +141,10 @@ fun PublicationsNumber() {
     ) {
         Text(text = "12", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(3.dp),)
     }
+}
+
+@Preview
+@Composable
+fun ProfilePreview() {
+    PublicationsNumber()
 }
