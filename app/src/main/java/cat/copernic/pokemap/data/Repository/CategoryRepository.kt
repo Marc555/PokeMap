@@ -58,10 +58,7 @@ class CategoryRepository {
 
     suspend fun getCategoryById(categoryId: String): Category? {
         return try {
-            // Obtener el documento de Firestore
             val documentSnapshot = categoriesCollection.document(categoryId).get().await()
-
-            // Convertir el documento a un objeto Category
             documentSnapshot.toObject(Category::class.java)
         } catch (e: Exception) {
             e.printStackTrace()

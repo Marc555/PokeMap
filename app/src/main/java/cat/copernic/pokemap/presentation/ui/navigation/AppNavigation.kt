@@ -11,6 +11,7 @@ import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.screens.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.Home
+import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
 import cat.copernic.pokemap.presentation.ui.screens.Profile
@@ -18,7 +19,6 @@ import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.Settings
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,10 +75,15 @@ fun AppNavigation() {
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
                 composable(AppScreens.Register.rute) { Register(navController) }
+                composable(AppScreens.Items.rute) { backStackEntry ->
+                    val categoryId = backStackEntry.arguments?.getString("categoryId")
+                    if (categoryId != null) {
+                        Items(navController, categoryId)
+                    }
+                }
             }
         }
     }
-
 }
 
 // Function to get the current route

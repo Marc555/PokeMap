@@ -1,10 +1,13 @@
 package cat.copernic.pokemap.data.DTO
 
 data class Item(
-    val uid: String,
-    val name: String,
-    val description: String,
-    val image: String,
+    var id: String = "",
+    val name: String = "",
+    val description: String = "",
+    val image: String = "",
+    var rate: Int = 0,
+
+    val user: Users,
     val location: Location,
     val category: Category
 )

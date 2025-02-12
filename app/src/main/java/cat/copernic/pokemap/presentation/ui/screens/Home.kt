@@ -2,6 +2,7 @@ package cat.copernic.pokemap.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,6 +77,7 @@ fun Home(navController: NavController) {
             }
 
             CategoryList(
+                navController = navController,
                 categories = categories,
                 onEditCategory = { category ->
                     categoryToEdit = category
@@ -130,6 +132,7 @@ fun Home(navController: NavController) {
 
 @Composable
 fun CategoryList(
+    navController: NavController,
     categories: List<Category>,
     onEditCategory: (Category) -> Unit
 ) {
@@ -139,6 +142,8 @@ fun CategoryList(
         LazyColumn(modifier = Modifier.wrapContentHeight()) {
             itemsIndexed(categories) { _, category ->
                 CategoryItem(
+                    navController = navController,
+                    modifier = Modifier.clickable { navController.navigate("items/${category.id}") },
                     category = category,
                     onEditCategory = onEditCategory
                 )
@@ -149,28 +154,31 @@ fun CategoryList(
 
 @Composable
 fun CategoryItem(
+    navController: NavController,
+    modifier: Modifier = Modifier,
     category: Category,
     onEditCategory: (Category) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { navController.navigate("items/${category.id}") },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
             // Imagen de la categoría
 
-            // Titulo y descripción
+            // Titulo de la categoría
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically, // Asegura que todo esté alineado
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
-                    modifier = Modifier.weight(1f) // Permite que los textos ocupen el espacio disponible
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = category.name,
@@ -179,14 +187,14 @@ fun CategoryItem(
                 }
 
                 // Botón de editar
-                EditCategoryImage(onClick = { onEditCategory(category) })
+                EditCategoryIcon(onClick = { onEditCategory(category) })
             }
         }
     }
 }
 
 @Composable
-fun EditCategoryImage(onClick: () -> Unit){
+fun EditCategoryIcon(onClick: () -> Unit){
     IconButton(onClick = onClick) {
         Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar categoria")
     }

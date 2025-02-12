@@ -61,7 +61,8 @@ fun EditCategoryDialog(
                         val updatedCategory = category.copy(name = categoryName, description = description)
                         onConfirm(updatedCategory)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = categoryName.isNotBlank() && description.isNotBlank()
                 ) {
                     Text("Guardar cambios")
                 }
