@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -13,8 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun EditCategoryDialog(
@@ -29,14 +32,16 @@ fun EditCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Editar categoría") },
+        title = { Text(text = LanguageManager.getText("edit category")) },
         text = {
             Column {
                 TextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text(LanguageManager.getText("name")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -44,8 +49,9 @@ fun EditCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Describe la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text(LanguageManager.getText("description")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
             }
         },
@@ -57,9 +63,11 @@ fun EditCategoryDialog(
                         val updatedCategory = category.copy(name = categoryName, description = description)
                         onConfirm(updatedCategory)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors()
+
                 ) {
-                    Text("Guardar cambios")
+                    Text(LanguageManager.getText("save"))
                 }
 
                 // Botón de eliminar
@@ -68,14 +76,12 @@ fun EditCategoryDialog(
                         categoryViewModel.deleteCategory(category.id)
                         onDismiss()
                     },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    ),
+                    colors = ButtonDefaults.buttonColors(),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Eliminar categoria", color = MaterialTheme.colorScheme.onError)
+                    Text(text = LanguageManager.getText("delete"), color = MaterialTheme.colorScheme.onError)
                 }
             }
-        }
+        }, containerColor = MaterialTheme.colorScheme.background
     )
 }

@@ -9,10 +9,21 @@
   "forgot password": "Has oblidat la teva contrasenya?",
   "sign up": "Registra't",
 
-  "Type email": "Escriu el teu correu electrònic",
+  "email invalid":"Correu electrònic no vàlid",
+  "email empty": "El correu electrònic no pot estar buit",
+  "email taken": "El correu electrònic ja està en ús",
+  "email or password empty": "El correu electrònic o la contrasenya no poden estar buits",
+  "firebaseAuth not innit": "FirebaseAuth no està inicialitzat",
+  "login error": "Error desconegut en iniciar sessió",
+  "email sent": "Correu electrònic enviat, revisa la safata d'entrada",
+
+
+  "type email": "Escriu el teu correu electrònic",
   "name and lastname": "Quin és el teu nom?",
   "choose username": "Tria un nom d'usuari",
+  "username taken": "Este nom d'usuari ja està en ús",
   "create password": "Crea una contrasenya segura",
+  "password not match": "Les contrasenyes no coincideixen",
   "sing up success message": "El teu compte s'ha creat amb èxit",
 
   "email": "Correu electrònic",
@@ -24,11 +35,14 @@
   "friend code": "Codi d'amic",
   "upload pic": "Puja una foto",
 
+  "back": "Enrere",
   "next": "Següent",
   "login": "Iniciar sessió",
   "go back": "Torna enrere",
   "send": "Envia",
   "save": "Desa",
+  "finish": "Finalitzar",
+  "loading": "Verificant...",
 
   "add item": "Afegir element",
   "edit item": "Editar element",
@@ -43,6 +57,7 @@
   "order by": "Ordenar per:",
   "likes": "M'agrada",
   "date": "Data",
+  "name not available":"Nom no disponible",
 
   "most liked": "Més populars",
   "most active": "Més actius",

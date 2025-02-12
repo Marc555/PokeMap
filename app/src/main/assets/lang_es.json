@@ -9,10 +9,21 @@
   "forgot password": "¿Olvidaste tu contraseña?",
   "sign up": "Regístrate",
 
-  "Type email": "Escribe tu correo electrónico",
+  "email invalid": "Correo electrónico no válido",
+  "email empty": "El correo electrónico no puede estar vacío",
+  "email taken": "El correo electrónico ya está en uso",
+  "email or password empty": "El correo electrónico o la contraseña no pueden estar vacíos",
+  "firebaseAuth not innit": "FirebaseAuth no está inicializado",
+  "login error": "Error desconocido al iniciar sesión",
+  "email sent": "Correo electrónico enviado, revisa tu bandeja de entrada",
+
+
+  "type email": "Escribe tu correo electrónico",
   "name and lastname": "¿Cuál es tu nombre?",
   "choose username": "Elige un nombre de usuario",
+  "username taken": "Este username ya está en uso",
   "create password": "Crea una contraseña segura",
+  "password not match": "Las contraseñas no coinciden",
   "sing up success message": "Tu cuenta se creó con éxito",
 
   "email": "Correo electrónico",
@@ -24,11 +35,14 @@
   "friend code": "Código de amigo",
   "upload pic": "Subir una foto",
 
+  "back": "Volver",
   "next": "Siguiente",
   "login": "Iniciar sesión",
-  "go back": "Volver",
+  "go back": "Ir atrás",
   "send": "Enviar",
   "save": "Guardar",
+  "finish": "Finalizar",
+  "loading": "Verificando...",
 
   "add item": "Añadir elemento",
   "edit item": "Editar elemento",
@@ -43,6 +57,7 @@
   "order by": "Ordenar por:",
   "likes": "Me gusta",
   "date": "Fecha",
+  "name not available":"Nombre no disponible",
 
   "most liked": "Más gustados",
   "most active": "Más activos",

@@ -12,30 +12,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = Purple80, // Color principal del botón (habilitado)
+    onPrimary = Color.White, // Color del contenido del botón (habilitado)
+    surfaceVariant = Color.Gray, // Color de fondo del botón (deshabilitado)
+    onSurfaceVariant = Color.White, // Color del contenido del botón (deshabilitado)
     secondary = PurpleGrey80,
     tertiary = Pink80,
     background = Color.Black,  // Fondo oscuro
     onBackground = Color.White,  // Texto sobre el fondo oscuro
-    surface = Color.Black,  // Superficie oscura
-    onSurface = Color.White,  // Texto sobre la superficie oscura
+    surface = Color.White,
+    onSurface = Color.Black,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Purple40, // Color principal del botón (habilitado)
+    onPrimary = Color.White, // Color del contenido del botón (habilitado)
+    surfaceVariant = Color.LightGray, // Color de fondo del botón (deshabilitado)
+    onSurfaceVariant = Color.Black, // Color del contenido del botón (deshabilitado)
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = Color(0xFFE2E9FF),  // Fondo claro
     onBackground = Color.Black,  // Texto sobre el fondo claro
-    surface = Color.White,  // Superficie clara
-    onSurface = Color.Black,  // Texto sobre la superficie clara
+    surface = Color.Black,
+    onSurface = Color.White,
 )
 
 @Composable
 fun PokeMapTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

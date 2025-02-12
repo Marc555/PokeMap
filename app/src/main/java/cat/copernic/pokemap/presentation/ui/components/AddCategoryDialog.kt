@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -13,6 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import cat.copernic.pokemap.utils.LanguageManager
+import androidx.compose.ui.text.TextStyle
+
+
 
 @Composable
 fun AddCategoryDialog(
@@ -25,14 +30,15 @@ fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Añadir nueva categoría") },
+        title = { Text(text = LanguageManager.getText("add category")) },
         text = {
             Column {
                 TextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text(LanguageManager.getText("name")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -40,8 +46,9 @@ fun AddCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Descripción de la categoría") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text(LanguageManager.getText("description")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
             }
         },
@@ -51,11 +58,16 @@ fun AddCategoryDialog(
                     onConfirm(categoryName, description)
                 },
                 enabled = categoryName.isNotBlank() && description.isNotBlank(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
-                Text("Añadir categoría")
+                Text(LanguageManager.getText("save"))
             }
-        }
+        }, containerColor = MaterialTheme.colorScheme.background
     )
 }
 

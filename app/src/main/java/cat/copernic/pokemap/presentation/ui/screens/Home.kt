@@ -41,6 +41,7 @@ import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.ui.components.AddCategoryDialog
 import cat.copernic.pokemap.presentation.ui.components.EditCategoryDialog
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Home(navController: NavController) {
@@ -73,7 +74,7 @@ fun Home(navController: NavController) {
             IconButton(onClick = { showAddCategoryDialog = true }, modifier = Modifier.align(Alignment.Start)) {
                 Icon(
                     imageVector = Icons.Default.AddCircle, // Replace with your drawable
-                    contentDescription = "Add category",
+                    contentDescription = LanguageManager.getText("add category"),
                 )
             }
 
@@ -103,7 +104,7 @@ fun Home(navController: NavController) {
                     showAddCategoryDialog = false
                     errorMessage = null
                 }else{
-                    errorMessage = "Este nombre ya está en uso"
+                    errorMessage = LanguageManager.getText("name not available")
                 }
             }
         )
@@ -123,7 +124,7 @@ fun Home(navController: NavController) {
                     categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
                     showEditCategoryDialog = false
                 } else {
-                    errorMessage = "Este nombre ya está en uso"
+                    errorMessage = LanguageManager.getText("name not available")
                 }
             }
         )
@@ -136,7 +137,7 @@ fun CategoryList(
     onEditCategory: (Category) -> Unit
 ) {
     if (categories.isEmpty()) {
-        Text(text = "No hay categorías disponibles")
+        Text(text = LanguageManager.getText("area empty"))
     } else {
         LazyColumn(modifier = Modifier.wrapContentHeight()) {
             itemsIndexed(categories) { _, category ->

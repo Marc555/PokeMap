@@ -9,10 +9,20 @@
   "forgot password": "Forgot your password?",
   "sign up": "Sing up",
 
-  "Type email" :"Type your email",
+  "email invalid": "Email not valid",
+  "email empty": "Email cannot be empty",
+  "email taken": "Email not available",
+  "email or password empty": "Email or password cannot be empty",
+  "firebaseAuth not innit": "FirebaseAuth is not initialized",
+  "login error": "Unknown error while logging in",
+  "email sent": "Email sent, check your mailbox",
+
+  "type email" :"Type your email",
   "name and lastname" : "What's your name?",
   "choose username": "Choose an username",
+  "username taken": "Username not available",
   "create password": "Create a secure password",
+  "password not match": "Passwords do not match",
   "sing up success message":"Your account was successfully created",
 
   "email": "Email",
@@ -24,11 +34,14 @@
   "friend code": "Friend code",
   "upload pic": "Upload a picture",
 
+  "back": "Back",
   "next": "Next",
   "login": "Login",
   "go back": "Go back",
   "send": "Send",
   "save": "Save",
+  "finish": "Finish",
+  "loading": "Loading...",
 
   "add item": "Add item",
   "edit item": "Edit item",
@@ -43,6 +56,7 @@
   "order by": "Order by:",
   "likes": "Likes",
   "date": "Date",
+  "name not available": "Name not available",
 
   "most liked" : "Most liked",
   "most active" : "Most active",
