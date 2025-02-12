@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Settings(navController: NavController){
@@ -25,7 +27,8 @@ fun Settings(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            "Configuraciones", color = Color.White
+            LanguageManager.getText("settings"), color = Color.White
         )
+        LanguageSelector{}
     }
 }

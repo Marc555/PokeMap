@@ -33,8 +33,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
 import cat.copernic.pokemap.presentation.ui.components.RestorePassword
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -84,6 +86,10 @@ fun Login(navController: NavController) {
                 onDismissRequest = { showResetPasswordDialog = false }
             )
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        LanguageSelector{}
     }
 }
 
@@ -110,7 +116,7 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Correo electrónico") },
+        label = {Text(LanguageManager.getText("email")) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         singleLine = true,
         modifier = Modifier
@@ -125,7 +131,7 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPas
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text(labelPassword) },
+        label = {Text(LanguageManager.getText("password")) },
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
@@ -139,7 +145,7 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPas
 @Composable
 fun RegisterButton(navController: NavController) {
     Text(
-        text = "Crear Cuenta",
+        text = LanguageManager.getText("sign up"),
         modifier = Modifier
             .clickable {
                 navController.navigate(AppScreens.Register.rute)
@@ -156,7 +162,7 @@ fun RegisterButton(navController: NavController) {
 @Composable
 fun RestorePasswordButton(onClick: () -> Unit) {
     Text(
-        text = "Recuperar Contraseña",
+        text = LanguageManager.getText("forgot password"),
         modifier = Modifier
             .clickable { onClick() }
             .padding(6.dp),
@@ -189,11 +195,11 @@ fun ButtonLogin(
                 .height(90.dp).width(180.dp)
                 .clickable {
                     if (email.isBlank() || password.isBlank()) {
-                        onErrorMessageChange("Correo y contraseña no pueden estar vacíos")
+                        onErrorMessageChange(LanguageManager.getText("email or password empty"))
                         return@clickable
                     }
                     if (!isValidEmail(email)) {
-                        onErrorMessageChange("Correo electrónico no válido")
+                        onErrorMessageChange(LanguageManager.getText("email invalid"))
                         return@clickable
                     }
                     onLoadingChange(true)
@@ -216,14 +222,14 @@ suspend fun loginWithEmail(
 
     try {
         if (auth == null) {
-            throw IllegalStateException("FirebaseAuth no está inicializado")
+            throw IllegalStateException(LanguageManager.getText("firebaseAuth not innit"))
         }
 
         auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
         onLoginSuccess()
     } catch (e: Exception) {
-        val errorMsg = e.localizedMessage ?: "Error desconocido al iniciar sesión"
+        val errorMsg = e.localizedMessage ?: LanguageManager.getText("login error")
         onErrorMessageChange("Error: $errorMsg")
 //      onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado

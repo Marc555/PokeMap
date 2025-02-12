@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
@@ -58,11 +59,11 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                 }
 
                 // Menu Items with Background and Rounded Corners
-                MenuItem("Inicio", "home", Color(0xFF00AE14), navController, onClose)
-                MenuItem("Perfil", "profile", Color(0xFF0060AE), navController, onClose)
-                MenuItem("Rankings", "rankings", Color(0xFF0060AE), navController, onClose)
+                MenuItem(LanguageManager.getText("home"), "home", Color(0xFF00AE14), navController, onClose)
+                MenuItem(LanguageManager.getText("profile"), "profile", Color(0xFF0060AE), navController, onClose)
+                MenuItem(LanguageManager.getText("rankings"), "rankings", Color(0xFF0060AE), navController, onClose)
                 MenuItem(
-                    "Notificaciones",
+                    LanguageManager.getText("notifications"),
                     "notifications",
                     Color(0xFF0060AE),
                     navController,
@@ -82,8 +83,8 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MenuItem("Configuración", "settings", Color(0xFF555555), navController, onClose)
-                    SiginOutItem("Cerrar sesión", Color(0xFFD32F2F), navController, onClose)
+                    MenuItem(LanguageManager.getText("settings"), "settings", Color(0xFF555555), navController, onClose)
+                    SiginOutItem(LanguageManager.getText("logout"), Color(0xFFD32F2F), navController, onClose)
                 }
             }
         }

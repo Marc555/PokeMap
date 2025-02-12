@@ -15,6 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import cat.copernic.pokemap.utils.LanguageManager
+import androidx.compose.ui.text.TextStyle
+
+
 import androidx.compose.ui.text.TextStyle
 
 @Composable
@@ -28,6 +32,7 @@ fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        title = { Text(text = LanguageManager.getText("add category",),color = MaterialTheme.colorScheme.onBackground) },
         title = { Text(text = "Añadir nueva categoría", color = MaterialTheme.colorScheme.onBackground) },
         text = {
             Column {
@@ -37,6 +42,9 @@ fun AddCategoryDialog(
                     label = { Text("Nombre de la categoría") },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                    label = { Text(LanguageManager.getText("name")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -44,6 +52,9 @@ fun AddCategoryDialog(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
+                    label = { Text(LanguageManager.getText("description")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                     label = { Text("Descripción de la categoría") },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
@@ -63,7 +74,7 @@ fun AddCategoryDialog(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
-                Text("Añadir categoría")
+                Text(LanguageManager.getText("save"))
             }
         }, containerColor = MaterialTheme.colorScheme.background
     )

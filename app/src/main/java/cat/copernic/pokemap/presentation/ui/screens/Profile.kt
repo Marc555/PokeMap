@@ -30,6 +30,7 @@ import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.copernic.pokemap.R
 import com.google.firebase.auth.FirebaseAuth
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel()){
@@ -137,10 +138,4 @@ fun PublicationsNumber() {
     ) {
         Text(text = "12", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(3.dp),)
     }
-}
-
-@Preview
-@Composable
-fun ProfilePreview() {
-    PublicationsNumber()
 }

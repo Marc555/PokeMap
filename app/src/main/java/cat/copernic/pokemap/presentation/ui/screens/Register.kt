@@ -33,6 +33,7 @@ import cat.copernic.pokemap.presentation.viewModel.AuthViewModel
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.data.Repository.UsersRepository
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.utils.LanguageManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -106,7 +107,7 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = viewMo
 @Composable
 fun BotonAtras(navController: NavController,modifier: Modifier = Modifier, viewModel: RegisterViewModel = viewModel()) {
     Text(
-        text = "<-- Atrás",
+        text = "<- "+LanguageManager.getText("back"),
         color = MaterialTheme.colorScheme.onBackground, // Color del texto
         modifier = modifier
             .clickable {
@@ -134,22 +135,22 @@ fun PantallaRegistro1(
 ) {
     var isChecking by remember { mutableStateOf(false) }
 
-    TextoTitulo("Ingresa tu email:")
+    TextoTitulo(LanguageManager.getText("type email"))
     EmailInput(email, onEmailChange)
 
     BotonSiguiente(
         onClick = {
             if (email.isEmpty()) {
-                onMensajeErrorChange("El correo no puede estar vacío")
+                onMensajeErrorChange(LanguageManager.getText("email empty"))
             } else if (!isValidEmail(email)) {
-                onMensajeErrorChange("Correo electrónico no válido")
+                onMensajeErrorChange(LanguageManager.getText("email invalid"))
             } else {
                 isChecking = true // Indica que estamos verificando
                 viewModel.viewModelScope.launch {
                     val existe = isRepeatingEmail(email)
                     isChecking = false // La verificación ha terminado
                     if (existe) {
-                        onMensajeErrorChange("Este correo ya está registrado")
+                        onMensajeErrorChange(LanguageManager.getText("email taken"))
                     } else {
                         onMensajeErrorChange("") // Limpia el mensaje de error
                         onClick() // Continúa con el flujo normal
@@ -164,7 +165,7 @@ fun PantallaRegistro1(
 
 @Composable
 fun PantallaRegistro2(name: String, surname: String, onNameChange: (String) -> Unit, onSurnameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
-    TextoTitulo("Ahora dinos como te llamas:")
+    TextoTitulo(LanguageManager.getText("name and lastname"))
     NameInput(name, onNameChange)
     SurnameInput(surname, onSurnameChange)
     BotonSiguiente(onClick = {
@@ -182,7 +183,7 @@ fun NameInput(name: String, onNameChange: (String) -> Unit){
     OutlinedTextField(
         value = name,
         onValueChange = onNameChange,
-        label = { Text("Nombre") },
+        label = { Text(LanguageManager.getText("name")) },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -196,7 +197,7 @@ fun SurnameInput(surname: String, onSurnameChange: (String) -> Unit){
     OutlinedTextField(
         value = surname,
         onValueChange = onSurnameChange,
-        label = { Text("Apellidos") },
+        label = { Text(LanguageManager.getText("lastname")) },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -207,7 +208,7 @@ fun SurnameInput(surname: String, onSurnameChange: (String) -> Unit){
 
 @Composable
 fun PantallaRegistro3(username: String, viewModel: UsersViewModel = viewModel(), onUsernameChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit){
-    TextoTitulo("Elige un nombre de usuario:")
+    TextoTitulo(LanguageManager.getText( "choose username"))
     UsernameInput(username, onUsernameChange)
 
     var isChecking by remember { mutableStateOf(false) }
@@ -221,7 +222,7 @@ fun PantallaRegistro3(username: String, viewModel: UsersViewModel = viewModel(),
                 val existe = isRepeatingUsername(username)
                 isChecking = false // La verificación ha terminado
                 if (existe) {
-                    onMensajeErrorChange("Este Username ya está registrado")
+                    onMensajeErrorChange(LanguageManager.getText( "username taken"))
                 } else {
                     onMensajeErrorChange("") // Limpia el mensaje de error
                     onClick() // Continúa con el flujo normal
@@ -236,7 +237,7 @@ fun UsernameInput(username: String, onUsernameChange: (String) -> Unit){
     OutlinedTextField(
         value = username,
         onValueChange = onUsernameChange,
-        label = { Text("Nombre de usuario") },
+        label = { LanguageManager.getText( "username") },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -248,14 +249,14 @@ fun UsernameInput(username: String, onUsernameChange: (String) -> Unit){
 @Composable
 fun PantallaRegistro4(password: String, onPasswordChange: (String) -> Unit, confirmPassword: String, onConfirmPasswordChange: (String) -> Unit, onMensajeErrorChange: (String) -> Unit, onClick: () -> Unit
 ){
-    TextoTitulo("Elige una contraseña:")
-    PasswordInput(password, onPasswordChange, "Contraseña")
-    PasswordInput(confirmPassword, onConfirmPasswordChange, "Confirmar contraseña")
+    TextoTitulo(LanguageManager.getText( "create password"))
+    PasswordInput(password, onPasswordChange, LanguageManager.getText( "password"))
+    PasswordInput(confirmPassword, onConfirmPasswordChange, LanguageManager.getText( "confirm password"))
     BotonSiguiente(onClick = {
         if (password.isEmpty() || confirmPassword.isEmpty()) {
             onMensajeErrorChange("")
         } else if (password != confirmPassword) {
-            onMensajeErrorChange("Las contraseñas no coinciden")
+            onMensajeErrorChange(LanguageManager.getText( "password not match"))
         } else{
             onMensajeErrorChange("")
             onClick()
@@ -293,19 +294,18 @@ fun PantallaRegistroFinal(
         when (registroExitoso) {
             true -> {
                 // Registro exitoso, navegar a la siguiente pantalla
-                TextoTitulo("Tu cuenta ha sido creada con éxito!")
-                TextoTitulo("Gracias por registrarte")
+                TextoTitulo(LanguageManager.getText( "sing up success message"))
                 BotonSiguiente(
                     onClick = { navController.navigate(AppScreens.Home.rute) },
-                    text = "Finalizar"
+                    text = LanguageManager.getText( "finish")
                 )
             }
             false -> {
                 // Mostrar mensaje de error
-                onMensajeErrorChange("Error desconocido")
+                onMensajeErrorChange(LanguageManager.getText( "error message"))
                 BotonSiguiente(
                     onClick = { navController.navigate(AppScreens.Login.rute) },
-                    text = "Volver a intentar"
+                    text = LanguageManager.getText( "go back")
                 )
             }
             null -> {
@@ -334,16 +334,16 @@ suspend fun isRepeatingUsername(username: String, userRepository: UsersRepositor
 }
 
 @Composable
-fun BotonSiguiente(onClick: () -> Unit, text: String = "Siguiente", isChecking: Boolean = false) {
+fun BotonSiguiente(onClick: () -> Unit, text: String = LanguageManager.getText( "next"), isChecking: Boolean = false) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary),
+            contentColor = MaterialTheme.colorScheme.onPrimary) ,
         enabled = !isChecking // Deshabilitar mientras se verifica
     ) {
-        Text(if (isChecking) "Verificando..." else "Siguiente")
+        Text(if (isChecking) LanguageManager.getText( "loading") else LanguageManager.getText( "next"))
     }
 }

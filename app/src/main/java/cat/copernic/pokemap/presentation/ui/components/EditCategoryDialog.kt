@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun EditCategoryDialog(
@@ -31,12 +32,16 @@ fun EditCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Editar categoría", color = MaterialTheme.colorScheme.onBackground) },
+        title = { Text(text = LanguageManager.getText("edit category")) },
         text = {
             Column {
                 TextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
+                    label = { Text(LanguageManager.getText("name")) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+
                     label = { Text("Nombre de la categoría") },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
@@ -48,6 +53,9 @@ fun EditCategoryDialog(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Describe la categoría") },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                    label = { Text(LanguageManager.getText("description")) },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
@@ -63,8 +71,11 @@ fun EditCategoryDialog(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors()
+
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors()
                 ) {
-                    Text("Guardar cambios")
+                    Text(LanguageManager.getText("save"))
                 }
 
                 // Botón de eliminar
@@ -76,7 +87,7 @@ fun EditCategoryDialog(
                     colors = ButtonDefaults.buttonColors(),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Eliminar categoria", color = MaterialTheme.colorScheme.onError)
+                    Text(text = LanguageManager.getText("delete"), color = MaterialTheme.colorScheme.onError)
                 }
             }
         }, containerColor = MaterialTheme.colorScheme.background

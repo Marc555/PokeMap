@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cat.copernic.pokemap.presentation.ui.screens.EmailInput
+import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -66,7 +67,7 @@ fun RestorePassword(
 @Composable
 fun TextTitulo(){
     Text(
-        text = "Escribe el correo de tu cuenta",
+        text = LanguageManager.getText("type email"),
         color = MaterialTheme.colorScheme.onBackground
     )
 }
@@ -86,15 +87,15 @@ fun SendButton(email: String, onMessageChange: (String) -> Unit, onDismissReques
             sendPasswordResetEmail(email) { isSuccessful ->
                 if (isSuccessful) {
                     onDismissRequest()
-                    onMessageChange("Correo enviado")
+                    onMessageChange(LanguageManager.getText("email sent"))
                 } else {
-                    onMessageChange("Error al enviar el correo")
+                    onMessageChange(LanguageManager.getText("error message"))
                 }
             }
         },
         colors = ButtonDefaults.buttonColors()
     ) {
-        Text(text = "Enviar")
+        Text(text = LanguageManager.getText("send"))
     }
 }
 
