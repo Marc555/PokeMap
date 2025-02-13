@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "734673080299",
-    "project_id": "pokemap-ff778",
-    "storage_bucket": "pokemap-ff778.firebasestorage.app"
+    "project_number": "422540402648",
+    "project_id": "pokemap-59d0a",
+    "storage_bucket": "pokemap-59d0a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:734673080299:android:60f30100c0b71b2d87d3ae",
+        "mobilesdk_app_id": "1:422540402648:android:5930d6b09f4cb01c4adcad",
         "android_client_info": {
           "package_name": "cat.copernic.pokemap"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAA0IzYD5wRgpwBWkpT0vHNOv1a_tHJmAo"
+          "current_key": "AIzaSyATzFEhpJoq15Hs19uPCq9K16evcv2cuOs"
         }
       ],
       "services": {
