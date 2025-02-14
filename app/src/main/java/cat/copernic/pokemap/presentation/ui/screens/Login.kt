@@ -1,5 +1,9 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButton
 import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
 import cat.copernic.pokemap.presentation.ui.components.RestorePassword
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
@@ -40,6 +46,11 @@ import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import androidx.biometric.BiometricManager
+import cat.copernic.pokemap.presentation.ui.components.retrieveStoredEmail
+import cat.copernic.pokemap.presentation.ui.components.retrieveStoredPassword
+import cat.copernic.pokemap.presentation.ui.components.saveCredentials
+
 
 @Composable
 fun Login(navController: NavController) {
@@ -48,6 +59,11 @@ fun Login(navController: NavController) {
     var errorMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var showResetPasswordDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    // Check if biometric login is available and user has previously logged in
+    val canUseBiometrics = remember {
+        checkBiometricAvailability(context) && retrieveStoredPassword(context) != null
+    }
 
     Column(
         modifier = Modifier
@@ -79,6 +95,11 @@ fun Login(navController: NavController) {
         }, onLoadingChange = {
             isLoading = it
         })
+
+        if (canUseBiometrics) {
+            Spacer(modifier = Modifier.height(15.dp))
+            BiometricLoginButton(context,navController, onErrorMessageChange = { errorMessage = it })
+        }
 
         if (showResetPasswordDialog) {
             RestorePassword(
@@ -184,6 +205,7 @@ fun ButtonLogin(
     onLoadingChange: (Boolean) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     if (isLoading) {
         CircularProgressIndicator()
@@ -204,7 +226,7 @@ fun ButtonLogin(
                     }
                     onLoadingChange(true)
                     coroutineScope.launch {
-                        loginWithEmail(email, password, onLoginSuccess, onErrorMessageChange, onLoadingChange)
+                        loginWithEmail(context,email, password, onLoginSuccess, onErrorMessageChange, onLoadingChange)
                     }
                 }
         )
@@ -212,6 +234,7 @@ fun ButtonLogin(
 }
 
 suspend fun loginWithEmail(
+    context: Context,
     email: String,
     password: String,
     onLoginSuccess: () -> Unit,
@@ -219,22 +242,43 @@ suspend fun loginWithEmail(
     onLoadingChange: (Boolean) -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
-
     try {
         if (auth == null) {
             throw IllegalStateException(LanguageManager.getText("firebaseAuth not innit"))
         }
 
         auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
+
+
+        val storedEmail = retrieveStoredEmail(context)
+
+        if (storedEmail == null) {
+            // First-time biometric user, store credentials
+            saveCredentials(context, email, password)
+            Log.d("BiometricAuth", "Stored biometric login for: $email")
+        } else if (storedEmail != email) {
+            // Block overwriting biometric credentials
+            Log.e("BiometricAuth", "User $email tried to overwrite biometric login for $storedEmail")
+            onErrorMessageChange("This account cannot be linked to biometrics. Use email & password.")
+            onLoadingChange(false)
+        }
+
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
+
+        // ✅ Delay navigation by 1 second
+        Handler(Looper.getMainLooper()).postDelayed({}, 1000)
+
         onLoginSuccess()
+
     } catch (e: Exception) {
+
         val errorMsg = e.localizedMessage ?: LanguageManager.getText("login error")
         onErrorMessageChange("Error: $errorMsg")
 //      onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado
     }
 }
+
 
 fun isValidEmail(email: String): Boolean {
     val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
@@ -249,5 +293,13 @@ fun ErrorMessage(errorMessage: String) {
             color = Color.Red,
             modifier = Modifier.padding(start = 20.dp, end = 20.dp)
         )
+    }
+}
+
+fun checkBiometricAvailability(context: Context): Boolean {
+    val biometricManager = BiometricManager.from(context)
+    return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+        BiometricManager.BIOMETRIC_SUCCESS -> true
+        else -> false
     }
 }

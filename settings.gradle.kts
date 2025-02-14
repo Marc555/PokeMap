@@ -7,6 +7,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        google() // ✅ Required for AndroidX
         mavenCentral()
         gradlePluginPortal()
     }
@@ -21,4 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "PokeMap"
 include(":app")
- 

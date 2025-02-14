@@ -38,6 +38,11 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
 }
 
 dependencies {
@@ -51,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.identity.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,15 +68,28 @@ dependencies {
     // basicos en Jetpack Compose
     implementation("androidx.compose.foundation:foundation:1.0.0")
     implementation("androidx.compose.foundation:foundation-layout:1.0.0")
+
     // navegation
     implementation("androidx.navigation:navigation-compose:2.6.0")
 
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-storage:20.3.0") // Add latest version
+
     // Auth
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    //Biometric
+    implementation("androidx.security:security-crypto:1.1.0-alpha05") // Latest version
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
 
     //Real time translate
     implementation("com.google.code.gson:gson:2.10.1")
+
+    //manage images
+    implementation("io.coil-kt:coil-compose:2.4.0") // Add latest version
 }
