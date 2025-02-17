@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,15 +63,29 @@ dependencies {
     // basicos en Jetpack Compose
     implementation("androidx.compose.foundation:foundation:1.0.0")
     implementation("androidx.compose.foundation:foundation-layout:1.0.0")
+
     // navegation
     implementation("androidx.navigation:navigation-compose:2.6.0")
 
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
     // Auth
     implementation("com.google.firebase:firebase-auth-ktx")
 
     //Real time translate
     implementation("com.google.code.gson:gson:2.10.1")
+
+    //manage images
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //Iconos
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    // Lifecycle y ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.4.0")
 }

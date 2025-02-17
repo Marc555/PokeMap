@@ -3,148 +3,289 @@ package cat.copernic.pokemap.presentation.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.data.DTO.Follow
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.presentation.viewModel.FollowViewModel
 import com.google.firebase.auth.FirebaseAuth
 import cat.copernic.pokemap.utils.LanguageManager
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 
+// "N3fIVrNrpbPfQXlgBqngFibVWxs2"
 @Composable
-fun Profile(navController: NavController, viewModel: UsersViewModel = viewModel()){
+fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getInstance().currentUser?.uid) {
+    val profileViewModel: UsersViewModel = viewModel(key = "profileViewModel")
+    val viewerViewModel: UsersViewModel = viewModel(key = "viewerViewModel")
+    val followViewModel: FollowViewModel = viewModel()
 
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val userUid = currentUser?.uid
-    if (userUid != null) {
-        viewModel.fetchUserByUid(userUid)
+    val userUid = userUid ?: run {
+        navController.navigate(AppScreens.Login.rute)
+        return
     }
-    val user =  viewModel.user.value
 
-    Column (
+    val isLoadingProfile by profileViewModel.isLoading.collectAsState()
+    val isLoadingViewer by viewerViewModel.isLoading.collectAsState()
+
+    LaunchedEffect(userUid) {
+        if (userUid != null) {
+            FirebaseAuth.getInstance().currentUser?.uid?.let { viewerViewModel.fetchUserByUid(it) }
+            profileViewModel.fetchUserByUid(userUid)
+        }
+    }
+
+    val viewer = viewerViewModel.user.value
+    val user = profileViewModel.user.value
+
+    Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-    ){
-        if (user != null) {
-            Row (
+    ) {
+        if (isLoadingProfile && isLoadingViewer) {
+            Row(
                 modifier = Modifier
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ImageProfile()
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Nombres(user = user)
-            }
-
-            Row (
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxSize()
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SeguidosSeguidores()
+                CircularProgressIndicator()
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row (
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                PublicationsNumber()
-            }
-
         } else {
-            Text(text = "Cargando datos del usuario...")
+            if (user != null && viewer != null) {
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ImageProfile(user.imageUrl)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Nombres(user,userUid, onClick = {
+                        navController.navigate(AppScreens.EditProfile.createRoute(userUid))
+                    })
+                }
+
+                SeguidosSeguidores()
+
+                if (userUid != FirebaseAuth.getInstance().currentUser?.uid) {
+                    // Verificar si el usuario es seguido y actualizar el botón
+                    LaunchedEffect(user.email, viewer.email) {
+                        followViewModel.checkIfUserXIsFollowedByUserY(user.email, viewer.email)
+                    }
+
+                    // Observar el estado isFollowed del ViewModel
+                    val isFollowed by followViewModel.isFollowed.collectAsState()
+                    val followedObjectId by followViewModel.followedObjectId.observeAsState()
+
+
+                    // Mostrar el botón correspondiente
+                    if (isFollowed) {
+                        BotonSeguir(text = "Dejar de seguir", user = user, viewer = viewer,
+                            onClick = {
+                                followViewModel.deleteFollow(followedObjectId!!)
+                            })
+                    } else {
+                        BotonSeguir(text = "Seguir", user = user, viewer = viewer, onClick = {followViewModel.addFollow(Follow(user.email, viewer.email))})
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                PublicationsNumber()
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "No se ha encontrado el usuario", color = MaterialTheme.colorScheme.error)
+                }
+            }
         }
     }
 }
 
 @Composable
-fun Nombres(user: Users) {
+fun Nombres(user: Users,
+            userUid: String,
+            abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
+            onClick: () -> Unit = {}) {
     Column {
-        Text(text = "${user.name} ${user.surname}")
-        Text(text = "@${user.username}")
-        Text(text = "${user.codeFriend}")
+        Text(text = "${user.name} ${user.surname}", fontFamily = abeeZee, fontSize = 25.sp, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "@${user.username}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
+        Text(text = "${user.codeFriend}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
+        if (userUid == FirebaseAuth.getInstance().currentUser?.uid) {
+            IconButton(onClick = onClick) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar perfil")
+            }
+        }
     }
 }
 
 @Composable
-fun ImageProfile(){
-    Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "Imagen de parfil",
-        modifier = Modifier
-            .size(150.dp) // Ajusta el tamaño de la imagen
-            .clip(CircleShape) // Redondea la imagen
-            .border(2.dp, color = MaterialTheme.colorScheme.onBackground, CircleShape)
+fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
 
-    )
+    val painter = if (imageUrl.isNullOrEmpty()) {
+        painterResource(id = R.drawable.logo)
+    } else {
+        rememberAsyncImagePainter(model = imageUrl)
+    }
+
+    Box(modifier = modifier.size(150.dp), contentAlignment = Alignment.Center) {
+        Image(
+            painter = painter,
+            contentDescription = "Imagen de perfil",
+            modifier = Modifier
+                .size(150.dp) // Ajusta el tamaño de la imagen
+                .clip(CircleShape) // Redondea la imagen
+                .border(2.dp, color = MaterialTheme.colorScheme.onBackground, CircleShape)
+        )
+    }
 }
 
 @Composable
 fun SeguidosSeguidores() {
-    Box(
+    Row (
         modifier = Modifier
-            .wrapContentSize()
-            .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "${LanguageManager.getText("followers")} 344", modifier = Modifier.padding(5.dp))
-    }
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+        ) {
+            Text(
+                text = "${LanguageManager.getText("followers")} 344",
+                modifier = Modifier.padding(5.dp)
+            )
+        }
 
-    Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
-    ) {
-        Text(text = "${LanguageManager.getText("following")} 238", modifier = Modifier.padding(5.dp))
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+        ) {
+            Text(
+                text = "${LanguageManager.getText("following")} 238",
+                modifier = Modifier.padding(5.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 
 @Composable
 fun PublicationsNumber() {
-    Text(text = "${LanguageManager.getText("publications")} ")
-    Box(
+    Row (
         modifier = Modifier
-            .wrapContentSize()
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surface)
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "12", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(3.dp),)
+        Text(text = "${LanguageManager.getText("posts")} ")
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            Text(
+                text = "12",
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(3.dp),
+            )
+        }
     }
 }
 
-@Preview
 @Composable
-fun ProfilePreview() {
-    PublicationsNumber()
+fun BotonSeguir(text: String = "jaun",
+                user: Users = Users(),
+                viewer: Users = Users(),
+                abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
+                onClick: () -> Unit){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable(
+                onClick = {
+                    // Acción al hacer clic en el botón
+                    onClick()
+                }
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center, fontFamily = abeeZee, fontSize = 20.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
 }

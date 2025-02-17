@@ -8,9 +8,12 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.screens.EditProfile
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
@@ -71,6 +74,13 @@ fun AppNavigation() {
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
                 composable(AppScreens.Register.rute) { Register(navController) }
+                composable(
+                    route = AppScreens.EditProfile.rute,
+                    arguments = listOf(navArgument("userUid") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val userUid = backStackEntry.arguments?.getString("userUid") ?: ""
+                    EditProfile(navController, userUid)
+                }
             }
         }
     }

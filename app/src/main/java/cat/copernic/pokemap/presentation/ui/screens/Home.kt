@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,17 +39,32 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
 import cat.copernic.pokemap.data.DTO.Category
+import cat.copernic.pokemap.data.DTO.Rol
+import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.presentation.ui.components.AddCategoryDialog
 import cat.copernic.pokemap.presentation.ui.components.EditCategoryDialog
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun Home(navController: NavController) {
     val categoryViewModel: CategoryViewModel = viewModel()
+    val usersViewModel: UsersViewModel = viewModel()
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userUid = currentUser?.uid
+    val isLoading by usersViewModel.isLoading.collectAsState()
 
     LaunchedEffect(Unit) {
         categoryViewModel.fetchCategories()
+    }
+
+    LaunchedEffect(userUid) {
+        if (userUid != null) {
+            usersViewModel.fetchUserByUid(userUid)
+        }
     }
 
     val categories by categoryViewModel.categories.collectAsState()
@@ -58,37 +74,55 @@ fun Home(navController: NavController) {
     var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+
+    // Observar el usuario dentro de un LaunchedEffect
+
+    val user by usersViewModel.user.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Titulo()
 
-            IconButton(onClick = { showAddCategoryDialog = true }, modifier = Modifier.align(Alignment.Start)) {
-                Icon(
-                    imageVector = Icons.Default.AddCircle, // Replace with your drawable
-                    contentDescription = LanguageManager.getText("add category"),
-                )
-            }
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Titulo()
 
-            CategoryList(
-                categories = categories,
-                onEditCategory = { category ->
-                    categoryToEdit = category
-                    showEditCategoryDialog = true
+                if (user?.rol == Rol.ADMIN) {
+                    IconButton(
+                        onClick = { showAddCategoryDialog = true },
+                        modifier = Modifier.align(Alignment.Start)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle, // Reemplaza con tu drawable
+                            contentDescription = "Add Category",
+                        )
+                    }
                 }
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+
+                CategoryList(
+                    categories = categories,
+                    user = user,
+                    onEditCategory = { category ->
+                        categoryToEdit = category
+                        showEditCategoryDialog = true
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
+
 
     if (showAddCategoryDialog) {
         AddCategoryDialog(
@@ -134,6 +168,7 @@ fun Home(navController: NavController) {
 @Composable
 fun CategoryList(
     categories: List<Category>,
+    user: Users?,
     onEditCategory: (Category) -> Unit
 ) {
     if (categories.isEmpty()) {
@@ -143,6 +178,7 @@ fun CategoryList(
             itemsIndexed(categories) { _, category ->
                 CategoryItem(
                     category = category,
+                    user = user,
                     onEditCategory = onEditCategory
                 )
             }
@@ -153,6 +189,7 @@ fun CategoryList(
 @Composable
 fun CategoryItem(
     category: Category,
+    user: Users?,
     onEditCategory: (Category) -> Unit
 ) {
     Card(
@@ -181,8 +218,11 @@ fun CategoryItem(
                     )
                 }
 
-                // Botón de editar
-                EditCategoryImage(onClick = { onEditCategory(category) })
+                if (user?.rol == Rol.ADMIN) {
+                    // Botón de editar
+                    EditCategoryImage(onClick = { onEditCategory(category) })
+                }
+
             }
         }
     }

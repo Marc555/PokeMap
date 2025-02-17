@@ -255,7 +255,9 @@ fun PantallaRegistro4(password: String, onPasswordChange: (String) -> Unit, conf
     BotonSiguiente(onClick = {
         if (password.isEmpty() || confirmPassword.isEmpty()) {
             onMensajeErrorChange("")
-        } else if (password != confirmPassword) {
+        } else if (password.trim().length >= 6) {
+            onMensajeErrorChange(LanguageManager.getText( "The password is to short"))
+        }else if (password != confirmPassword) {
             onMensajeErrorChange(LanguageManager.getText( "password not match"))
         } else{
             onMensajeErrorChange("")
