@@ -30,19 +30,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -56,10 +52,7 @@ import cat.copernic.pokemap.presentation.viewModel.FollowViewModel
 import com.google.firebase.auth.FirebaseAuth
 import cat.copernic.pokemap.utils.LanguageManager
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 
-// "N3fIVrNrpbPfQXlgBqngFibVWxs2"
 @Composable
 fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getInstance().currentUser?.uid) {
     val profileViewModel: UsersViewModel = viewModel(key = "profileViewModel")
@@ -101,6 +94,13 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
             }
         } else {
             if (user != null && viewer != null) {
+
+                // Verificar si el usuario es seguido y actualizar el botón
+                LaunchedEffect(Unit) {
+                    followViewModel.checkIfUserXIsFollowedByUserY(user.email, viewer.email)
+                    followViewModel.fetchFollows()
+                }
+
                 Row(
                     modifier = Modifier
                         .padding(16.dp),
@@ -109,7 +109,7 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
                 ) {
                     ImageProfile(user.imageUrl)
                     Spacer(modifier = Modifier.width(16.dp))
-                    Nombres(user,userUid, onClick = {
+                    Nombres(user, userUid, onClick = {
                         navController.navigate(AppScreens.EditProfile.createRoute(userUid))
                     })
                 }
@@ -117,24 +117,22 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
                 SeguidosSeguidores()
 
                 if (userUid != FirebaseAuth.getInstance().currentUser?.uid) {
-                    // Verificar si el usuario es seguido y actualizar el botón
-                    LaunchedEffect(user.email, viewer.email) {
-                        followViewModel.checkIfUserXIsFollowedByUserY(user.email, viewer.email)
-                    }
-
                     // Observar el estado isFollowed del ViewModel
                     val isFollowed by followViewModel.isFollowed.collectAsState()
                     val followedObjectId by followViewModel.followedObjectId.observeAsState()
 
-
                     // Mostrar el botón correspondiente
                     if (isFollowed) {
-                        BotonSeguir(text = "Dejar de seguir", user = user, viewer = viewer,
+                        BotonSeguir(text = "Dejar de seguir",
                             onClick = {
-                                followViewModel.deleteFollow(followedObjectId!!)
+                                if (followedObjectId != null) {
+                                    followViewModel.deleteFollow(followedObjectId!!)
+                                }
                             })
                     } else {
-                        BotonSeguir(text = "Seguir", user = user, viewer = viewer, onClick = {followViewModel.addFollow(Follow(user.email, viewer.email))})
+                        BotonSeguir(text = "Seguir", onClick = {
+                            followViewModel.addFollow(Follow(followed = user.email, follower = viewer.email))
+                        })
                     }
                 }
 
@@ -175,7 +173,6 @@ fun Nombres(user: Users,
 
 @Composable
 fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
-
     val painter = if (imageUrl.isNullOrEmpty()) {
         painterResource(id = R.drawable.logo)
     } else {
@@ -187,16 +184,18 @@ fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
             painter = painter,
             contentDescription = "Imagen de perfil",
             modifier = Modifier
-                .size(150.dp) // Ajusta el tamaño de la imagen
-                .clip(CircleShape) // Redondea la imagen
-                .border(2.dp, color = MaterialTheme.colorScheme.onBackground, CircleShape)
+                .size(150.dp)
+                .clip(CircleShape)
+                .border(2.dp, color = MaterialTheme.colorScheme.onBackground, CircleShape),
+            contentScale = ContentScale.Crop
         )
     }
 }
 
 @Composable
 fun SeguidosSeguidores() {
-    Row (
+    // Mostrar los contadores solo cuando los datos estén listos
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -209,10 +208,12 @@ fun SeguidosSeguidores() {
                 .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
         ) {
             Text(
-                text = "${LanguageManager.getText("followers")} 344",
+                text = "${LanguageManager.getText("followers")} 35",
                 modifier = Modifier.padding(5.dp)
             )
         }
+
+        Spacer(modifier = Modifier.width(16.dp))
 
         Box(
             modifier = Modifier
@@ -220,17 +221,16 @@ fun SeguidosSeguidores() {
                 .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
         ) {
             Text(
-                text = "${LanguageManager.getText("following")} 238",
+                text = "${LanguageManager.getText("following")} 15",
                 modifier = Modifier.padding(5.dp)
             )
         }
-        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 
 @Composable
 fun PublicationsNumber() {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -255,20 +255,16 @@ fun PublicationsNumber() {
 
 @Composable
 fun BotonSeguir(text: String = "jaun",
-                user: Users = Users(),
-                viewer: Users = Users(),
                 abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
-                onClick: () -> Unit){
+                onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable(
-                onClick = {
-                    // Acción al hacer clic en el botón
-                    onClick()
-                }
-            ),
+            .clickable(onClick = {
+                onClick()
+            }),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -281,9 +277,11 @@ fun BotonSeguir(text: String = "jaun",
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text,
+                text = text,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center, fontFamily = abeeZee, fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                fontFamily = abeeZee,
+                fontSize = 20.sp,
                 modifier = Modifier.padding(8.dp)
             )
         }

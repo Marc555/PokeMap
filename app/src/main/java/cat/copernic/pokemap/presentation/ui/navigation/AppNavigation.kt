@@ -20,6 +20,7 @@ import cat.copernic.pokemap.presentation.ui.screens.Notifications
 import cat.copernic.pokemap.presentation.ui.screens.Profile
 import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
+import cat.copernic.pokemap.presentation.ui.screens.SearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.Settings
 import kotlinx.coroutines.launch
 
@@ -70,6 +71,13 @@ fun AppNavigation() {
                 composable("home") { Home(navController) }
                 composable(AppScreens.Login.rute) { Login(navController) }
                 composable(AppScreens.Profile.rute) { Profile(navController) }
+                composable(
+                    route = AppScreens.ProfileUid.createRoute("{userUid}"),
+                    arguments = listOf(navArgument("userUid") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val userUid = backStackEntry.arguments?.getString("userUid") ?: ""
+                    Profile(navController, userUid)
+                }
                 composable(AppScreens.Notifications.rute) { Notifications(navController) }
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
@@ -81,6 +89,7 @@ fun AppNavigation() {
                     val userUid = backStackEntry.arguments?.getString("userUid") ?: ""
                     EditProfile(navController, userUid)
                 }
+                composable(AppScreens.SearchUsers.rute) { SearchUsers(navController) }
             }
         }
     }

@@ -37,6 +37,18 @@ class UsersViewModel : ViewModel() {
         }
     }
 
+    private val _usersWithIds = MutableStateFlow<List<Pair<String, Users>>>(emptyList())
+    val usersWithIds: StateFlow<List<Pair<String, Users>>> = _usersWithIds
+
+    fun fetchUsersWithIds() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _usersWithIds.value = repository.getUsersWithIds()
+            _isLoading.value = false
+        }
+    }
+
+
     fun fetchUserByUid(userUid: String) {
         viewModelScope.launch {
             _isLoading.value = true // Iniciar carga

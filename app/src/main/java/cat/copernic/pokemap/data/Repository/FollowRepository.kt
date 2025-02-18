@@ -9,13 +9,15 @@ class FollowRepository {
     private val db = FirebaseFirestore.getInstance()
     private val followCollection = db.collection("follows")
 
-    // Añadir un nuevo seguimiento
-    suspend fun addFollow(follow: Follow): Boolean {
+    // Añadir un nuevo seguimiento y guardar la ID en el propio Follow
+    suspend fun addFollow(follow: Follow): Pair<Boolean, String?> {
         return try {
-            followCollection.document().set(follow).await()
-            true // Éxito
+            val documentRef = followCollection.document() // Generar una nueva ID
+            val followWithId = follow.copy(Uid = documentRef.id) // Asignar la ID al campo Uid
+            documentRef.set(followWithId).await() // Guardar el documento con la ID
+            Pair(true, documentRef.id) // Retorna éxito y la ID del documento
         } catch (e: Exception) {
-            false // Fallo
+            Pair(false, null) // Retorna fallo y null si hay un error
         }
     }
 
@@ -44,16 +46,6 @@ class FollowRepository {
             followCollection.document(followId).get().await().toObject(Follow::class.java)
         } catch (e: Exception) {
             null // Devuelve null en caso de error
-        }
-    }
-
-    // Obtener todos los seguimientos de un usuario específico (seguidos o seguidores)
-    suspend fun getFollowsByUser(email: String, isFollower: Boolean): List<Follow> {
-        return try {
-            val field = if (isFollower) "follower" else "followed"
-            followCollection.whereEqualTo(field, email).get().await().toObjects(Follow::class.java)
-        } catch (e: Exception) {
-            emptyList() // Devuelve una lista vacía en caso de error
         }
     }
 

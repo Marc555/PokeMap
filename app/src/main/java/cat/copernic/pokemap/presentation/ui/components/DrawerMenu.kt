@@ -60,8 +60,9 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
 
                 // Menu Items with Background and Rounded Corners
                 MenuItem(LanguageManager.getText("home"), "home", Color(0xFF00AE14), navController, onClose)
-                MenuItem(LanguageManager.getText("profile"), "profile", Color(0xFF0060AE), navController, onClose)
+                PerfileItem(LanguageManager.getText("profile"), Color(0xFF0060AE), navController, onClose)
                 MenuItem(LanguageManager.getText("rankings"), "rankings", Color(0xFF0060AE), navController, onClose)
+                MenuItem(LanguageManager.getText("searchUsers"), "searchUsers", Color(0xFF0060AE), navController, onClose)
                 MenuItem(
                     LanguageManager.getText("notifications"),
                     "notifications",
@@ -87,6 +88,41 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     SiginOutItem(LanguageManager.getText("logout"), Color(0xFFD32F2F), navController, onClose)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun PerfileItem(
+    title: String,
+    bgColor: Color,
+    navController: NavController,
+    onClose: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                navController.navigate(AppScreens.Profile.rute)
+                onClose()
+            }
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(1f) // Ensures all buttons have the same width
+                .background(bgColor, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(), // Ensures text stays centered
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis // Prevents text from breaking into multiple lines
+            )
         }
     }
 }

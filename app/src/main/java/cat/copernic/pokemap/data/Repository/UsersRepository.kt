@@ -26,6 +26,19 @@ class UsersRepository {
         }
     }
 
+    suspend fun getUsersWithIds(): List<Pair<String, Users>> {
+        return try {
+            usersCollection.get().await().documents.mapNotNull { document ->
+                document.toObject(Users::class.java)?.let { user ->
+                    document.id to user
+                }
+            }
+        } catch (e: Exception) {
+            emptyList() // Devuelve una lista vacía en caso de error
+        }
+    }
+
+
     suspend fun updateUser(uid: String, user: Users): Boolean {
         return try {
             usersCollection.document(uid).set(user).await()

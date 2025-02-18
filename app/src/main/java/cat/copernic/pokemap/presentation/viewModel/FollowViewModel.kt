@@ -18,6 +18,9 @@ class FollowViewModel : ViewModel() {
     private val _follows = MutableStateFlow<List<Follow>>(emptyList())
     val follows: StateFlow<List<Follow>> = _follows
 
+    private val _following = MutableStateFlow<List<Follow>>(emptyList())
+    val following: StateFlow<List<Follow>> = _following
+
     // Estado para indicar si se está cargando
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -28,7 +31,6 @@ class FollowViewModel : ViewModel() {
 
     private val _followedObjectId = MutableLiveData<String?>()
     val followedObjectId: LiveData<String?> get() = _followedObjectId
-
 
     // Estado para manejar errores
     private val _errorMessage = MutableStateFlow<String?>(null)
@@ -48,16 +50,19 @@ class FollowViewModel : ViewModel() {
         }
     }
 
-    // Añadir un nuevo seguimiento
+    // Añadir un seguimiento
     fun addFollow(follow: Follow) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val success = repository.addFollow(follow)
-                if (success) {
-                    // Actualizar la lista de seguimientos si es necesario
+                val result = repository.addFollow(follow) // Devuelve Pair<Boolean, String?>
+                val success = result.first
+                val documentId = result.second
+
+                if (success && documentId != null) {
                     _isFollowed.value = true
-                    fetchFollows()
+                    fetchFollows() // Actualiza la lista de seguidores y seguidos
+                    _followedObjectId.value = documentId // Guardamos la ID del documento
                 } else {
                     _errorMessage.value = "Error al añadir el seguimiento"
                 }
@@ -76,8 +81,8 @@ class FollowViewModel : ViewModel() {
             try {
                 val success = repository.deleteFollow(followId)
                 if (success) {
-                    _isFollowed.value = false // Actualizar el estado isFollowed
-                    fetchFollows() // Actualizar la lista de seguimientos
+                    _isFollowed.value = false
+                    _followedObjectId.value = null
                 } else {
                     _errorMessage.value = "Error al eliminar el seguimiento"
                 }
@@ -99,20 +104,6 @@ class FollowViewModel : ViewModel() {
                 _followedObjectId.value = result.second // Asignar el ID del objeto
             } catch (e: Exception) {
                 _errorMessage.value = "Error al verificar el seguimiento: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    // Obtener los seguimientos de un usuario (seguidos o seguidores)
-    fun fetchFollowsByUser(email: String, isFollower: Boolean) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                _follows.value = repository.getFollowsByUser(email, isFollower)
-            } catch (e: Exception) {
-                _errorMessage.value = "Error al obtener los seguimientos: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
