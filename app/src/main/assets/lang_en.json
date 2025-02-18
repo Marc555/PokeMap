@@ -5,6 +5,7 @@
   "notifications": "Notifications",
   "settings": "Settings",
   "logout": "Logout",
+  "google auth": "Continue with Google",
 
   "forgot password": "Forgot your password?",
   "sign up": "Sing up",
@@ -24,6 +25,7 @@
   "create password": "Create a secure password",
   "password not match": "Passwords do not match",
   "sing up success message":"Your account was successfully created",
+  "welcome": "Welcome",
 
   "email": "Email",
   "password": "Password",
@@ -42,6 +44,7 @@
   "save": "Save",
   "finish": "Finish",
   "loading": "Loading...",
+  "cancel ": "Cancelar",
 
   "add item": "Add item",
   "edit item": "Edit item",
@@ -70,7 +73,7 @@
   "description": "Description",
   "upload pics": "Upload pictures",
   "complaints or suggestions": "Complaints or suggestions",
-  "error email account": "Forgotten email of account",
+  "error email account": "Forgotten account's email",
   "other": "Other",
 
   "comments": "Comments",
@@ -82,9 +85,14 @@
   "item to report" : "Item ro report",
   "account to report": "Account to report",
 
-  "language": "Language",
+  "language": "Choose preferred language",
   "theme": "Theme",
   "auth biometric" : "Biometric authentication",
+  "auth biometric instructions":"Use fingerprint or face unlock to log in",
+  "auth biometric error": "No biometric account found. Please log in manually",
+  "login biometric": "Login with Biometrics",
+  "disable biometric": "Disable biometric login",
+  "biometric not available" : "You have singed up with a Google account therefore we can't provide you with biometric authentication ",
 
   "pending notifications": "Pending notifications",
   "viewed notifications": "Viewed notifications",

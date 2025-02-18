@@ -5,6 +5,8 @@
   "notifications": "Notificaciones",
   "settings": "Configuración",
   "logout": "Cerrar sesión",
+  "google auth": "Continua con Google",
+  "profile picture": "Foto de perfil",
 
   "forgot password": "¿Olvidaste tu contraseña?",
   "sign up": "Regístrate",
@@ -25,6 +27,8 @@
   "create password": "Crea una contraseña segura",
   "password not match": "Las contraseñas no coinciden",
   "sing up success message": "Tu cuenta se creó con éxito",
+  "welcome": "Bienvenido",
+
 
   "email": "Correo electrónico",
   "password": "Contraseña",
@@ -43,6 +47,8 @@
   "save": "Guardar",
   "finish": "Finalizar",
   "loading": "Verificando...",
+  "cancel ": "Cancel",
+
 
   "add item": "Añadir elemento",
   "edit item": "Editar elemento",
@@ -86,6 +92,13 @@
   "language": "Idioma",
   "theme": "Tema",
   "auth biometric": "Autenticación biométrica",
+  "auth biometric instructions": "Utilice la huella digital o el desbloqueo facial para iniciar sesión",
+  "auth biometric error":"No se encontró ninguna cuenta biométrica. Inicie sesión manualmente",
+  "login biometric": "Inicio de sesión biométrico",
+  "disable biometric": "Desactivar inicio de sesión biométrico",
+  "biometric not available" : "Te has registrado con un cuenta de Google, por ello no podemos proveer autenticación biométrica",
+
+
 
   "pending notifications": "Notificaciones pendientes",
   "viewed notifications": "Notificaciones vistas",

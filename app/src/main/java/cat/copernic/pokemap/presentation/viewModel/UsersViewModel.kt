@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.data.Repository.UsersRepository
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class UsersViewModel : ViewModel() {
+class UsersViewModel: ViewModel(){
+
     private val repository = UsersRepository()
 
     private val _users = MutableStateFlow<List<Users>>(emptyList())
@@ -97,6 +100,18 @@ class UsersViewModel : ViewModel() {
                     _isUploadingImage.value = false // Finalizar subida de imagen (incluso en caso de error)
                     println("Error al subir la imagen: ${it.message}")
                 }
+        }
+    }
+
+    fun editUserLanguage(lang: String){
+        val userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        viewModelScope.launch {
+            _isLoading.value = true
+
+        if(!repository.updateUserLanguage(userUid,lang)){
+            return@launch
+        }
+            _isLoading.value = false
         }
     }
 }

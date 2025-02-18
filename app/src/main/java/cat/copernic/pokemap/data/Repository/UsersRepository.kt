@@ -1,5 +1,6 @@
 package cat.copernic.pokemap.data.Repository
 
+import android.util.Log
 import cat.copernic.pokemap.data.DTO.Users
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -62,6 +63,16 @@ class UsersRepository {
             usersCollection.document(uid).get().await().toObject(Users::class.java)
         } catch (e: Exception) {
             null // Devuelve null en caso de error
+        }
+    }
+
+    fun updateUserLanguage(userId: String, newLanguage: String) : Boolean {
+
+        return try {
+            usersCollection.document(userId) .update("language", newLanguage)
+            true // Éxito
+        } catch (e: Exception) {
+            false // Fallo
         }
     }
 }

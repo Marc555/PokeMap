@@ -5,6 +5,7 @@
   "notifications": "Notificacions",
   "settings": "Configuració",
   "logout": "Tancar sessió",
+  "google auth": "Continua amb Google",
 
   "forgot password": "Has oblidat la teva contrasenya?",
   "sign up": "Registra't",
@@ -25,6 +26,7 @@
   "create password": "Crea una contrasenya segura",
   "password not match": "Les contrasenyes no coincideixen",
   "sing up success message": "El teu compte s'ha creat amb èxit",
+  "welcome": "Benvingut",
 
   "email": "Correu electrònic",
   "password": "Contrasenya",
@@ -43,6 +45,8 @@
   "save": "Desa",
   "finish": "Finalitzar",
   "loading": "Verificant...",
+  "cancel ": "Cancel·lar",
+
 
   "add item": "Afegir element",
   "edit item": "Editar element",
@@ -86,6 +90,11 @@
   "language": "Idioma",
   "theme": "Tema",
   "auth biometric": "Autenticació biomètrica",
+  "auth biometric instructions": "Utilitza l'empremta digital o el desbloqueig facial per iniciar la sessió",
+  "auth biometric error":  "No s'ha trobat cap compte biomètric. Inicieu sessió manualment",
+  "login biometric": "Inici de sessió biomètric",
+  "disable biometric": "Desactivar inici de sessió biomètric",
+  "biometric not available" : "T'has registrat amb un compte de Google, per això no podem proveir autenticació biomètrica",
 
   "pending notifications": "Notificacions pendents",
   "viewed notifications": "Notificacions vistes",

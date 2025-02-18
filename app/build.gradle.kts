@@ -38,6 +38,11 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
 }
 
 dependencies {
@@ -51,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.identity.jvm)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
@@ -74,8 +80,20 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    implementation ("com.google.firebase:firebase-storage:20.3.0") // Add latest version
+
     // Auth
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    //Biometric
+    implementation("androidx.security:security-crypto:1.1.0-alpha05") // Latest version
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    //google auth
+    implementation("com.google.android.gms:play-services-auth:20.7.0") // Google Sign-In /
+
 
     //Real time translate
     implementation("com.google.code.gson:gson:2.10.1")
@@ -92,4 +110,7 @@ dependencies {
     // Lifecycle y ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.4.0")
+
+    //manage images
+    implementation("io.coil-kt:coil-compose:2.4.0") // Add latest version
 }

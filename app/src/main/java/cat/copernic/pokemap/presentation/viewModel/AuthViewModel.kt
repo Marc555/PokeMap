@@ -1,14 +1,21 @@
 package cat.copernic.pokemap.presentation.viewModel
 
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.data.DTO.Rol
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.data.Repository.AuthRepository
 import cat.copernic.pokemap.data.Repository.UsersRepository
+import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 
 class AuthViewModel : ViewModel() {
 
@@ -25,6 +32,7 @@ class AuthViewModel : ViewModel() {
         username: String,
         name: String,
         surname: String,
+        language:String?,
         onResult: (Boolean) -> Unit
     ) {
         _isLoading.value = true // Iniciar carga
@@ -35,9 +43,9 @@ class AuthViewModel : ViewModel() {
                     username = username.trim(),
                     name = name.trim(),
                     surname = surname.trim(),
-                    rol = Rol.USER
+                    rol = Rol.USER,
+                    language = language
                 )
-
                 viewModelScope.launch {
                     val firestoreSuccess = usersRepository.addUser(uid, user)
                     _isLoading.value = false // Finalizar carga
@@ -49,4 +57,5 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
 }
