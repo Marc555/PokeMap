@@ -10,9 +10,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="cat.copernic.pokemap" />
-                  <option name="mobileSdkAppId" value="1:734673080299:android:60f30100c0b71b2d87d3ae" />
-                  <option name="projectId" value="pokemap-ff778" />
-                  <option name="projectNumber" value="734673080299" />
+                  <option name="mobileSdkAppId" value="1:422540402648:android:5930d6b09f4cb01c4adcad" />
+                  <option name="projectId" value="pokemap-59d0a" />
+                  <option name="projectNumber" value="422540402648" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +46,7 @@ import cat.copernic.pokemap.presentation.ui.components.AddCategoryDialog
 import cat.copernic.pokemap.presentation.ui.components.EditCategoryDialog
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import cat.copernic.pokemap.utils.LanguageManager
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun Home(navController: NavController) {
@@ -70,11 +74,11 @@ fun Home(navController: NavController) {
                 .padding(start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Titulo()
+            Title()
 
             IconButton(onClick = { showAddCategoryDialog = true }, modifier = Modifier.align(Alignment.Start)) {
                 Icon(
-                    imageVector = Icons.Default.AddCircle, // Replace with your drawable
+                    imageVector = Icons.Default.AddCircle,
                     contentDescription = LanguageManager.getText("add category"),
                 )
             }
@@ -99,13 +103,17 @@ fun Home(navController: NavController) {
                 showAddCategoryDialog = false
                 errorMessage = null
             },
-            onConfirm = { categoryName, description ->
+            onConfirm = { categoryName, description, imageUrl ->
                 if (!nameExistsAdd(categoryName, categories)) {
-                    val newCategory = Category(name = categoryName, description = description)
+                    val newCategory = Category(
+                        name = categoryName,
+                        description = description,
+                        imageUrl = imageUrl
+                    )
                     categoryViewModel.addCategory(newCategory)
                     showAddCategoryDialog = false
                     errorMessage = null
-                }else{
+                } else {
                     errorMessage = LanguageManager.getText("name not available")
                 }
             }
@@ -146,7 +154,6 @@ fun CategoryList(
             itemsIndexed(categories) { _, category ->
                 CategoryItem(
                     navController = navController,
-                    modifier = Modifier.clickable { navController.navigate("items/${category.id}") },
                     category = category,
                     onEditCategory = onEditCategory
                 )
@@ -158,10 +165,14 @@ fun CategoryList(
 @Composable
 fun CategoryItem(
     navController: NavController,
-    modifier: Modifier = Modifier,
     category: Category,
     onEditCategory: (Category) -> Unit
 ) {
+    val imageUrl = category.imageUrl
+    val painter = rememberAsyncImagePainter(model = imageUrl)
+    val fondoTexto = MaterialTheme.colorScheme.surface
+    val colorTexto = MaterialTheme.colorScheme.onSurface
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,27 +180,33 @@ fun CategoryItem(
             .clickable { navController.navigate("items/${category.id}") },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column {
-            // Imagen de la categoría
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painter,
+                contentDescription = "Imagen de la categoría",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16 / 9f), // Ajustar imagen a toda la tarjeta
+                contentScale = ContentScale.Crop
+            )
 
-            // Titulo de la categoría
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .background(fondoTexto) //Color del fondo del texto
+                    .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
+                Text(
+                    text = category.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = colorTexto, //Color del texto
                     modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = category.name,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
+                )
 
-                // Botón de editar
                 EditCategoryIcon(onClick = { onEditCategory(category) })
             }
         }
@@ -199,18 +216,21 @@ fun CategoryItem(
 @Composable
 fun EditCategoryIcon(onClick: () -> Unit){
     IconButton(onClick = onClick) {
-        Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar categoria")
+        Icon(imageVector = Icons.Default.Edit,
+            contentDescription = "Editar categoria",
+            tint = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
 @Composable
-fun Titulo() {
+fun Title() {
     Image(
         painter = painterResource(id = R.drawable.nombreapp),
         contentDescription = "Nombre de la aplicación",
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(100.dp),
     )
 }
 

@@ -4,5 +4,5 @@ data class Category(
     var id: String = "",
     val name: String = "",
     val description: String = "",
-    val image: String = "",
+    val imageUrl: String = "",
 )

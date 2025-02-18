@@ -27,22 +27,22 @@ class ItemViewModel : ViewModel() {
         }
     }
 
-    fun addItem(item: Item) {
+    fun addItem(item: Item, categoryId: String) {
         viewModelScope.launch {
             try {
                 repository.addItem(item)
-                fetchItems(item.category.id)
+                fetchItems(categoryId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun updateItem(itemId: String, updatedItem: Item) {
+    fun updateItem(itemId: String, updatedItem: Item, categoryId: String) {
         viewModelScope.launch {
             try {
                 repository.updateItem(itemId, updatedItem)
-                fetchItems(updatedItem.category.id)
+                fetchItems(categoryId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -62,9 +62,7 @@ class ItemViewModel : ViewModel() {
 
     fun getCategoryById(categoryId: String) {
         viewModelScope.launch {
-            // Obtener la categoría del repositorio
-            val result = categoryRepository.getCategoryById(categoryId)
-            _category.value = result  // Actualizar el estado
+            _category.value = categoryRepository.getCategoryById(categoryId)
         }
     }
 }
