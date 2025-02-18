@@ -15,4 +15,5 @@ sealed class AppScreens(val rute: String) {
         fun createRoute(userUid: String) = "editProfile/$userUid"
     }
     object SearchUsers: AppScreens("searchUsers")
+    object Items: AppScreens("items/{categoryId}")
 }

@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,6 +79,9 @@ dependencies {
 
     //Real time translate
     implementation("com.google.code.gson:gson:2.10.1")
+
+    //Image Painter
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     //manage images
     implementation("io.coil-kt:coil-compose:2.4.0")

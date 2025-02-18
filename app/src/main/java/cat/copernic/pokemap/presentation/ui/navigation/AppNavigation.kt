@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -15,6 +16,7 @@ import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.EditProfile
 import cat.copernic.pokemap.presentation.ui.screens.Home
+import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
 import cat.copernic.pokemap.presentation.ui.screens.Profile
@@ -22,6 +24,7 @@ import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.SearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.Settings
+import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,10 +34,14 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val categoryViewModel: CategoryViewModel = viewModel()
     val currentRoute = getCurrentRoute(navController)
+    var showAddCategoryDialog by remember { mutableStateOf(false) }
 
     // List of screens where the menu should NOT be shown
     val hideMenuScreens = listOf("login", "register")
+
+    val showAddCategory = listOf("home")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -90,6 +97,12 @@ fun AppNavigation() {
                     EditProfile(navController, userUid)
                 }
                 composable(AppScreens.SearchUsers.rute) { SearchUsers(navController) }
+                composable(AppScreens.Items.rute) { backStackEntry ->
+                    val categoryId = backStackEntry.arguments?.getString("categoryId")
+                    if (categoryId != null) {
+                        Items(navController, categoryId)
+                    }
+                }
             }
         }
     }

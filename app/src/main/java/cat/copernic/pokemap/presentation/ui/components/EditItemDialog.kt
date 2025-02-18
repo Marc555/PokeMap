@@ -6,35 +6,48 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import cat.copernic.pokemap.data.DTO.Category
-import cat.copernic.pokemap.presentation.ui.theme.LocalCustomColors
-import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.data.DTO.Item
+import cat.copernic.pokemap.presentation.viewModel.ItemViewModel
 import cat.copernic.pokemap.utils.LanguageManager
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun EditCategoryDialog(
+fun EditItemDialog(
     errorMessage: String?,
-    category: Category,
-    categoryViewModel: CategoryViewModel,
+    item: Item,
+    itemViewModel: ItemViewModel,
     onDismiss: () -> Unit,
-    onConfirm: (Category) -> Unit
+    onConfirm: (Item, String) -> Unit
 ) {
-    val customColors = LocalCustomColors.current
+    var itemName by remember { mutableStateOf(item.name) }
+    var description by remember { mutableStateOf(item.description) }
 
-    var categoryName by remember { mutableStateOf(category.name) }
-    var description by remember { mutableStateOf(category.description) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var imageUrl by remember { mutableStateOf(category.imageUrl) }
+    var imageUrl by remember { mutableStateOf(item.imageUrl) }
 
     var localErrorMessage by remember { mutableStateOf<String?>(null) }
     var isUploading by remember { mutableStateOf(false) }
@@ -44,15 +57,19 @@ fun EditCategoryDialog(
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> uri?.let { imageUri = it } }
+    ) { uri: Uri? ->
+        uri?.let {
+            imageUri = it
+        }
+    }
 
     // Mostrar el dialogo de confirmación de eliminación
     if (showDeleteConfirmation) {
         ConfirmDeleteDialog(
             title = "Confirmar eliminación",
-            message = "¿Estás seguro de que deseas eliminar esta categoría?",
+            message = "¿Estás seguro de que deseas eliminar este ítem?",
             onConfirm = {
-                categoryViewModel.deleteCategory(category.id)
+                itemViewModel.deleteItem(item.id, item.categoryId)
                 onDismiss()
                 showDeleteConfirmation = false
             },
@@ -61,17 +78,16 @@ fun EditCategoryDialog(
     }
 
     AlertDialog(
-        containerColor = customColors.popUpsMenu,
         onDismissRequest = onDismiss,
-        title = { Text(text = LanguageManager.getText("edit category")) },
+        title = { Text(text = LanguageManager.getText("edit item")) },
         text = {
             Column {
                 TextField(
-                    value = categoryName,
-                    onValueChange = { categoryName = it },
+                    value = itemName,
+                    onValueChange = { itemName = it },
                     label = { Text(LanguageManager.getText("name")) },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary)
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -84,7 +100,7 @@ fun EditCategoryDialog(
                     onValueChange = { description = it },
                     label = { Text(LanguageManager.getText("description")) },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary)
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
@@ -123,23 +139,24 @@ fun EditCategoryDialog(
                 Button(
                     onClick = {
                         isUploading = true
+
                         if (imageUri != null) {
                             uploadCategoryImage(imageUri!!) { url ->
-                                val updatedCategory = category.copy(
-                                    name = categoryName,
+                                val updatedItem = item.copy(
+                                    name = itemName,
                                     description = description,
                                     imageUrl = url
                                 )
-                                onConfirm(updatedCategory)
+                                onConfirm(updatedItem, item.categoryId)
                                 isUploading = false
                             }
                         } else {
-                            val updatedCategory = category.copy(
-                                name = categoryName,
+                            val updatedItem = item.copy(
+                                name = itemName,
                                 description = description,
                                 imageUrl = imageUrl
                             )
-                            onConfirm(updatedCategory)
+                            onConfirm(updatedItem, item.categoryId)
                             isUploading = false
                         }
                     },
@@ -162,4 +179,3 @@ fun EditCategoryDialog(
         }
     )
 }
-
