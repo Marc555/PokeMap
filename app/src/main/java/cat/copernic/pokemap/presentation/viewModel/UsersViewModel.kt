@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class UsersViewModel : ViewModel() {
-class UsersViewModel: ViewModel(){
 
     private val repository = UsersRepository()
 

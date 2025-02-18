@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.identity.jvm)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,9 +98,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     //Image Painter
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-    //manage images
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     //Iconos

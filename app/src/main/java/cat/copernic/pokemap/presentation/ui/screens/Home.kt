@@ -104,12 +104,6 @@ fun Home(navController: NavController) {
             } else {
                 Title()
 
-            IconButton(onClick = { showAddCategoryDialog = true }, modifier = Modifier.align(Alignment.Start)) {
-                Icon(
-                    imageVector = Icons.Default.AddCircle,
-                    contentDescription = LanguageManager.getText("add category"),
-                )
-            }
                 if (user?.rol == Rol.ADMIN) {
                     IconButton(
                         onClick = { showAddCategoryDialog = true },
@@ -122,16 +116,19 @@ fun Home(navController: NavController) {
                     }
                 }
 
-
-            CategoryList(
-                navController = navController,
-                categories = categories,
-                onEditCategory = { category ->
-                    categoryToEdit = category
-                    showEditCategoryDialog = true
+                if (user?.rol == Rol.ADMIN) {
+                    IconButton(
+                        onClick = { showAddCategoryDialog = true },
+                        modifier = Modifier.align(Alignment.Start)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle, // Reemplaza con tu drawable
+                            contentDescription = "Add Category",
+                        )
+                    }
                 }
-            )
                 CategoryList(
+                    navController,
                     categories = categories,
                     user = user,
                     onEditCategory = { category ->
@@ -139,7 +136,6 @@ fun Home(navController: NavController) {
                         showEditCategoryDialog = true
                     }
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
