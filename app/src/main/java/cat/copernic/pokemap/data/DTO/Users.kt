@@ -6,5 +6,6 @@ data class Users(
     val name: String = "",
     val surname: String = "",
     val codeFriend: String = "",
+    val language: String? = "",
     val rol: Rol = Rol.USER,
 )

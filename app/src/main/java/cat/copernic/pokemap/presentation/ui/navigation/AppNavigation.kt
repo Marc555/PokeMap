@@ -11,9 +11,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.screens.ContactForm
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
+import cat.copernic.pokemap.presentation.ui.screens.OnboardingScreen
 import cat.copernic.pokemap.presentation.ui.screens.Profile
 import cat.copernic.pokemap.presentation.ui.screens.Rankings
 import cat.copernic.pokemap.presentation.ui.screens.Register
@@ -71,6 +73,8 @@ fun AppNavigation() {
                 composable(AppScreens.Rankings.rute) { Rankings(navController) }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
                 composable(AppScreens.Register.rute) { Register(navController) }
+                composable(AppScreens.ContactForm.rute) { ContactForm(navController)}
+                composable(AppScreens.Onboarding.rute) { OnboardingScreen(navController) }
             }
         }
     }

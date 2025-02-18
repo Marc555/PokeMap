@@ -1,46 +1,67 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButton
+import cat.copernic.pokemap.presentation.ui.components.BiometricDisable
+import cat.copernic.pokemap.presentation.ui.components.BiometricToggleSwitch
 import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun Settings(navController: NavController){
     val context = LocalContext.current
+    val user = FirebaseAuth.getInstance().currentUser
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.Top)
+
+    {
         Text(
-            LanguageManager.getText("settings")
+            LanguageManager.getText("settings"), modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            textAlign = Center,
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(
+            LanguageManager.getText("language"), modifier = Modifier.padding(16.dp).fillMaxWidth(),
+
         )
         LanguageSelector{}
 
+        Spacer(modifier = Modifier.height(15.dp))
+
+        if (user != null) {
+            if (user.providerData[1].providerId != "google.com" )
+                BiometricToggleSwitch(context)
+            else{
+                BiometricDisable()
+            }
+        }
+
+        Spacer(modifier = Modifier.height(15.dp))
+
         Text(text ="Contact administrators", modifier = Modifier
-            .clickable { navController.navigate("contact") } )
-
-        Text(text = LanguageManager.getText("auth biometric"))
-        BiometricLoginButton(context,navController) { }
-        Log.d("BiometricCheck", "Biometric availability: ${checkBiometricAvailability(context)}")
-
+            .clickable { navController.navigate("contact")}.padding(16.dp).fillMaxWidth())}
     }
-}
+
+
+
+
+

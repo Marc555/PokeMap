@@ -69,6 +69,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.0.0")
     implementation("androidx.compose.foundation:foundation-layout:1.0.0")
 
+
     // navegation
     implementation("androidx.navigation:navigation-compose:2.6.0")
 
@@ -85,6 +86,9 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha05") // Latest version
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    //google auth
+    implementation("com.google.android.gms:play-services-auth:20.7.0") // Google Sign-In /
 
 
     //Real time translate

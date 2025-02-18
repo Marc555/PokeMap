@@ -1,11 +1,12 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
+import android.app.Activity
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +39,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.R
-import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButton
 import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
 import cat.copernic.pokemap.presentation.ui.components.RestorePassword
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
@@ -47,9 +47,12 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import androidx.biometric.BiometricManager
-import cat.copernic.pokemap.presentation.ui.components.retrieveStoredEmail
-import cat.copernic.pokemap.presentation.ui.components.retrieveStoredPassword
-import cat.copernic.pokemap.presentation.ui.components.saveCredentials
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import cat.copernic.pokemap.MyApp
+import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButtonWithIcon
+import cat.copernic.pokemap.presentation.ui.components.ContinueWithGoogleButton
+import cat.copernic.pokemap.utils.GoogleAuthHelper
 
 
 @Composable
@@ -60,22 +63,96 @@ fun Login(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var showResetPasswordDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    // Check if biometric login is available and user has previously logged in
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
     val canUseBiometrics = remember {
-        checkBiometricAvailability(context) && retrieveStoredPassword(context) != null
+        checkBiometricAvailability(context)
+    }
+    var isSigningIn by remember { mutableStateOf(false) } // ✅ Track sign-in state
+
+
+    val activity = context as? Activity
+    val googleAuthHelper = remember { GoogleAuthHelper(context) }
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        isSigningIn = false
+        if (result.resultCode == Activity.RESULT_OK) {
+            googleAuthHelper.handleSignInResult(result.data,
+                onSignUp = { user ->
+                    Log.d("GoogleAuth", "New User: ${user.email}")
+                    navController.navigate(AppScreens.Onboarding.rute) // Navigate to onboarding
+                },
+                onLogin = { user ->
+                    Log.d("GoogleAuth", "Returning User: ${user.email}")
+                    navController.navigate(AppScreens.Home.rute) // Navigate to Home Screen
+                },
+                onShowMessage = { message ->
+                    dialogMessage = message
+                    showDialog = true
+                },
+                onError = { errorMessage ->
+                    Log.e("GoogleAuth", errorMessage)
+                    dialogMessage = errorMessage
+                    showDialog = true
+                }
+            )
+        }
+
+    }
+    // ✅ Show Dialog If Email Already Exists with Another Method
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Error") },
+            text = { Text(dialogMessage) },
+            confirmButton = {
+                Button(onClick = {
+                    showDialog = false
+                    navController.navigate(AppScreens.Login.rute) // ✅ Redirect to Login
+                }) {
+                    Text(LanguageManager.getText("login"))
+                }
+            },
+            textContentColor = MaterialTheme.colorScheme.onSurface
+        )
     }
 
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Logo()
-        Spacer(modifier = Modifier.height(90.dp))
 
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Logo()
+        Spacer(modifier = Modifier.height(10.dp))
+        ContinueWithGoogleButton(
+            onClick = {
+                if (!isSigningIn) {
+                    isSigningIn = true
+                    activity?.let {
+                        googleAuthHelper.launchSignIn(
+                            activity = it,
+                            onSignInStarted = { intentSender ->
+                                googleSignInLauncher.launch(
+                                    IntentSenderRequest.Builder(intentSender).build()
+                                )
+                            },
+                            onError = { errorMessage ->
+                                Log.e("GoogleAuth", errorMessage)
+                            }
+                        )
+                    }
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
         EmailInput(email, onEmailChange = { email = it })
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -96,11 +173,11 @@ fun Login(navController: NavController) {
             isLoading = it
         })
 
-        if (canUseBiometrics) {
-            Spacer(modifier = Modifier.height(15.dp))
-            BiometricLoginButton(context,navController, onErrorMessageChange = { errorMessage = it })
+        if (MyApp.prefs.isBiometricEnabled() && canUseBiometrics) {
+            BiometricLoginButtonWithIcon(
+                navController,
+                onErrorMessageChange = { errorMessage = it })
         }
-
         if (showResetPasswordDialog) {
             RestorePassword(
                 email = email,
@@ -108,9 +185,7 @@ fun Login(navController: NavController) {
             )
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
-
-        LanguageSelector{}
+        LanguageSelector {}
     }
 }
 
@@ -137,7 +212,7 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = {Text(LanguageManager.getText("email")) },
+        label = { Text(LanguageManager.getText("email")) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         singleLine = true,
         modifier = Modifier
@@ -148,11 +223,15 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
 }
 
 @Composable
-fun PasswordInput(password: String, onPasswordChange: (String) -> Unit, labelPassword: String = "Contraseña") {
+fun PasswordInput(
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    labelPassword: String = "Contraseña"
+) {
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = {Text(LanguageManager.getText("password")) },
+        label = { Text(LanguageManager.getText("password")) },
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
@@ -206,7 +285,6 @@ fun ButtonLogin(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-
     if (isLoading) {
         CircularProgressIndicator()
     } else {
@@ -214,7 +292,8 @@ fun ButtonLogin(
             painter = painterResource(id = R.drawable.go),
             contentDescription = "Botón de inicio de sesión",
             modifier = Modifier
-                .height(90.dp).width(180.dp)
+                .height(90.dp)
+                .width(180.dp)
                 .clickable {
                     if (email.isBlank() || password.isBlank()) {
                         onErrorMessageChange(LanguageManager.getText("email or password empty"))
@@ -226,12 +305,20 @@ fun ButtonLogin(
                     }
                     onLoadingChange(true)
                     coroutineScope.launch {
-                        loginWithEmail(context,email, password, onLoginSuccess, onErrorMessageChange, onLoadingChange)
+                        loginWithEmail(
+                            context,
+                            email,
+                            password,
+                            onLoginSuccess,
+                            onErrorMessageChange,
+                            onLoadingChange
+                        )
                     }
                 }
         )
     }
 }
+
 
 suspend fun loginWithEmail(
     context: Context,
@@ -239,46 +326,29 @@ suspend fun loginWithEmail(
     password: String,
     onLoginSuccess: () -> Unit,
     onErrorMessageChange: (String) -> Unit,
-    onLoadingChange: (Boolean) -> Unit
+    onLoadingChange: (Boolean) -> Unit,
 ) {
     val auth = FirebaseAuth.getInstance()
+
     try {
         if (auth == null) {
             throw IllegalStateException(LanguageManager.getText("firebaseAuth not innit"))
         }
 
         auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
-
-
-        val storedEmail = retrieveStoredEmail(context)
-
-        if (storedEmail == null) {
-            // First-time biometric user, store credentials
-            saveCredentials(context, email, password)
-            Log.d("BiometricAuth", "Stored biometric login for: $email")
-        } else if (storedEmail != email) {
-            // Block overwriting biometric credentials
-            Log.e("BiometricAuth", "User $email tried to overwrite biometric login for $storedEmail")
-            onErrorMessageChange("This account cannot be linked to biometrics. Use email & password.")
-            onLoadingChange(false)
-        }
-
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
 
-        // ✅ Delay navigation by 1 second
-        Handler(Looper.getMainLooper()).postDelayed({}, 1000)
+        MyApp.prefs.saveBiometricCredentials(email, password)
 
         onLoginSuccess()
-
+        LanguageManager.setLanguage(context)
     } catch (e: Exception) {
-
         val errorMsg = e.localizedMessage ?: LanguageManager.getText("login error")
         onErrorMessageChange("Error: $errorMsg")
 //      onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado
     }
 }
-
 
 fun isValidEmail(email: String): Boolean {
     val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
@@ -302,4 +372,6 @@ fun checkBiometricAvailability(context: Context): Boolean {
         BiometricManager.BIOMETRIC_SUCCESS -> true
         else -> false
     }
+
 }
+

@@ -8,4 +8,6 @@ sealed class AppScreens(val rute: String) {
     object Rankings: AppScreens("rankings")
     object Notifications: AppScreens("notifications")
     object Settings: AppScreens("settings")
+    object ContactForm: AppScreens("contact")
+    object Onboarding : AppScreens("onboarding_screen") // ✅ Onboarding Screen
 }

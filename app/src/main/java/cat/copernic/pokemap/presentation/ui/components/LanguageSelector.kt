@@ -1,12 +1,12 @@
 package cat.copernic.pokemap.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -14,12 +14,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LanguageSelector(onLanguageSelected: (String) -> Unit ) {
     val context = LocalContext.current // Get context from a Composable function
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val usersViewModel: UsersViewModel = UsersViewModel()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,8 +45,18 @@ fun LanguageSelector(onLanguageSelected: (String) -> Unit ) {
                     .padding(8.dp)
                     .clip(CircleShape) // Makes it a circle
                     .background(Color.LightGray) // Optional background color
-                    .clickable { LanguageManager.setLanguage(context, lang) },
-                contentAlignment = Alignment.Center
+                    .clickable {
+                        Log.d("LanguageSelector", "User selected language: $lang")
+
+                        val storedLang = MyApp.prefs.getString("PREF_LANGUAGE_KEY")
+                        Log.d("LanguageSelector", "Stored language after selection: $storedLang")
+
+                        if(currentUser!=null){
+                            usersViewModel.editUserLanguage(lang)
+                        }
+                        LanguageManager.setLanguageInit(context,lang)
+                    }
+
             ) {
                 Image(
                     painter = painterResource(id = flag),

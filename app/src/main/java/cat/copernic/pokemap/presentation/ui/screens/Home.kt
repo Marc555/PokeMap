@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,8 +46,9 @@ import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
 fun Home(navController: NavController) {
+    var context = LocalContext.current
     val categoryViewModel: CategoryViewModel = viewModel()
-
+    LanguageManager.setLanguage(context)
     LaunchedEffect(Unit) {
         categoryViewModel.fetchCategories()
     }

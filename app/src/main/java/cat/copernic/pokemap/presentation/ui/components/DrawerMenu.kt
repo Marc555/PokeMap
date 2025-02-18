@@ -1,5 +1,6 @@
 package cat.copernic.pokemap.presentation.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,16 +12,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
     val interactionSource = remember { MutableInteractionSource() }
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxHeight()
@@ -84,7 +88,7 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MenuItem(LanguageManager.getText("settings"), "settings", Color(0xFF555555), navController, onClose)
-                    SiginOutItem(LanguageManager.getText("logout"), Color(0xFFD32F2F), navController, onClose)
+                    SiginOutItem(context,LanguageManager.getText("logout"), Color(0xFFD32F2F), navController, onClose)
                 }
             }
         }
@@ -129,6 +133,7 @@ fun MenuItem(
 
 @Composable
 fun SiginOutItem(
+    context: Context,
     title: String,
     bgColor: Color,
     navController: NavController,
@@ -139,6 +144,9 @@ fun SiginOutItem(
             .fillMaxWidth()
             .clickable {
                 onClose()
+                val auth = FirebaseAuth.getInstance()
+                auth.signOut()
+
                 navController.navigate(AppScreens.Login.rute){
                     popUpTo(AppScreens.Login.rute) { inclusive = true }
                 }

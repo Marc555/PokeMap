@@ -24,11 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.presentation.viewModel.AuthViewModel
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.data.Repository.UsersRepository
@@ -277,6 +279,7 @@ fun PantallaRegistroFinal(
 ) {
     var registroExitoso by remember { mutableStateOf<Boolean?>(null) }
     val isLoading by viewModel.isLoading.collectAsState()
+    val deviceLanguage = MyApp.prefs.getString("PREF_LANGUAGE_KEY")
 
     LaunchedEffect(Unit) {
         viewModel.registerUser(
@@ -284,7 +287,8 @@ fun PantallaRegistroFinal(
             password,
             username,
             name,
-            surname
+            surname,
+            deviceLanguage
         ) { success -> registroExitoso = success }
     }
 

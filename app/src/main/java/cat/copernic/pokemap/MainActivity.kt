@@ -3,6 +3,7 @@ package cat.copernic.pokemap
 import android.content.res.Configuration
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -18,7 +19,8 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT // Lock portrait mode
         FirebaseApp.initializeApp(this)
-        LanguageManager.init(this) // Initialize language system
+        // ✅ Initialize and log language on app start
+        LanguageManager.setLanguage(this) // ✅ Ensures language is properly initialized
         setContent {
             PokeMapTheme {
                 AppNavigation()
