@@ -139,6 +139,7 @@ fun Login(navController: NavController) {
                         googleAuthHelper.launchSignIn(
                             activity = it,
                             onSignInStarted = { intentSender ->
+                                Log.e("GoogleAuth", errorMessage)
                                 googleSignInLauncher.launch(
                                     IntentSenderRequest.Builder(intentSender).build()
                                 )
