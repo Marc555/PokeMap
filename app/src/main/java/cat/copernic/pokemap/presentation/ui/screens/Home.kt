@@ -110,19 +110,7 @@ fun Home(navController: NavController) {
                         modifier = Modifier.align(Alignment.Start)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.AddCircle, // Reemplaza con tu drawable
-                            contentDescription = "Add Category",
-                        )
-                    }
-                }
-
-                if (user?.rol == Rol.ADMIN) {
-                    IconButton(
-                        onClick = { showAddCategoryDialog = true },
-                        modifier = Modifier.align(Alignment.Start)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle, // Reemplaza con tu drawable
+                            imageVector = Icons.Default.AddCircle,
                             contentDescription = "Add Category",
                         )
                     }
