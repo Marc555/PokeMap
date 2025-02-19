@@ -191,7 +191,7 @@ fun SelectAndPreviewImage(
     currentImageUrl: String?,
     onUploadImage: (Uri) -> Unit
 ) {
-    var imageUrl by remember { mutableStateOf(currentImageUrl) }
+    var imageUrl by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     var photoFile: File? = null
@@ -238,7 +238,11 @@ fun SelectAndPreviewImage(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ImageProfile(imageUrl, modifier = Modifier.size(100.dp))
+        if(currentImageUrl != null) {
+            ImageProfile(currentImageUrl, modifier = Modifier.size(100.dp))
+        }else {
+            ImageProfile(imageUrl, modifier = Modifier.size(100.dp))
+        }
 
         Spacer(modifier = Modifier.width(5.dp))
 
