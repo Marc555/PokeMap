@@ -105,7 +105,7 @@
   "report account": "Reportar compte",
 
   "followers": "Seguidors",
-  "following": "Seguint",
+  "following": "Seguits",
   "posts": "Publicacions",
   "outstanding publications": "Publicacions destacades",
   "outstanding comments": "Comentaris destacats",
@@ -125,5 +125,12 @@
   "delete_credentials_message": "Estàs segur que vols eliminar les teves credencials? Aquesta acció no es pot desfer.",
   "delete_button": "Eliminar",
   "cancel_button": "Cancel·lar",
-  "delete_account_text": "Eliminar Compte"
+  "delete_account_text": "Eliminar Compte",
+
+  "unfollow": "Deixar de seguir",
+  "follow": "Seguir",
+  "loading_user": "Carregant usuari, espereu...",
+  "edit_profile": "Editar perfil",
+  "profile_image": "Imatge de perfil",
+  "friend_code": "Codi d'Amic"
 }

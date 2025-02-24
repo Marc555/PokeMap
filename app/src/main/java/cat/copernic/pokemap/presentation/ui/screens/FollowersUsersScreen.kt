@@ -69,7 +69,7 @@ fun FollowersUsersScreen(
 //        if (user?.rol == Rol.ADMIN) {
 //            NamberUsers(numUsers, navController)
 //        }
-        Text("Seguidores", fontFamily = abeeZee, fontSize = 25.sp)
+        Text(LanguageManager.getText("followers"), fontFamily = abeeZee, fontSize = 25.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
