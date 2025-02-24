@@ -16,6 +16,7 @@ import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.EditProfile
 import cat.copernic.pokemap.presentation.ui.screens.ContactForm
+import cat.copernic.pokemap.presentation.ui.screens.ContactMessages
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
@@ -107,6 +108,7 @@ fun AppNavigation() {
                 }
                 composable(AppScreens.ContactForm.rute) { ContactForm(navController)}
                 composable(AppScreens.Onboarding.rute) { OnboardingScreen(navController) }
+                composable(AppScreens.ContactMessages.rute){ ContactMessages(navController) }
             }
         }
     }

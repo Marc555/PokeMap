@@ -86,6 +86,7 @@ fun Login(navController: NavController) {
                 },
                 onLogin = { user ->
                     Log.d("GoogleAuth", "Returning User: ${user.email}")
+
                     navController.navigate(AppScreens.Home.rute) // Navigate to Home Screen
                 },
                 onShowMessage = { message ->
@@ -177,7 +178,8 @@ fun Login(navController: NavController) {
         if (MyApp.prefs.isBiometricEnabled() && canUseBiometrics) {
             BiometricLoginButtonWithIcon(
                 navController,
-                onErrorMessageChange = { errorMessage = it })
+                onErrorMessageChange = { errorMessage = it },
+                onSuccess = {})
         }
         if (showResetPasswordDialog) {
             RestorePassword(

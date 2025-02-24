@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -272,8 +273,10 @@ fun FormButton(
     val contactViewModel = remember { ContactViewModal() }
     val isSuccess by contactViewModel.isSuccess.collectAsState()
     val storageRef = FirebaseStorage.getInstance().reference // Get Firebase Storage instance
+    var loading by remember { mutableStateOf(false) } // Track loading state
     Button(
         onClick = {
+            loading = true // Show loading indicator when clicked
             if (imageUri != null) {
                 val imageRef = storageRef.child("contact_images/${UUID.randomUUID()}.jpg")
 
@@ -296,6 +299,7 @@ fun FormButton(
                         }
                     }
                     .addOnFailureListener { exception ->
+                        loading = false
                         Toast.makeText(
                             context,
                             "Image Upload Failed: ${exception.message}",
@@ -322,10 +326,15 @@ fun FormButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
-    ) {
+    ) { if (loading) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp),
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    } else {
         Text(LanguageManager.getText("send"))
     }
-
+}
     // Show success message and navigate when successful
     LaunchedEffect(isSuccess) {
         if (isSuccess) {
