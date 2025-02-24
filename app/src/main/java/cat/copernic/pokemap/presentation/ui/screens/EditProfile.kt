@@ -27,12 +27,18 @@ import androidx.navigation.NavController
 import cat.copernic.pokemap.R
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.presentation.ui.components.sendPasswordResetEmail
+import cat.copernic.pokemap.presentation.viewModel.AuthViewModel
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
 import java.io.File
 
 @Composable
-fun EditProfile(navController: NavController, userUid: String, usersViewModel: UsersViewModel = viewModel()) {
+fun EditProfile(navController: NavController,
+                userUid: String,
+                usersViewModel: UsersViewModel = viewModel()
+) {
+    val context = LocalContext.current
+
     LaunchedEffect(userUid) {
         usersViewModel.fetchUserByUid(userUid)
     }
@@ -123,7 +129,9 @@ fun EditProfile(navController: NavController, userUid: String, usersViewModel: U
                     )
                 }
             )
-
+            if (isUploadingImage) {
+                CircularProgressIndicator()
+            }
             SaveButton(
                 onSave = {
                     usersViewModel.updateUser(userUid, editableUser)
@@ -135,6 +143,25 @@ fun EditProfile(navController: NavController, userUid: String, usersViewModel: U
             Spacer(modifier = Modifier.height(5.dp))
 
             ResetPassword(editableUser.email)
+
+            DeleteCredentialsText(
+                onDeleteCredentials = {
+                    // Eliminar las credenciales del usuario
+                    editableUser = editableUser.copy(username = "User deleted", email = "", name = "", surname = "", codeFriend = "", imageUrl = "")
+                    usersViewModel.deleteUserCredentials(editableUser, navController) { success ->
+                        if (success) {
+                            navController.navigate("login") { // Redirigir a la pantalla de inicio de sesión
+                                popUpTo(navController.graph.startDestinationId) { // Limpiar la pila de navegación
+                                    inclusive = true
+                                }
+                            }
+                        } else {
+                            // Mostrar un mensaje de error
+                            Toast.makeText(context, "Error al eliminar credenciales", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            )
         }
     }
 }
@@ -191,7 +218,7 @@ fun SelectAndPreviewImage(
     currentImageUrl: String?,
     onUploadImage: (Uri) -> Unit
 ) {
-    var imageUrl by remember { mutableStateOf(currentImageUrl) }
+    var imageUrl by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     var photoFile: File? = null
@@ -238,7 +265,11 @@ fun SelectAndPreviewImage(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ImageProfile(imageUrl, modifier = Modifier.size(100.dp))
+        if(currentImageUrl != null) {
+            ImageProfile(currentImageUrl, modifier = Modifier.size(100.dp))
+        }else {
+            ImageProfile(imageUrl, modifier = Modifier.size(100.dp))
+        }
 
         Spacer(modifier = Modifier.width(5.dp))
 
@@ -280,5 +311,51 @@ fun ResetPassword(email: String){
                     Toast.makeText(context, LanguageManager.getText("error message"), Toast.LENGTH_SHORT).show()
                 }
             }
-        })
+        }
+    )
+}
+
+@Composable
+fun DeleteCredentialsText(onDeleteCredentials: () -> Unit) {
+    val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Diálogo de confirmación
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(LanguageManager.getText("delete_credentials_title")) },
+            text = { Text(LanguageManager.getText("delete_credentials_message")) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDeleteCredentials()
+                        showDialog = false
+                    }
+                ) {
+                    Text(
+                        text = LanguageManager.getText("delete_button"),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(LanguageManager.getText("cancel_button"))
+                }
+            }
+        )
+    }
+
+    // Texto clicable
+    Text(
+        text = LanguageManager.getText("delete_account_text"),
+        color = MaterialTheme.colorScheme.error,
+        modifier = Modifier
+            .clickable { showDialog = true } // Mostrar diálogo al hacer clic
+            .padding(8.dp),
+        style = MaterialTheme.typography.bodyMedium
+    )
 }

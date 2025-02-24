@@ -1,15 +1,19 @@
 package cat.copernic.pokemap.presentation.viewModel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.data.Repository.UsersRepository
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class UsersViewModel : ViewModel() {
 
@@ -85,7 +89,8 @@ class UsersViewModel : ViewModel() {
     fun uploadImageToStorage(uri: Uri, previousImageUrl: String?, onSuccess: (String) -> Unit) {
         _isUploadingImage.value = true // Iniciar subida de imagen
         val storageRef = FirebaseStorage.getInstance().reference
-        val imageRef = storageRef.child("profile_images/${System.currentTimeMillis()}_${uri.lastPathSegment}.jpg") // Usar un nombre único
+        val imageRef =
+            storageRef.child("profile_images/${System.currentTimeMillis()}_${uri.lastPathSegment}.jpg") // Usar un nombre único
 
         viewModelScope.launch {
             imageRef.putFile(uri)
@@ -96,21 +101,58 @@ class UsersViewModel : ViewModel() {
                     }
                 }
                 .addOnFailureListener {
-                    _isUploadingImage.value = false // Finalizar subida de imagen (incluso en caso de error)
+                    _isUploadingImage.value =
+                        false // Finalizar subida de imagen (incluso en caso de error)
                     println("Error al subir la imagen: ${it.message}")
                 }
         }
     }
 
-    fun editUserLanguage(lang: String){
-        val userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    fun editUserLanguage(lang: String) {
+        val userUid: String = FirebaseAuth.getInstance().currentUser?.uid.toString()
         viewModelScope.launch {
             _isLoading.value = true
 
-        if(!repository.updateUserLanguage(userUid,lang)){
-            return@launch
-        }
+            if (!repository.updateUserLanguage(userUid, lang)) {
+                return@launch
+            }
             _isLoading.value = false
+        }
+    }
+
+    fun updateLastLogin(uid: String?) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.updateLastLogin(uid)
+        }
+    }
+
+    fun deleteUserCredentials(userInfo: Users, navController: NavController, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            try {
+
+                val user = FirebaseAuth.getInstance().currentUser ?: run {
+                    navController.navigate(AppScreens.Login.rute){
+                        popUpTo(AppScreens.Login.rute) { inclusive = true }
+                    }
+                    return@launch
+                }
+
+
+                // Eliminar la cuenta del usuario en Firebase Authentication
+                user.delete().await()
+
+                repository.updateUser(user.uid, userInfo)
+
+                onResult(true) // Notificar éxito
+            } catch (e: Exception) {
+                // Manejar errores
+                onResult(false) // Notificar error
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 }

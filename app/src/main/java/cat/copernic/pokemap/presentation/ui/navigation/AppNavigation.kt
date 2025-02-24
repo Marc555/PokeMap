@@ -1,7 +1,6 @@
 package cat.copernic.pokemap.presentation.ui.navigation
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
@@ -14,8 +13,11 @@ import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
+import cat.copernic.pokemap.presentation.ui.screens.AdminSearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.EditProfile
 import cat.copernic.pokemap.presentation.ui.screens.ContactForm
+import cat.copernic.pokemap.presentation.ui.screens.FollowersUsersScreen
+import cat.copernic.pokemap.presentation.ui.screens.FollowingUsersScreen
 import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
@@ -99,6 +101,7 @@ fun AppNavigation() {
                     EditProfile(navController, userUid)
                 }
                 composable(AppScreens.SearchUsers.rute) { SearchUsers(navController) }
+                composable(AppScreens.AdminSearchUsers.rute) { AdminSearchUsers(navController) }
                 composable(AppScreens.Items.rute) { backStackEntry ->
                     val categoryId = backStackEntry.arguments?.getString("categoryId")
                     if (categoryId != null) {
@@ -107,6 +110,20 @@ fun AppNavigation() {
                 }
                 composable(AppScreens.ContactForm.rute) { ContactForm(navController)}
                 composable(AppScreens.Onboarding.rute) { OnboardingScreen(navController) }
+                composable(
+                    route = AppScreens.FollowersUsersScreen.createRoute("{email}"),
+                    arguments = listOf(navArgument("email") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val email = backStackEntry.arguments?.getString("email") ?: ""
+                    FollowersUsersScreen(navController, email)
+                }
+                composable(
+                    route = AppScreens.FollowingUsersScreen.createRoute("{email}"),
+                    arguments = listOf(navArgument("email") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val email = backStackEntry.arguments?.getString("email") ?: ""
+                    FollowingUsersScreen(navController, email)
+                }
             }
         }
     }
