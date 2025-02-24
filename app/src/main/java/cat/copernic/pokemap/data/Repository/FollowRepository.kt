@@ -1,5 +1,6 @@
 package cat.copernic.pokemap.data.Repository
 
+import android.util.Log
 import cat.copernic.pokemap.data.DTO.Follow
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -10,14 +11,22 @@ class FollowRepository {
     private val followCollection = db.collection("follows")
 
     // Añadir un nuevo seguimiento y guardar la ID en el propio Follow
-    suspend fun addFollow(follow: Follow): Pair<Boolean, String?> {
+    suspend fun addFollow(follow: Follow): String? {
         return try {
-            val documentRef = followCollection.document() // Generar una nueva ID
-            val followWithId = follow.copy(Uid = documentRef.id) // Asignar la ID al campo Uid
-            documentRef.set(followWithId).await() // Guardar el documento con la ID
-            Pair(true, documentRef.id) // Retorna éxito y la ID del documento
+            // Crear una referencia a un nuevo documento con un ID generado automáticamente
+            val documentRef = followCollection.document()
+
+            // Asignar el ID generado al campo Uid
+            val followWithId = follow.copy(Uid = documentRef.id)
+
+            // Guardar el objeto Follow en Firestore
+            documentRef.set(followWithId).await()
+
+            // Devolver el ID generado
+            documentRef.id
         } catch (e: Exception) {
-            Pair(false, null) // Retorna fallo y null si hay un error
+            e.printStackTrace()
+            null // Fallo, devuelve null
         }
     }
 
@@ -26,7 +35,7 @@ class FollowRepository {
         return try {
             followCollection.get().await().toObjects(Follow::class.java)
         } catch (e: Exception) {
-            emptyList() // Devuelve una lista vacía en caso de error
+            return emptyList() // Devuelve una lista vacía en caso de error
         }
     }
 

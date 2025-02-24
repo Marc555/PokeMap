@@ -112,5 +112,15 @@
   "contact administrators ": "Contact the administrators",
   "change password": "Change password",
   "delete account": "Delete account",
-  "report success message":"We have received your report.\nThank you for making this community a safe place."
+  "report success message":"We have received your report.\nThank you for making this community a safe place.",
+
+  "searchUsers": "Search Users",
+  "Total registered users": "Total registered users:",
+  "Write to search for users": "Write to search for users",
+
+  "delete_credentials_title": "Delete Credentials",
+  "delete_credentials_message": "Are you sure you want to delete your credentials? This action cannot be undone.",
+  "delete_button": "Delete",
+  "cancel_button": "Cancel",
+  "delete_account_text": "Delete Account"
 }

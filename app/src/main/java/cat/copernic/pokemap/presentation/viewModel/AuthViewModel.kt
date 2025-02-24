@@ -10,11 +10,13 @@ import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.data.Repository.AuthRepository
 import cat.copernic.pokemap.data.Repository.UsersRepository
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.intellij.lang.annotations.Language
 
 class AuthViewModel : ViewModel() {
@@ -57,5 +59,4 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
-
 }

@@ -118,5 +118,15 @@
   "contact administrators": "Contactar con los administradores",
   "change password": "Cambiar contraseña",
   "delete account": "Eliminar cuenta",
-  "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro."
+  "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro.",
+
+  "searchUsers": "Buscar Usuarios",
+  "Total registered users": "Usuarios totales registrados:",
+  "Write to search for users": "Escribe para buscar usuarios",
+
+  "delete_credentials_title": "Eliminar Credencials",
+  "delete_credentials_message": "Estàs segur que vols eliminar les teves credencials? Aquesta acció no es pot desfer.",
+  "delete_button": "Eliminar",
+  "cancel_button": "Cancel·lar",
+  "delete_account_text": "Eliminar Compte"
 }
