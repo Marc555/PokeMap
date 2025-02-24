@@ -122,5 +122,12 @@
   "delete_credentials_message": "Are you sure you want to delete your credentials? This action cannot be undone.",
   "delete_button": "Delete",
   "cancel_button": "Cancel",
-  "delete_account_text": "Delete Account"
+  "delete_account_text": "Delete Account",
+
+  "unfollow": "Unfollow",
+  "follow": "Follow",
+  "loading_user": "Loading user, please wait...",
+  "edit_profile": "Edit profile",
+  "profile_image": "Profile picture",
+  "friend_code": "Friend Code"
 }

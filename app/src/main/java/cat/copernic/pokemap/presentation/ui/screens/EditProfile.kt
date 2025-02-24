@@ -74,7 +74,7 @@ fun EditProfile(navController: NavController,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Label(LanguageManager.getText("editProfile"))
+            Label(LanguageManager.getText("edit_profile"))
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,7 +108,7 @@ fun EditProfile(navController: NavController,
                 label = LanguageManager.getText("surname")
             )
 
-            Label(LanguageManager.getText("codeFriend"))
+            Label(LanguageManager.getText("friend_code"))
             EditField(
                 value = editableUser.codeFriend,
                 onValueChange = { newCodeFriend -> editableUser = editableUser.copy(codeFriend = newCodeFriend) },
@@ -177,7 +177,7 @@ fun SaveButton(onSave: () -> Unit, enabled: Boolean = true) {
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary)
     ) {
-        Text("Guardar Cambios")
+        Text(LanguageManager.getText("save_changes"))
     }
 }
 
@@ -255,7 +255,7 @@ fun SelectAndPreviewImage(
                 "${context.packageName}.fileprovider",
                 photoFileTemp
             )
-            cameraLauncher.launch(currentPhotoUri)
+            cameraLauncher.launch(currentPhotoUri!!)
         } else {
             // Handle permission not granted case
         }
@@ -276,7 +276,7 @@ fun SelectAndPreviewImage(
         Button(onClick = {
             galleryLauncher.launch("image/*")
         }) {
-            Text("Galeria")
+            Text(LanguageManager.getText("gallery"))
         }
 
         Spacer(modifier = Modifier.width(5.dp))
@@ -284,7 +284,7 @@ fun SelectAndPreviewImage(
         Button(onClick = {
             permissionLauncher.launch(android.Manifest.permission.CAMERA)
         }) {
-            Text("Cámara")
+            Text(LanguageManager.getText("camera"))
         }
     }
 }
