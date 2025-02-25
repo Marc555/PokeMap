@@ -16,6 +16,7 @@ sealed class AppScreens(val rute: String) {
     }
     object SearchUsers: AppScreens("searchUsers")
     object Items: AppScreens("items/{categoryId}")
+    object ItemInside: AppScreens("itemInside/{itemId}")
     object ContactForm: AppScreens("contact")
     object Onboarding : AppScreens("onboarding_screen") // ✅ Onboarding Screen
 }

@@ -120,5 +120,17 @@
   "contact administrators": "Contactar con los administradores",
   "change password": "Cambiar contraseña",
   "delete account": "Eliminar cuenta",
-  "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro."
+  "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro.",
+
+  "select image": "Selecciona una imagen",
+  "no image error": "Tienes que seleccionar una imagen",
+  "delete confirmation": "Confirmar eliminación",
+  "delete question": "¿Seguro que quieres borrar la categoria?",
+  "camera denied acces": "No tienes permisos para acceder a la camara",
+  "photo with camera": "Hacer la foto con la camara",
+  "current image": "Imagen actual",
+  "show filters": "Mostrar filtros",
+  "filter by name": "Filtrar por nombre",
+  "filter by distance": "Filtrar por distancia",
+  "filter by likes": "Filtrar por likes"
 }

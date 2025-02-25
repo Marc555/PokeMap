@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 data class CustomColors(
     val confirmButton: Color,
     val deleteButton: Color,
-    val popUpsMenu: Color,
+    val popUpsMenu: Color
 )
 
 // Esquema de colores en modo oscuro
@@ -28,13 +28,13 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = Color.Gray, //Items/menus secundarios
     onSurfaceVariant = Color.White, //Textos/icomos encima
 
-    background = Color(0xFF4B5FB2), //Color fondo
+    background = Color(0xFF26264D), //Color fondo
     onBackground = Color.White, //Texto/iconos directamente encima del fondo
 
     primary = Color.Gray, //Botones normales
-    onPrimary = Color.White, //Texto encima de los botones
+    onPrimary = Color.Black, //Texto encima de los botones
 
-    secondary = Color.LightGray, //Botones deshabilitados
+    secondary = Color(0x7EABABAB), //Botones deshabilitados
     onSecondary = Color.White, //Texto encima de los botones deshabilitados
 )
 
@@ -49,23 +49,23 @@ private val LightColorScheme = lightColorScheme(
     background = Color(0xFFCEDAFF), //Color fondo
     onBackground = Color.Black, //Texto/iconos directamente encima del fondo
 
-    primary = Color.Gray, //Botones normales
-    onPrimary = Color.Black, //Texto encima de los botones
+    primary = Color.LightGray, //Botones normales
+    onPrimary = Color.White, //Texto encima de los botones
 
-    secondary = Color.LightGray, //Botones deshabilitados
+    secondary = Color(0x7EABABAB), //Botones deshabilitados
     onSecondary = Color.White, //Texto encima de los botones deshabilitados
 )
 
 private val DarkCustomColors = CustomColors(
-    confirmButton = Color(0xFF3A8D3A),
-    deleteButton = Color(0xFF850909),
-    popUpsMenu = Color(0xFF94931D),
+    confirmButton = Color(0xFF005900),
+    deleteButton = Color(0xFF930000),
+    popUpsMenu = Color(0xFFCEBB0B)
 )
 
 private val LightCustomColors = CustomColors(
     confirmButton = Color(0xFFBBFABE),
     deleteButton = Color(0xFFF8C6C1),
-    popUpsMenu = Color(0xFFFAF2BC)
+    popUpsMenu = Color(0xFFAEE8D7)
 )
 
 
