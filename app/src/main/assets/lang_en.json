@@ -132,4 +132,17 @@
   "edit_profile": "Edit profile",
   "profile_image": "Profile picture",
   "friend_code": "Friend Code"
+  "report success message":"We have received your report.\nThank you for making this community a safe place.",
+
+  "select image": "Select an image",
+  "no image error": "Select an image",
+  "delete confirmation": "Confirm delete",
+  "delete question": "Are you sure deleting the category?",
+  "camera denied acces": "Failed to access to the camera",
+  "photo with camera": "Take the photo with the camera",
+  "current image": "Current image",
+  "show filters": "Show filters",
+  "filter by name": "Filter by name",
+  "filter by distance": "Filter by distance",
+  "filter by likes": "Filter by likes"
 }

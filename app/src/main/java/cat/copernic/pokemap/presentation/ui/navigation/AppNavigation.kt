@@ -19,6 +19,7 @@ import cat.copernic.pokemap.presentation.ui.screens.ContactForm
 import cat.copernic.pokemap.presentation.ui.screens.FollowersUsersScreen
 import cat.copernic.pokemap.presentation.ui.screens.FollowingUsersScreen
 import cat.copernic.pokemap.presentation.ui.screens.Home
+import cat.copernic.pokemap.presentation.ui.screens.ItemInside
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
@@ -31,6 +32,7 @@ import cat.copernic.pokemap.presentation.ui.screens.Settings
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
@@ -102,12 +104,21 @@ fun AppNavigation() {
                 }
                 composable(AppScreens.SearchUsers.rute) { SearchUsers(navController) }
                 composable(AppScreens.AdminSearchUsers.rute) { AdminSearchUsers(navController) }
+
                 composable(AppScreens.Items.rute) { backStackEntry ->
                     val categoryId = backStackEntry.arguments?.getString("categoryId")
                     if (categoryId != null) {
                         Items(navController, categoryId)
                     }
                 }
+
+                composable(AppScreens.ItemInside.rute) { backStackEntry ->
+                    val itemId = backStackEntry.arguments?.getString("itemId")
+                    if (itemId != null) {
+                        ItemInside(navController, itemId)
+                    }
+                }
+
                 composable(AppScreens.ContactForm.rute) { ContactForm(navController)}
                 composable(AppScreens.Onboarding.rute) { OnboardingScreen(navController) }
                 composable(

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PokeMap</string>
     <string name="default_web_client_id">422540402648-13j8h2isd3j8lh2h4qp2knk6isl9nhh7.apps.googleusercontent.com</string>
+
+    <!-- Google Maps -->
+    <string name="maps_api_key">AIzaSyDYOsjmCgXEMvDFN-KqFNwB2vXX0V46Co4</string>
 </resources>

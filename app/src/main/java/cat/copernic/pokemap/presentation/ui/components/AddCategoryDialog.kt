@@ -14,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.ui.theme.LocalCustomColors
+import cat.copernic.pokemap.utils.LanguageManager
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
@@ -23,12 +25,11 @@ import java.util.*
 fun AddCategoryDialog(
     errorMessage: String?,
     onDismiss: () -> Unit,
-    onConfirm: (String, String, String) -> Unit
+    onConfirm: (String, Uri) -> Unit
 ) {
     val customColors = LocalCustomColors.current // Para colores personalizados
 
     var categoryName by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var imageUrl by remember { mutableStateOf<String?>(null) }
     var localErrorMessage by remember { mutableStateOf<String?>(null) }
@@ -46,29 +47,31 @@ fun AddCategoryDialog(
     AlertDialog(
         containerColor = customColors.popUpsMenu,
         onDismissRequest = onDismiss,
-        title = { Text(text = "Añadir categoría", color = MaterialTheme.colorScheme.onBackground) },
+        title = { Text(text = LanguageManager.getText("add category"), color = MaterialTheme.colorScheme.onSurfaceVariant) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     value = categoryName,
-                    onValueChange = { categoryName = it },
-                    label = { Text("Nombre de la categoría") },
+                    onValueChange = {
+                        if (it.length <= 15) { // Límite de 50 caracteres
+                            categoryName = it
+                        }
+                    },
+                    label = { Text(LanguageManager.getText("name")) },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
+
+                // Contador de caracteres
+                Text(
+                    text = "${categoryName.length}/50",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.End)
+                )
+
                 errorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                TextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Descripción de la categoría") },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
-                )
 
                 Spacer(modifier = Modifier.height(5.dp))
 
@@ -76,20 +79,21 @@ fun AddCategoryDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp)
-                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
                         .clickable { imagePickerLauncher.launch("image/*") },
                     contentAlignment = Alignment.Center
                 ) {
                     if (imageUri != null) {
                         Image(
                             painter = rememberAsyncImagePainter(model = imageUri),
-                            contentDescription = "Imagen seleccionada",
+                            contentDescription = LanguageManager.getText("select image"),
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Text("Seleccionar imagen", color = MaterialTheme.colorScheme.onPrimary)
+                        Text(LanguageManager.getText("select image"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
+
                 localErrorMessage?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
                 }
@@ -99,38 +103,18 @@ fun AddCategoryDialog(
         },
         confirmButton = {
             Button(
-                onClick = {
-                    if (imageUri == null) {
-                        localErrorMessage = "Debes seleccionar una imagen"
-                    } else {
-                        isUploading = true
-                        uploadCategoryImage(imageUri!!) { url ->
-                            imageUrl = url
-                            isUploading = false
-                            onConfirm(categoryName, description, url)
-                        }
-                    }
-                },
-                enabled = categoryName.isNotBlank() && description.isNotBlank() && !isUploading,
+                onClick = { onConfirm(categoryName, imageUri!!) },
+                enabled = categoryName.isNotBlank()&& imageUri != null && !isUploading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = customColors.confirmButton,
+                ),
                 modifier = Modifier.fillMaxWidth()
+
             ) {
-                Text("Guardar")
+                Text(text= LanguageManager.getText("save"), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     )
 }
 
-fun uploadCategoryImage(uri: Uri, onSuccess: (String) -> Unit) {
-    val storageRef = FirebaseStorage.getInstance().reference
-    val imageRef = storageRef.child("categories/${UUID.randomUUID()}.jpg")
 
-    imageRef.putFile(uri)
-        .addOnSuccessListener { taskSnapshot ->
-            imageRef.downloadUrl.addOnSuccessListener { url ->
-                onSuccess(url.toString())
-            }
-        }
-        .addOnFailureListener {
-            println("Error al subir la imagen: ${it.message}")
-        }
-}
