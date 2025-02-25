@@ -1,5 +1,6 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
+import Title
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

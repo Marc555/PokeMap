@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender // ✅ Use IntentSender instead of Intent
 import android.util.Log
+import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.data.DTO.UserFromGoogle
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -41,6 +43,7 @@ class GoogleAuthHelper(private val context: Context) {
                             .setFilterByAuthorizedAccounts(false)
                             .build()
                     )
+                    .setAutoSelectEnabled(false) // ✅ Forces manual selection & consent
                     .build()
 
                 signInClient.beginSignIn(signInRequest)
@@ -60,10 +63,10 @@ class GoogleAuthHelper(private val context: Context) {
 
     fun handleSignInResult(
         data: Intent?,
-        onSignUp: (FirebaseUser) -> Unit, // ✅ Trigger onboarding if Firestore profile is missing
-        onLogin: (FirebaseUser) -> Unit, // ✅ Redirect to Home if already exists
+        onSignUp: (UserFromGoogle) -> Unit, // ✅ Trigger onboarding if Firestore profile is missing
+        onLogin: (UserFromGoogle) -> Unit, // ✅ Redirect to Home if already exists
         onShowMessage: (String) -> Unit, // ✅ Show message if account exists with another method
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
         try {
             CoroutineScope(Dispatchers.IO).launch {
@@ -71,31 +74,41 @@ class GoogleAuthHelper(private val context: Context) {
                 val credential: SignInCredential = signInClient.getSignInCredentialFromIntent(data)
                 val idToken = credential.googleIdToken
                 val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                val email = credential.id ?: ""
+                val email = credential.id
+                val name = credential.givenName ?: "NULL"
+                val surname = credential.familyName ?: "NULL"
+                val imageUrl = credential.profilePictureUri ?: "NULL"
 
-                val exists = checkIfUserExists(email)
-                val userProvider = getSignInMethodsForEmail(email)
-                println(userProvider)
                 if (idToken != null) {
                     firebaseAuth.signInWithCredential(firebaseCredential)
                         .addOnSuccessListener { authResult ->
-                            val providerFromFS = authResult.user?.providerData?.get(1)?.providerId ?: "Unknown"
+                            val uid: String = authResult.user?.uid ?: "NULL"
+                            StoredGoogleAuthCred.fillUserFromGoogle(
+                                uid,
+                                idToken,
+                                email,
+                                name,
+                                surname,
+                                imageUrl.toString()
+                            )
 
-                            Log.d("PROVEEDOR",providerFromFS )
-                                if (authResult.additionalUserInfo?.isNewUser == true) {
-                                    //MyApp.prefs.saveGoogleAuthToken(idToken)
-                                    Log.d(
-                                        "GoogleAuth",
-                                        "User signed in successfully. Proceeding to onboarding."
-                                    )
-                                    Log.d("GoogleAuth", "New user detected: $email")
-                                    onSignUp(authResult.user!!)
-                                } else {
-                                  //  if(MyApp.prefs.isBiometricEnabled()){
-                                  //      MyApp.prefs.saveGoogleAuthToken(idToken)
-                                   // }
-                                onLogin(authResult.user!!)
+                            if (authResult.additionalUserInfo?.isNewUser == true) {
+                                Log.d(
+                                    "GoogleAuth",
+                                    "User signed in successfully. Proceeding to onboarding."
+                                )
+                                Log.d("GoogleAuth", "New user detected: $email")
+
+                                if (!MyApp.prefs.isAnyBiometricOn()) {
+                                    MyApp.prefs.saveGoogleAuthToken(idToken)
                                 }
+                                onSignUp(StoredGoogleAuthCred.waitForUsername())
+                            } else {
+                                if (!MyApp.prefs.isAnyBiometricOn()) {
+                                    MyApp.prefs.saveGoogleAuthToken(idToken)
+                                }
+                                onLogin(StoredGoogleAuthCred.waitForUsername())
+                            }
                         }.addOnFailureListener { e ->
                             Log.e("GoogleAuth", "Sign-in failed: ${e.localizedMessage}")
                             onError(e.localizedMessage ?: "Google Sign-In failed")
@@ -110,6 +123,8 @@ class GoogleAuthHelper(private val context: Context) {
             onError("Google Sign-In failed: ${e.localizedMessage}")
         }
     }
+
+
 }
 
 

@@ -1,6 +1,7 @@
 package cat.copernic.pokemap.presentation.ui.navigation
 
 
+import Home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,12 +13,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.EditProfile
 import cat.copernic.pokemap.presentation.ui.screens.ContactForm
 import cat.copernic.pokemap.presentation.ui.screens.ContactMessages
-import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
@@ -28,6 +29,7 @@ import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.SearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.Settings
 import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
+import cat.copernic.pokemap.utils.SharedUserViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,7 +108,7 @@ fun AppNavigation() {
                         Items(navController, categoryId)
                     }
                 }
-                composable(AppScreens.ContactForm.rute) { ContactForm(navController)}
+                composable(AppScreens.ContactForm.rute) { ContactForm(navController) }
                 composable(AppScreens.Onboarding.rute) { OnboardingScreen(navController) }
                 composable(AppScreens.ContactMessages.rute){ ContactMessages(navController) }
             }

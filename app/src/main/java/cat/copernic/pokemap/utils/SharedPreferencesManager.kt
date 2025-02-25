@@ -42,14 +42,10 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun saveBiometricCredentials(email: String, password: String) {
-        val storedEmail = biometricPrefs.getString("email", null)
-
-        if (storedEmail == null) { // ✅ Only store the first registered user
-            biometricPrefs.edit().apply {
+        biometricPrefs.edit().apply {
                 putString("email", email)
                 putString("password", password)
                 apply()
-            }
         }
     }
 
@@ -109,4 +105,19 @@ class SharedPreferencesManager(context: Context) {
         }
     }
 
+    fun isAnyBiometricOn() : Boolean {
+        val getGoogleAuthToken = getGoogleAuthToken()
+        val getBiometricEmail = getBiometricEmail()
+        val getBiometricPassword = getBiometricPassword()
+
+        return if (getGoogleAuthToken != null){
+            true
+        }else if(getBiometricEmail != null){
+            true
+        }else if(getBiometricPassword != null){
+            true
+        }else{
+            false
+        }
+    }
 }

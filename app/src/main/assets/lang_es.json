@@ -97,9 +97,10 @@
   "auth biometric instructions": "Utilice la huella digital o el desbloqueo facial para iniciar sesión",
   "auth biometric error":"No se encontró ninguna cuenta biométrica. Inicie sesión manualmente",
   "login biometric": "Inicio de sesión biométrico",
-  "disable biometric": "Desactivar inicio de sesión biométrico",
-  "biometric not available" : "Te has registrado con un cuenta de Google, por ello no podemos proveer autenticación biométrica",
-
+  "clean biometric": "Esborrar les credencials biomètriques",
+  "biometric not available" : "T'has registrat amb un compte de Google, per això no podem proveir autenticació biomètrica",
+  "biometric is enable" : "Has activado la autenticación biométrica",
+  "biometric is disable" : "Has desactivado la autenticación biométrica",
 
 
   "pending notifications": "Notificaciones pendientes",

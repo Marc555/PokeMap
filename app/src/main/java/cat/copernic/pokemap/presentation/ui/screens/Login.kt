@@ -49,10 +49,15 @@ import kotlinx.coroutines.tasks.await
 import androidx.biometric.BiometricManager
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.copernic.pokemap.MyApp
+import cat.copernic.pokemap.data.DTO.UserFromGoogle
 import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButtonWithIcon
 import cat.copernic.pokemap.presentation.ui.components.ContinueWithGoogleButton
 import cat.copernic.pokemap.utils.GoogleAuthHelper
+import cat.copernic.pokemap.utils.SharedUserViewModel
+import cat.copernic.pokemap.utils.checkIfUserExists
 
 
 @Composable
@@ -68,11 +73,27 @@ fun Login(navController: NavController) {
     val canUseBiometrics = remember {
         checkBiometricAvailability(context)
     }
+    var userEmailToCheck by remember { mutableStateOf("") }
+    var doesAccountExists by remember { mutableStateOf(false) }
     var isSigningIn by remember { mutableStateOf(false) } // ✅ Track sign-in state
-
-
     val activity = context as? Activity
     val googleAuthHelper = remember { GoogleAuthHelper(context) }
+
+    LaunchedEffect(userEmailToCheck) {
+        if (userEmailToCheck.isNotEmpty()) { // ✅ Ensure it's set before checking
+            doesAccountExists = checkIfUserExists(userEmailToCheck)
+
+            Log.d("doesAccountExists", doesAccountExists.toString())
+
+            if (!doesAccountExists) {
+                navController.popBackStack()
+                navController.navigate(AppScreens.Onboarding.rute)
+            } else {
+                navController.popBackStack()
+                navController.navigate(AppScreens.Home.rute)
+            }
+        }
+    }
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
@@ -80,14 +101,13 @@ fun Login(navController: NavController) {
         isSigningIn = false
         if (result.resultCode == Activity.RESULT_OK) {
             googleAuthHelper.handleSignInResult(result.data,
-                onSignUp = { user ->
-                    Log.d("GoogleAuth", "New User: ${user.email}")
-                    navController.navigate(AppScreens.Onboarding.rute) // Navigate to onboarding
+                onSignUp = { _ ->
+                    navController.navigate(AppScreens.Onboarding.rute)
                 },
                 onLogin = { user ->
                     Log.d("GoogleAuth", "Returning User: ${user.email}")
-
-                    navController.navigate(AppScreens.Home.rute) // Navigate to Home Screen
+                    userEmailToCheck = user.email
+                        ?: "" // ✅ Update userEmailToCheck, let LaunchedEffect handle navigation
                 },
                 onShowMessage = { message ->
                     dialogMessage = message
@@ -178,8 +198,8 @@ fun Login(navController: NavController) {
         if (MyApp.prefs.isBiometricEnabled() && canUseBiometrics) {
             BiometricLoginButtonWithIcon(
                 navController,
-                onErrorMessageChange = { errorMessage = it },
-                onSuccess = {})
+                onErrorMessageChange = { errorMessage = it }
+            )
         }
         if (showResetPasswordDialog) {
             RestorePassword(
@@ -332,16 +352,16 @@ suspend fun loginWithEmail(
     onLoadingChange: (Boolean) -> Unit,
 ) {
     val auth = FirebaseAuth.getInstance()
-
     try {
         if (auth == null) {
             throw IllegalStateException(LanguageManager.getText("firebaseAuth not innit"))
         }
-
         auth.signInWithEmailAndPassword(email.trim(), password.trim()).await()
         onLoadingChange(false)  // Asegurar que se detiene la carga antes de navegar
 
-        MyApp.prefs.saveBiometricCredentials(email, password)
+        if (!MyApp.prefs.isAnyBiometricOn()) {
+            MyApp.prefs.saveBiometricCredentials(email, password)
+        }
 
         onLoginSuccess()
         LanguageManager.setLanguage(context)

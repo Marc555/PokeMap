@@ -1,18 +1,28 @@
 package cat.copernic.pokemap.utils
 
 import android.util.Log
+import cat.copernic.pokemap.MyApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-fun saveUserToFirestore(uid: String, username: String, email: String?, profilePicture: String) {
+fun saveUserToFirestore(
+    uid: String,
+    email: String,
+    username: String,
+    name: String,
+    surname: String,
+    profilePicture: String
+) {
     val db = FirebaseFirestore.getInstance()
     val userProfile = hashMapOf(
-        "uid" to uid,
+        "name" to name,
+        "surname" to surname,
         "username" to username,
         "email" to email,
-        "profilePicture" to profilePicture,
-        "createdAt" to System.currentTimeMillis()
+        "imageUrl" to profilePicture,
+        "rol" to "USER",
+        "language" to MyApp.prefs.getString("PREF_LANGUAGE_KEY"),
     )
 
     db.collection("users").document(uid)
@@ -27,6 +37,11 @@ fun saveUserToFirestore(uid: String, username: String, email: String?, profilePi
 }
 
 suspend fun checkIfUserExists(email: String): Boolean {
+
+    if (email.isEmpty() || email.isBlank()){
+        return false
+    }
+
     return try {
         val db = FirebaseFirestore.getInstance()
         val querySnapshot = db.collection("users")
