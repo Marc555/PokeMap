@@ -122,7 +122,6 @@
   "delete account": "Eliminar cuenta",
   "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro.",
 
-  "searchUsers": "Buscar Usuarios",
   "Total registered users": "Usuarios totales registrados:",
   "Write to search for users": "Escribe para buscar usuarios",
 
@@ -141,8 +140,7 @@
 
   "gallery": "Galería",
   "camera": "Cámara",
-  "save_changes": "Guardar Cambios"
-  "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro.",
+  "save_changes": "Guardar Cambios",
 
   "select image": "Selecciona una imagen",
   "no image error": "Tienes que seleccionar una imagen",

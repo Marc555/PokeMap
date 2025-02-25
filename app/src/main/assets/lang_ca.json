@@ -117,7 +117,6 @@
   "delete account": "Eliminar compte",
   "report success message": "Hem rebut el teu informe.\nGràcies per fer d'aquesta comunitat un lloc segur.",
 
-  "searchUsers": "Busca Usuaris",
   "Total registered users": "Usuaris totals registrats:",
   "Write to search for users": "Escriu per a buscar usuaris",
 
@@ -132,8 +131,8 @@
   "loading_user": "Carregant usuari, espereu...",
   "edit_profile": "Editar perfil",
   "profile_image": "Imatge de perfil",
-  "friend_code": "Codi d'Amic"
-  "report success message": "Hem rebut el teu informe.\nGràcies per fer d'aquesta comunitat un lloc segur.",
+  "friend_code": "Codi d'Amic",
+
 
   "select image": "Selecciona una imatge",
   "no image error": "Has de seleccionar una imatge",

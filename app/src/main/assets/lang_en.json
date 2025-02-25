@@ -116,7 +116,6 @@
   "delete account": "Delete account",
   "report success message":"We have received your report.\nThank you for making this community a safe place.",
 
-  "searchUsers": "Search Users",
   "Total registered users": "Total registered users:",
   "Write to search for users": "Write to search for users",
 
@@ -131,8 +130,7 @@
   "loading_user": "Loading user, please wait...",
   "edit_profile": "Edit profile",
   "profile_image": "Profile picture",
-  "friend_code": "Friend Code"
-  "report success message":"We have received your report.\nThank you for making this community a safe place.",
+  "friend_code": "Friend Code",
 
   "select image": "Select an image",
   "no image error": "Select an image",
