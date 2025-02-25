@@ -110,7 +110,7 @@
   "report account": "Reportar cuenta",
 
   "followers": "Seguidores",
-  "following": "Siguiendo",
+  "following": "Seguidos",
   "posts": "Publicaciones",
   "outstanding publications": "Publicaciones destacadas",
   "outstanding comments": "Comentarios destacados",
@@ -122,7 +122,6 @@
   "delete account": "Eliminar cuenta",
   "report success message": "Hemos recibido tu reporte.\nGracias por hacer de esta comunidad un lugar seguro.",
 
-  "searchUsers": "Buscar Usuarios",
   "Total registered users": "Usuarios totales registrados:",
   "Write to search for users": "Escribe para buscar usuarios",
 
@@ -130,5 +129,28 @@
   "delete_credentials_message": "Estàs segur que vols eliminar les teves credencials? Aquesta acció no es pot desfer.",
   "delete_button": "Eliminar",
   "cancel_button": "Cancel·lar",
-  "delete_account_text": "Eliminar Compte"
+  "delete_account_text": "Eliminar Compte",
+
+  "unfollow": "Dejar de seguir",
+  "follow": "Seguir",
+  "loading_user": "Cargando usuario, espere...",
+  "edit_profile": "Editar perfil",
+  "profile_image": "Imagen de perfil",
+  "friend_code": "Código de Amigo",
+
+  "gallery": "Galería",
+  "camera": "Cámara",
+  "save_changes": "Guardar Cambios",
+
+  "select image": "Selecciona una imagen",
+  "no image error": "Tienes que seleccionar una imagen",
+  "delete confirmation": "Confirmar eliminación",
+  "delete question": "¿Seguro que quieres borrar la categoria?",
+  "camera denied acces": "No tienes permisos para acceder a la camara",
+  "photo with camera": "Hacer la foto con la camara",
+  "current image": "Imagen actual",
+  "show filters": "Mostrar filtros",
+  "filter by name": "Filtrar por nombre",
+  "filter by distance": "Filtrar por distancia",
+  "filter by likes": "Filtrar por likes"
 }

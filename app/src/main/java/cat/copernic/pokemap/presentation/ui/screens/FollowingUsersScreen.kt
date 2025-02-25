@@ -68,7 +68,7 @@ fun FollowingUsersScreen(
 //        if (user?.rol == Rol.ADMIN) {
 //            NamberUsers(numUsers, navController)
 //        }
-        Text("Seguidos", fontFamily = abeeZee, fontSize = 25.sp)
+        Text(LanguageManager.getText("following"), fontFamily = abeeZee, fontSize = 25.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 

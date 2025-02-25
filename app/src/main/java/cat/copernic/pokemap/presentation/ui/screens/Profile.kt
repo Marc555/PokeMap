@@ -130,14 +130,14 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
 
                     // Mostrar el botón correspondiente
                     if (isFollowed) {
-                        BotonSeguir(text = "Dejar de seguir",
+                        BotonSeguir(LanguageManager.getText("unfollow"),
                             onClick = {
                                 if (followedObjectId != null) {
                                     followViewModel.deleteFollow(followedObjectId!!)
                                 }
                             })
                     } else {
-                        BotonSeguir(text = "Seguir", onClick = {
+                        BotonSeguir(LanguageManager.getText("follow"), onClick = {
                             followViewModel.addFollow(Follow(followed = user.email, follower = viewer.email))
                         })
                     }
@@ -154,7 +154,7 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Cargando usuario, espere...", color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.getText("loading_user"), color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -172,7 +172,7 @@ fun Nombres(user: Users,
         Text(text = "${user.codeFriend}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
         if (userUid == FirebaseAuth.getInstance().currentUser?.uid) {
             IconButton(onClick = onClick) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar perfil")
+                Icon(imageVector = Icons.Default.Edit, contentDescription = LanguageManager.getText("edit_profile"))
             }
         }
     }
@@ -189,7 +189,7 @@ fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
     Box(modifier = modifier.size(150.dp), contentAlignment = Alignment.Center) {
         Image(
             painter = painter,
-            contentDescription = "Imagen de perfil",
+            contentDescription = LanguageManager.getText("profile_image"),
             modifier = Modifier
                 .size(150.dp)
                 .clip(CircleShape)
@@ -227,7 +227,7 @@ fun SeguidosSeguidores(followViewModel: FollowViewModel, email: String, navContr
                 }
         ) {
             Text(
-                text = "followers: ${followersList.size}",
+                text = "${LanguageManager.getText("followers")} ${followersList.size}",
                 modifier = Modifier.padding(5.dp)
             )
         }
@@ -243,7 +243,7 @@ fun SeguidosSeguidores(followViewModel: FollowViewModel, email: String, navContr
                 }
         ) {
             Text(
-                text = "following: ${followingList.size}",
+                text = "${LanguageManager.getText("following")} ${followingList.size}",
                 modifier = Modifier.padding(5.dp)
             )
         }
@@ -276,7 +276,7 @@ fun PublicationsNumber() {
 }
 
 @Composable
-fun BotonSeguir(text: String = "jaun",
+fun BotonSeguir(text: String,
                 abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
                 onClick: () -> Unit
 ) {

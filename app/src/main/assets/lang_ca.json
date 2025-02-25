@@ -105,7 +105,7 @@
   "report account": "Reportar compte",
 
   "followers": "Seguidors",
-  "following": "Seguint",
+  "following": "Seguits",
   "posts": "Publicacions",
   "outstanding publications": "Publicacions destacades",
   "outstanding comments": "Comentaris destacats",
@@ -117,7 +117,6 @@
   "delete account": "Eliminar compte",
   "report success message": "Hem rebut el teu informe.\nGràcies per fer d'aquesta comunitat un lloc segur.",
 
-  "searchUsers": "Busca Usuaris",
   "Total registered users": "Usuaris totals registrats:",
   "Write to search for users": "Escriu per a buscar usuaris",
 
@@ -125,5 +124,25 @@
   "delete_credentials_message": "Estàs segur que vols eliminar les teves credencials? Aquesta acció no es pot desfer.",
   "delete_button": "Eliminar",
   "cancel_button": "Cancel·lar",
-  "delete_account_text": "Eliminar Compte"
+  "delete_account_text": "Eliminar Compte",
+
+  "unfollow": "Deixar de seguir",
+  "follow": "Seguir",
+  "loading_user": "Carregant usuari, espereu...",
+  "edit_profile": "Editar perfil",
+  "profile_image": "Imatge de perfil",
+  "friend_code": "Codi d'Amic",
+
+
+  "select image": "Selecciona una imatge",
+  "no image error": "Has de seleccionar una imatge",
+  "delete confirmation": "Confirmar eliminació",
+  "delete question": "Segur que vols eliminar la categoria?",
+  "camera denied acces": "Permisos de la camara denegats",
+  "photo with camera": "Fer la foto amb la camara",
+  "current image": "Imatge actual",
+  "show filters": "Mostrar filtres",
+  "filter by name": "Filtrar per nom",
+  "filter by distance": "Filtrar per distancia",
+  "filter by likes": "Filtrar per likes"
 }
