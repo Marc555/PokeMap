@@ -12,9 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -25,7 +27,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 @Composable
-fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String) -> Unit) {
+fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String) -> Unit, userViewModel: UsersViewModel = viewModel()) {
     val context = LocalContext.current
     val executor: Executor = Executors.newSingleThreadExecutor()
     val firebaseAuth = FirebaseAuth.getInstance()
@@ -83,6 +85,10 @@ fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String)
 
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         isLoading = false
+
+                                        val uid = FirebaseAuth.getInstance().currentUser?.uid
+                                        userViewModel.updateLastLogin(uid)
+
                                         navController.navigate(AppScreens.Home.rute)
                                     }, 1000)
                                 }

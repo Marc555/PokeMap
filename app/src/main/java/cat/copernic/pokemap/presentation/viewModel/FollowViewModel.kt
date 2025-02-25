@@ -1,5 +1,7 @@
 package cat.copernic.pokemap.presentation.viewModel
 
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,7 +9,11 @@ import androidx.lifecycle.viewModelScope
 import cat.copernic.pokemap.data.DTO.Follow
 import cat.copernic.pokemap.data.Repository.FollowRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FollowViewModel : ViewModel() {
@@ -36,12 +42,33 @@ class FollowViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
+    // Estado para almacenar el email
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> get() = _email
+
+    // followersCount y followingCount se calculan en función del email almacenado
+    val followersList: StateFlow<List<Follow>> = _follows
+        .asStateFlow()
+        .map { follows -> follows.filter { it.followed == _email.value } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val followingList: StateFlow<List<Follow>> = _follows
+        .asStateFlow()
+        .map { follows -> follows.filter { it.follower == _email.value } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    // Método para actualizar el email
+    fun setEmail(newEmail: String) {
+        _email.value = newEmail
+    }
+
     // Obtener todos los seguimientos
     fun fetchFollows() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 _follows.value = repository.getFollows()
+                Log.d("FollowViewModel", "Seguimientos obtenidos: ${_follows.value}")
             } catch (e: Exception) {
                 _errorMessage.value = "Error al obtener los seguimientos: ${e.message}"
             } finally {
@@ -55,14 +82,11 @@ class FollowViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val result = repository.addFollow(follow) // Devuelve Pair<Boolean, String?>
-                val success = result.first
-                val documentId = result.second
-
-                if (success && documentId != null) {
+                val followId = repository.addFollow(follow)
+                if (followId != null) {
                     _isFollowed.value = true
-                    fetchFollows() // Actualiza la lista de seguidores y seguidos
-                    _followedObjectId.value = documentId // Guardamos la ID del documento
+                    _followedObjectId.value = followId
+                    fetchFollows()
                 } else {
                     _errorMessage.value = "Error al añadir el seguimiento"
                 }
@@ -83,6 +107,7 @@ class FollowViewModel : ViewModel() {
                 if (success) {
                     _isFollowed.value = false
                     _followedObjectId.value = null
+                    fetchFollows()
                 } else {
                     _errorMessage.value = "Error al eliminar el seguimiento"
                 }

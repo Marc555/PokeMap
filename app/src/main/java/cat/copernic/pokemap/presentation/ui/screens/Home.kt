@@ -1,3 +1,6 @@
+package cat.copernic.pokemap.presentation.ui.screens
+
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,13 +19,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -50,6 +59,8 @@ import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 @Composable
 fun Home(navController: NavController) {
@@ -79,10 +90,14 @@ fun Home(navController: NavController) {
     var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-
-    // Observar el usuario dentro de un LaunchedEffect
-
     val user by usersViewModel.user.collectAsState()
+
+    var filter by remember { mutableStateOf<String>("") }
+    var showFilters by remember { mutableStateOf(false) }
+
+    val filteredCategories = categories.filter { item ->
+        item.name.contains(filter, ignoreCase = true)
+    }
 
     Box(
         modifier = Modifier
@@ -101,20 +116,43 @@ fun Home(navController: NavController) {
             } else {
                 Title()
 
-                if (user?.rol == Rol.ADMIN) {
-                    IconButton(
-                        onClick = { showAddCategoryDialog = true },
-                        modifier = Modifier.align(Alignment.Start)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle,
-                            contentDescription = "Add Category",
-                        )
+                Row {
+                    //Boton nueva cat
+                    if (user?.rol == Rol.ADMIN) {
+                        IconButton(
+                            onClick = { showAddCategoryDialog = true },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircle,
+                                contentDescription = LanguageManager.getText("add category"),
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // Botón para mostrar la barra de busqueda
+                    IconButton(onClick = { showFilters = !showFilters }) {
+                        val icon: ImageVector = if (!showFilters){
+                            Icons.Default.Search
+                        } else{
+                            Icons.Default.Close
+                        }
+                        Icon(imageVector = icon, contentDescription = LanguageManager.getText("show filters"))
                     }
                 }
+
+                // Mostrar barra busqueda si el desplegable está abierto
+                if (showFilters) {
+                    FilterOptions(
+                        filter = filter,
+                        onFilterChange = { filter = it }
+                    )
+                }
+
                 CategoryList(
                     navController,
-                    categories = categories,
+                    categories = filteredCategories,
                     user = user,
                     onEditCategory = { category ->
                         categoryToEdit = category
@@ -134,18 +172,19 @@ fun Home(navController: NavController) {
                 showAddCategoryDialog = false
                 errorMessage = null
             },
-            onConfirm = { categoryName, description, imageUrl ->
-                if (!nameExistsAdd(categoryName, categories)) {
-                    val newCategory = Category(
-                        name = categoryName,
-                        description = description,
-                        imageUrl = imageUrl
-                    )
-                    categoryViewModel.addCategory(newCategory)
-                    showAddCategoryDialog = false
-                    errorMessage = null
-                } else {
+            onConfirm = { categoryName, imageUri ->
+                if (nameExistsAdd(categoryName, categories)) {
                     errorMessage = LanguageManager.getText("name not available")
+                } else {
+                    uploadCategoryImage(imageUri) { url ->
+                        val newCategory = Category(
+                            name = categoryName,
+                            imageUrl = url
+                        )
+                        categoryViewModel.addCategory(newCategory)
+                        showAddCategoryDialog = false
+                        errorMessage = null
+                    }
                 }
             }
         )
@@ -153,6 +192,7 @@ fun Home(navController: NavController) {
 
     if (showEditCategoryDialog && categoryToEdit != null) {
         EditCategoryDialog(
+            categories = categories,
             errorMessage = errorMessage,
             category = categoryToEdit!!,
             categoryViewModel = categoryViewModel,
@@ -161,12 +201,8 @@ fun Home(navController: NavController) {
                 errorMessage = null
             },
             onConfirm = { updatedCategory ->
-                if (!nameExistsEdit(updatedCategory.name, categories, updatedCategory.id)) {
-                    categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
-                    showEditCategoryDialog = false
-                } else {
-                    errorMessage = LanguageManager.getText("name not available")
-                }
+                categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
+                showEditCategoryDialog = false
             }
         )
     }
@@ -219,7 +255,7 @@ fun CategoryItem(
         ) {
             Image(
                 painter = painter,
-                contentDescription = "Imagen de la categoría",
+                contentDescription = LanguageManager.getText("category image"),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16 / 9f), // Ajustar imagen a toda la tarjeta
@@ -253,21 +289,36 @@ fun CategoryItem(
 }
 
 @Composable
-fun EditCategoryIcon(onClick: () -> Unit) {
+fun EditCategoryIcon(onClick: () -> Unit){
     IconButton(onClick = onClick) {
-        Icon(
-            imageVector = Icons.Default.Edit,
-            contentDescription = "Editar categoria",
+        Icon(imageVector = Icons.Default.Edit,
+            contentDescription = LanguageManager.getText("edit category"),
             tint = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterOptions(
+    filter: String,
+    onFilterChange: (String) -> Unit,
+){
+    OutlinedTextField(
+        value = filter,
+        onValueChange = onFilterChange,
+        label = { Text(LanguageManager.getText("search")) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+    )
 }
 
 @Composable
 fun Title() {
     Image(
         painter = painterResource(id = R.drawable.nombreapp),
-        contentDescription = "Nombre de la aplicación",
+        contentDescription = "PokeMap",
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp),
@@ -275,9 +326,25 @@ fun Title() {
 }
 
 fun nameExistsAdd(name: String, categories: List<Category>): Boolean {
-    return categories.any { it.name == name }
+    return categories.any { it.name.equals(ignoreCase = true, other = name)  }
 }
 
 fun nameExistsEdit(name: String, categories: List<Category>, currentCategoryId: String): Boolean {
-    return categories.any { it.id != currentCategoryId && it.name == name }
+    return categories.any { it.id != currentCategoryId && it.name.equals(ignoreCase = true, other = name) }
 }
+
+fun uploadCategoryImage(uri: Uri, onSuccess: (String) -> Unit) {
+    val storageRef = FirebaseStorage.getInstance().reference
+    val imageRef = storageRef.child("categories/${UUID.randomUUID()}.jpg")
+
+    imageRef.putFile(uri)
+        .addOnSuccessListener { taskSnapshot ->
+            imageRef.downloadUrl.addOnSuccessListener { url ->
+                onSuccess(url.toString())
+            }
+        }
+        .addOnFailureListener {
+            println("Error al subir la imagen: ${it.message}")
+        }
+}
+

@@ -1,5 +1,6 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -22,9 +24,11 @@ import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun SearchUsers(
+fun AdminSearchUsers(
     navController: NavController,
     viewModel: UsersViewModel = viewModel(),
     abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
@@ -54,7 +58,7 @@ fun SearchUsers(
             .padding(16.dp)
     ){
         if (user?.rol == Rol.ADMIN) {
-            NamberUsers(numUsers, navController)
+            NamberUsersAdmin(numUsers)
         }
 
         // Barra de búsqueda
@@ -66,70 +70,41 @@ fun SearchUsers(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Lista de usuarios (solo se muestra si hay texto en la barra de búsqueda)
-        if (searchQuery.isNotEmpty()) {
-            LazyColumn {
-                items(
-                    users.filter { (id, user) ->
-                        user.username.contains(searchQuery, ignoreCase = true) // Filtrado "LIKE"
-                    }
-                ) { (id, user) ->
-                    UserItem(
-                        id = id,
-                        user = user,
-                        modifier = Modifier.fillMaxWidth(),
-                        navController
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp), // Espacio vertical alrededor de la línea
-                        thickness = 1.dp, // Grosor de la línea
-                        color = MaterialTheme.colorScheme.onBackground // Color de la línea
-                    )
+        LazyColumn {
+            items(
+                users.filter { (id, user) ->
+                    user.username.contains(searchQuery, ignoreCase = true) // Filtrado "LIKE"
                 }
-            }
-        } else {
-            // Mensaje o estado inicial cuando no se ha escrito nada
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(LanguageManager.getText("Usuaris totals registrats"), style = MaterialTheme.typography.bodyMedium, fontFamily = abeeZee)
+                .toList() // Convierte el Map a una lista de pares (id, user)
+                .sortedByDescending { (_, user) -> user.lastLogin } // Ordena por lastLogin
+
+            ) { (id, user) ->
+                UserItemAdmin(
+                    id = id,
+                    user = user,
+                    modifier = Modifier.fillMaxWidth(),
+                    navController
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp), // Espacio vertical alrededor de la línea
+                    thickness = 1.dp, // Grosor de la línea
+                    color = MaterialTheme.colorScheme.onBackground // Color de la línea
+                )
             }
         }
     }
 }
 
 @Composable
-fun NamberUsers(numUsers: Int, navController: NavController, abeeZee: FontFamily = FontFamily(Font(R.font.abeezee))) {
+fun NamberUsersAdmin(numUsers: Int, abeeZee: FontFamily = FontFamily(Font(R.font.abeezee))) {
     Text(
-        text = "${LanguageManager.getText("Total registered users")} $numUsers", fontFamily = abeeZee,
-        modifier = Modifier.clickable {
-            navController.navigate(AppScreens.AdminSearchUsers.rute)
-        },
-    )
+        text = "${LanguageManager.getText("Total registered users")} $numUsers", fontFamily = abeeZee)
 }
 
 @Composable
-fun SearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    abeeZee: FontFamily = FontFamily(Font(R.font.abeezee))
-) {
-    TextField(
-        value = query,
-        onValueChange = onQueryChange,
-        modifier = modifier,
-        placeholder = { Text(LanguageManager.getText("searchUsers"), fontFamily = abeeZee) },
-        singleLine = true,
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") }
-    )
-}
-
-@Composable
-fun UserItem(
+fun UserItemAdmin(
     id: String,
     user: Users,
     modifier: Modifier = Modifier,
@@ -141,12 +116,13 @@ fun UserItem(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Imagen de perfil (usando Coil para cargar imágenes desde una URL)
-        ImageProfile(user.imageUrl, Modifier.size(40.dp))
 
         Spacer(modifier = Modifier.width(8.dp))
+        val lastLoginTimestamp = user.lastLogin.toDate() // Convierte Timestamp a Date
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        val formattedDate = dateFormat.format(lastLoginTimestamp)
 
         // Nombre de usuario
-        Text(text = user.username, style = MaterialTheme.typography.bodyMedium)
+        Text(text = "${user.username}, $formattedDate", style = MaterialTheme.typography.bodyMedium)
     }
 }

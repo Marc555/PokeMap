@@ -2,6 +2,7 @@ package cat.copernic.pokemap.data.Repository
 
 import android.util.Log
 import cat.copernic.pokemap.data.DTO.Users
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -73,6 +74,13 @@ class UsersRepository {
             true // Éxito
         } catch (e: Exception) {
             false // Fallo
+        }
+    }
+
+    fun updateLastLogin(uid: String?) {
+        if (uid != null) {
+            usersCollection.document(uid)
+                .update("lastLogin", Timestamp.now())
         }
     }
 }

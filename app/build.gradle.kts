@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.identity.jvm)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -109,4 +110,9 @@ dependencies {
 
     //manage images
     implementation("io.coil-kt:coil-compose:2.4.0") // Add latest version
+
+    //Google Maps
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }

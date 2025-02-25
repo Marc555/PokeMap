@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,7 +65,9 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
     val followViewModel: FollowViewModel = viewModel()
 
     val userUid = userUid ?: run {
-        navController.navigate(AppScreens.Login.rute)
+        navController.navigate(AppScreens.Login.rute){
+            popUpTo(AppScreens.Login.rute) { inclusive = true }
+        }
         return
     }
 
@@ -114,7 +121,7 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
                     })
                 }
 
-                SeguidosSeguidores()
+                SeguidosSeguidores(followViewModel, user.email, navController)
 
                 if (userUid != FirebaseAuth.getInstance().currentUser?.uid) {
                     // Observar el estado isFollowed del ViewModel
@@ -123,14 +130,14 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
 
                     // Mostrar el botón correspondiente
                     if (isFollowed) {
-                        BotonSeguir(text = "Dejar de seguir",
+                        BotonSeguir(LanguageManager.getText("unfollow"),
                             onClick = {
                                 if (followedObjectId != null) {
                                     followViewModel.deleteFollow(followedObjectId!!)
                                 }
                             })
                     } else {
-                        BotonSeguir(text = "Seguir", onClick = {
+                        BotonSeguir(LanguageManager.getText("follow"), onClick = {
                             followViewModel.addFollow(Follow(followed = user.email, follower = viewer.email))
                         })
                     }
@@ -147,7 +154,7 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "No se ha encontrado el usuario", color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.getText("loading_user"), color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -165,7 +172,7 @@ fun Nombres(user: Users,
         Text(text = "${user.codeFriend}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
         if (userUid == FirebaseAuth.getInstance().currentUser?.uid) {
             IconButton(onClick = onClick) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar perfil")
+                Icon(imageVector = Icons.Default.Edit, contentDescription = LanguageManager.getText("edit_profile"))
             }
         }
     }
@@ -182,7 +189,7 @@ fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
     Box(modifier = modifier.size(150.dp), contentAlignment = Alignment.Center) {
         Image(
             painter = painter,
-            contentDescription = "Imagen de perfil",
+            contentDescription = LanguageManager.getText("profile_image"),
             modifier = Modifier
                 .size(150.dp)
                 .clip(CircleShape)
@@ -193,8 +200,17 @@ fun ImageProfile(imageUrl: String? = null, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SeguidosSeguidores() {
-    // Mostrar los contadores solo cuando los datos estén listos
+fun SeguidosSeguidores(followViewModel: FollowViewModel, email: String, navController: NavController) {
+    // Actualiza el email en el ViewModel y carga los datos
+    LaunchedEffect(email) {
+        followViewModel.setEmail(email)
+        followViewModel.fetchFollows()
+    }
+
+    // Observa el estado del ViewModel
+    val followersList by followViewModel.followersList.collectAsState()
+    val followingList by followViewModel.followingList.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,9 +222,12 @@ fun SeguidosSeguidores() {
             modifier = Modifier
                 .wrapContentSize()
                 .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+                .clickable {
+                    navController.navigate(AppScreens.FollowersUsersScreen.createRoute(email))
+                }
         ) {
             Text(
-                text = "${LanguageManager.getText("followers")} 35",
+                text = "${LanguageManager.getText("followers")} ${followersList.size}",
                 modifier = Modifier.padding(5.dp)
             )
         }
@@ -219,9 +238,12 @@ fun SeguidosSeguidores() {
             modifier = Modifier
                 .wrapContentSize()
                 .border(1.dp, color = MaterialTheme.colorScheme.onBackground)
+                .clickable {
+                    navController.navigate(AppScreens.FollowingUsersScreen.createRoute(email))
+                }
         ) {
             Text(
-                text = "${LanguageManager.getText("following")} 15",
+                text = "${LanguageManager.getText("following")} ${followingList.size}",
                 modifier = Modifier.padding(5.dp)
             )
         }
@@ -254,7 +276,7 @@ fun PublicationsNumber() {
 }
 
 @Composable
-fun BotonSeguir(text: String = "jaun",
+fun BotonSeguir(text: String,
                 abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
                 onClick: () -> Unit
 ) {

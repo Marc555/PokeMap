@@ -1,6 +1,7 @@
 package cat.copernic.pokemap.presentation.ui.screens
 
-import Title
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -39,7 +41,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -53,19 +57,40 @@ import cat.copernic.pokemap.presentation.viewModel.ItemViewModel
 import cat.copernic.pokemap.utils.LanguageManager
 import com.google.firebase.auth.FirebaseAuth
 import cat.copernic.pokemap.data.DTO.Item
+import cat.copernic.pokemap.data.DTO.Rol
+import cat.copernic.pokemap.data.DTO.Users
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.firestore.auth.User
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Items(navController: NavController, categoryId: String) {
+fun Items(
+    navController: NavController,
+    categoryId: String,
+    userId: String? = FirebaseAuth.getInstance().currentUser?.uid
+) {
+
+    val userId = userId ?: run {
+        navController.navigate(AppScreens.Login.rute){
+            popUpTo(AppScreens.Login.rute) {inclusive = true}
+        }
+
+    }
+
     val itemViewModel: ItemViewModel = viewModel()
+    val usersViewModel: UsersViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         itemViewModel.getCategoryById(categoryId)
         itemViewModel.fetchItems(categoryId)
+        usersViewModel.fetchUserByUid(userId.toString())
     }
 
     val category by itemViewModel.category.collectAsState()
     val items by itemViewModel.items.collectAsState()
+    val user by usersViewModel.user.collectAsState()
 
     var showAddItemDialog by remember { mutableStateOf(false) }
     var showEditItemDialog by remember { mutableStateOf(false) }
@@ -80,8 +105,7 @@ fun Items(navController: NavController, categoryId: String) {
     val filteredItems = items.filter { item ->
         item.name.contains(filter, ignoreCase = true) &&
                 item.likes >= minLikes //&&
-        // Aquí llamamos a la función pendiente de calcular distancia
-        //calculateDistance(item) >= minDistance
+                //calculateDistance(item) >= minDistance
     }
 
     Column(
@@ -104,7 +128,12 @@ fun Items(navController: NavController, categoryId: String) {
 
             // Botón para mostrar los filtros
             IconButton(onClick = { showFilters = !showFilters }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = LanguageManager.getText("show filters"))
+                val icon: ImageVector = if (!showFilters){
+                    Icons.Default.Search
+                } else{
+                    Icons.Default.Close
+                }
+                Icon(imageVector = icon, contentDescription = LanguageManager.getText("show filters"))
             }
         }
 
@@ -120,27 +149,32 @@ fun Items(navController: NavController, categoryId: String) {
             )
         }
 
-        ItemsList(filteredItems) { item ->
-            itemToEdit = item
-            showEditItemDialog = true
+        user?.let {
+            ItemsList(navController, it, userId.toString(), filteredItems) { item ->
+                itemToEdit = item
+                showEditItemDialog = true
+            }
         }
 
         //Mostrar menu de nuevo item
         if (showAddItemDialog) {
             AddItemDialog(
+                context =  LocalContext.current,
                 errorMessage = errorMessage,
                 onDismiss = {
                     showAddItemDialog = false
                     errorMessage = null
                 },
-                onConfirm = { itemName, description, imageUrl ->
+                onConfirm = { itemName, description, latitude, longitude, imageUrl ->
                     if (!itemExistsAdd(itemName, items)) {
                         val newItem =
                             Item(
                                 name = itemName,
                                 description = description,
                                 categoryId = categoryId,
-                                userId = getUserId(),
+                                userId = getCurrentUserId(),
+                                latitude = latitude,
+                                longitude = longitude,
                                 imageUrl = imageUrl,
                             )
                         itemViewModel.addItem(newItem, categoryId)
@@ -149,13 +183,14 @@ fun Items(navController: NavController, categoryId: String) {
                     } else {
                         errorMessage = LanguageManager.getText("name not available")
                     }
-                }
+                },
             )
         }
 
         //Mostrar menu de editar item
         if (showEditItemDialog && itemToEdit != null) {
             EditItemDialog(
+                context =  LocalContext.current,
                 errorMessage = errorMessage,
                 item = itemToEdit!!,
                 itemViewModel = itemViewModel,
@@ -193,7 +228,7 @@ fun FilterOptions(
             .padding(16.dp)
             .clip(RoundedCornerShape(20.dp))
             .border(width = 2.dp, color = MaterialTheme.colorScheme.onBackground, shape = RoundedCornerShape(20.dp)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),  // Más altura en la sombra
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceVariant)
     ) {
@@ -270,7 +305,13 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun ItemsList(items: List<Item>, onEditItem: (Item) -> Unit) {
+fun ItemsList(
+    navController: NavController,
+    user: Users,
+    userId: String?,
+    items: List<Item>,
+    onEditItem: (Item) -> Unit
+) {
     if (items.isEmpty()) {
         Text(
             text = LanguageManager.getText("area empty"),
@@ -280,9 +321,11 @@ fun ItemsList(items: List<Item>, onEditItem: (Item) -> Unit) {
         LazyColumn(modifier = Modifier.wrapContentHeight()) {
             itemsIndexed(items) { _, item ->
                 ItemCard(
+                    userId = userId,
+                    user = user,
                     item = item,
-                    onClick = { /* Acción al hacer clic en la tarjeta */ },
-                    onEditClick = { onEditItem(item) }
+                    onClick = { navController.navigate("itemInside/${item.id}") },
+                    onEditClick = { onEditItem(item) },
                 )
             }
         }
@@ -291,7 +334,7 @@ fun ItemsList(items: List<Item>, onEditItem: (Item) -> Unit) {
 
 
 @Composable
-fun ItemCard(item: Item, onClick: () -> Unit, onEditClick: () -> Unit) {
+fun ItemCard(item: Item, onClick: () -> Unit, onEditClick: () -> Unit, user: Users, userId: String?) {
     val imageUrl = item.imageUrl
     val painter = rememberAsyncImagePainter(model = imageUrl)
     val fondoTexto = MaterialTheme.colorScheme.surface
@@ -309,7 +352,7 @@ fun ItemCard(item: Item, onClick: () -> Unit, onEditClick: () -> Unit) {
         ) {
             Image(
                 painter = painter,
-                contentDescription = "Imagen del ítem",
+                contentDescription = LanguageManager.getText("image"),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16 / 9f), // Ajuste de la imagen
@@ -331,12 +374,14 @@ fun ItemCard(item: Item, onClick: () -> Unit, onEditClick: () -> Unit) {
                     modifier = Modifier.weight(1f)
                 )
 
-                IconButton(onClick = { onEditClick() }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar ítem",
-                        tint = colorTexto
-                    )
+                if(item.userId == userId || user.rol == Rol.ADMIN){
+                    IconButton(onClick = { onEditClick() }) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = LanguageManager.getText("edit item"),
+                            tint = colorTexto
+                        )
+                    }
                 }
             }
         }
@@ -359,14 +404,14 @@ fun CategoryName(category: Category) {
 }
 
 fun itemExistsAdd(name: String, items: List<Item>): Boolean {
-    return items.any { it.name == name }
+    return items.any { it.name.equals(ignoreCase = true, other = name) }
 }
 
 fun itemExistsEdit(name: String, items: List<Item>, id: String): Boolean {
-    return items.any { it.name == name && it.id != id }
+    return items.any { it.name.equals(ignoreCase = true, other = name) && it.id != id }
 }
 
-fun getUserId(): String{
+fun getCurrentUserId(): String{
     val currentUser = FirebaseAuth.getInstance().currentUser
     val userUid = currentUser?.uid
 

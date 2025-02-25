@@ -49,19 +49,21 @@ import kotlinx.coroutines.tasks.await
 import androidx.biometric.BiometricManager
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.data.DTO.UserFromGoogle
 import cat.copernic.pokemap.presentation.ui.components.BiometricLoginButtonWithIcon
 import cat.copernic.pokemap.presentation.ui.components.ContinueWithGoogleButton
+import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.GoogleAuthHelper
 import cat.copernic.pokemap.utils.SharedUserViewModel
 import cat.copernic.pokemap.utils.checkIfUserExists
 
 
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController, userViewModel: UsersViewModel = viewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -188,6 +190,10 @@ fun Login(navController: NavController) {
 
         ButtonLogin(email, password, isLoading, onLoginSuccess = {
             isLoading = false  // Asegurar que la carga se detiene antes de navegar
+
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            userViewModel.updateLastLogin(uid)
+
             navController.navigate(AppScreens.Home.rute)
         }, onErrorMessageChange = {
             errorMessage = it
