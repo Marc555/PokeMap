@@ -10,6 +10,15 @@ class ItemRepository {
     private val db = FirebaseFirestore.getInstance()
     private val itemsCollection = db.collection("items")
 
+    suspend fun getAllItems(): List<Item> {
+        return try {
+            itemsCollection.get().await().toObjects(Item::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList() // Error, devuelve una lista vacía
+        }
+    }
+
     suspend fun getItems(categoryId: String): List<Item> {
         return try {
             itemsCollection

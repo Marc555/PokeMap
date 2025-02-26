@@ -65,7 +65,7 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                 // Menu Items with Background and Rounded Corners
                 MenuItem(LanguageManager.getText("home"), "home", Color(0xFF00AE14), navController, onClose)
                 PerfileItem(LanguageManager.getText("profile"), Color(0xFF0060AE), navController, onClose)
-                MenuItem(LanguageManager.getText("rankings"), "rankings", Color(0xFF0060AE), navController, onClose)
+                MenuItem("Ranking", "rankingMenu", Color(0xFF0060AE), navController, onClose)
                 MenuItem(LanguageManager.getText("searchUsers"), "searchUsers", Color(0xFF0060AE), navController, onClose)
                 MenuItem(
                     LanguageManager.getText("notifications"),

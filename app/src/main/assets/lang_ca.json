@@ -1,7 +1,6 @@
 {
   "home": "Inici",
   "profile": "Perfil",
-  "rankings": "Classificacions",
   "notifications": "Notificacions",
   "settings": "Configuració",
   "logout": "Tancar sessió",
@@ -144,5 +143,9 @@
   "show filters": "Mostrar filtres",
   "filter by name": "Filtrar per nom",
   "filter by distance": "Filtrar per distancia",
-  "filter by likes": "Filtrar per likes"
+  "filter by likes": "Filtrar per likes",
+
+  "top_rated": "Millor valorat",
+  "most_active": "Més Actiu",
+  "most_followed": "Més seguit"
 }

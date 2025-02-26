@@ -5,19 +5,27 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import cat.copernic.pokemap.data.DTO.Item
 import cat.copernic.pokemap.data.DTO.Users
+import cat.copernic.pokemap.data.Repository.CommentRepository
+import cat.copernic.pokemap.data.Repository.FollowRepository
+import cat.copernic.pokemap.data.Repository.ItemRepository
 import cat.copernic.pokemap.data.Repository.UsersRepository
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import com.google.firebase.Timestamp
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.*
 
-class UsersViewModel : ViewModel() {
-
-    private val repository = UsersRepository()
+class UsersViewModel() : ViewModel() {
+    private val usersRepository: UsersRepository = UsersRepository()
+    private val followRepository: FollowRepository = FollowRepository()
+    private val itemRepository: ItemRepository = ItemRepository()
+    private val commentRepository: CommentRepository = CommentRepository()
 
     private val _users = MutableStateFlow<List<Users>>(emptyList())
     val users: StateFlow<List<Users>> = _users
@@ -31,48 +39,60 @@ class UsersViewModel : ViewModel() {
     private val _isUploadingImage = MutableStateFlow(false) // Estado para la subida de imágenes
     val isUploadingImage: StateFlow<Boolean> = _isUploadingImage
 
-    init {
-        fetchUsers()
-    }
+    private val _usersWithFollowersCount = MutableStateFlow<List<Pair<Users, Int>>>(emptyList())
+    val usersWithFollowersCount: StateFlow<List<Pair<Users, Int>>> = _usersWithFollowersCount
 
-    fun fetchUsers() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _users.value = repository.getUsers()
-            _isLoading.value = false
-        }
-    }
+    private val _topUsersByPosts = MutableStateFlow<Map<String, List<Pair<Users, Int>>>>(emptyMap())
+    val topUsersByPosts: StateFlow<Map<String, List<Pair<Users, Int>>>> = _topUsersByPosts
 
     private val _usersWithIds = MutableStateFlow<List<Pair<String, Users>>>(emptyList())
     val usersWithIds: StateFlow<List<Pair<String, Users>>> = _usersWithIds
 
-    fun fetchUsersWithIds() {
+    private val _usersWithLikes = MutableStateFlow<List<Pair<Users, Int>>>(emptyList())
+    val usersWithLikes: StateFlow<List<Pair<Users, Int>>> = _usersWithLikes
+
+    init {
+        fetchUsers()
+    }
+
+    // Obtener todos los usuarios
+    fun fetchUsers() {
         viewModelScope.launch {
             _isLoading.value = true
-            _usersWithIds.value = repository.getUsersWithIds()
+            _users.value = usersRepository.getUsers()
             _isLoading.value = false
         }
     }
 
+    // Obtener usuarios con sus IDs
+    fun fetchUsersWithIds() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _usersWithIds.value = usersRepository.getUsersWithIds()
+            _isLoading.value = false
+        }
+    }
 
+    // Obtener un usuario por su UID
     fun fetchUserByUid(userUid: String) {
         viewModelScope.launch {
-            _isLoading.value = true // Iniciar carga
+            _isLoading.value = true
             try {
-                _user.value = repository.getUserByUid(userUid)
+                _user.value = usersRepository.getUserByUid(userUid)
             } catch (e: Exception) {
                 // Manejar errores
             } finally {
-                _isLoading.value = false // Finalizar carga
+                _isLoading.value = false
             }
         }
     }
 
+    // Actualizar un usuario
     fun updateUser(uid: String, user: Users) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val result = repository.updateUser(uid, user)
+                val result = usersRepository.updateUser(uid, user)
                 if (result) {
                     _user.value = user
                 } else {
@@ -86,73 +106,178 @@ class UsersViewModel : ViewModel() {
         }
     }
 
+    // Subir una imagen de perfil a Firebase Storage
     fun uploadImageToStorage(uri: Uri, previousImageUrl: String?, onSuccess: (String) -> Unit) {
-        _isUploadingImage.value = true // Iniciar subida de imagen
+        _isUploadingImage.value = true
         val storageRef = FirebaseStorage.getInstance().reference
         val imageRef =
-            storageRef.child("profile_images/${System.currentTimeMillis()}_${uri.lastPathSegment}.jpg") // Usar un nombre único
+            storageRef.child("profile_images/${System.currentTimeMillis()}_${uri.lastPathSegment}.jpg")
 
         viewModelScope.launch {
             imageRef.putFile(uri)
                 .addOnSuccessListener { taskSnapshot ->
                     imageRef.downloadUrl.addOnSuccessListener { url ->
-                        _isUploadingImage.value = false // Finalizar subida de imagen
+                        _isUploadingImage.value = false
                         onSuccess(url.toString())
                     }
                 }
                 .addOnFailureListener {
-                    _isUploadingImage.value =
-                        false // Finalizar subida de imagen (incluso en caso de error)
+                    _isUploadingImage.value = false
                     println("Error al subir la imagen: ${it.message}")
                 }
         }
     }
 
+    // Actualizar el idioma del usuario
     fun editUserLanguage(lang: String) {
         val userUid: String = FirebaseAuth.getInstance().currentUser?.uid.toString()
         viewModelScope.launch {
             _isLoading.value = true
-
-            if (!repository.updateUserLanguage(userUid, lang)) {
+            if (!usersRepository.updateUserLanguage(userUid, lang)) {
                 return@launch
             }
             _isLoading.value = false
         }
     }
 
+    // Actualizar la última vez que el usuario inició sesión
     fun updateLastLogin(uid: String?) {
         viewModelScope.launch {
             _isLoading.value = true
-            repository.updateLastLogin(uid)
+            usersRepository.updateLastLogin(uid)
         }
     }
 
+    // Eliminar las credenciales del usuario
     fun deleteUserCredentials(userInfo: Users, navController: NavController, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
-
             try {
-
                 val user = FirebaseAuth.getInstance().currentUser ?: run {
-                    navController.navigate(AppScreens.Login.rute){
+                    navController.navigate(AppScreens.Login.rute) {
                         popUpTo(AppScreens.Login.rute) { inclusive = true }
                     }
                     return@launch
                 }
-
-
-                // Eliminar la cuenta del usuario en Firebase Authentication
                 user.delete().await()
-
-                repository.updateUser(user.uid, userInfo)
-
+                usersRepository.updateUser(user.uid, userInfo)
                 onResult(true) // Notificar éxito
             } catch (e: Exception) {
-                // Manejar errores
                 onResult(false) // Notificar error
             } finally {
                 _isLoading.value = false
             }
+        }
+    }
+
+    // Obtener los 5 usuarios con más seguidores
+    fun fetchUsersWithFollowersCount() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val users = usersRepository.getUsers()
+            val follows = followRepository.getFollows()
+
+            val usersWithCount = users.map { user ->
+                val followerCount = follows.count { it.followed == user.email }
+                user to followerCount
+            }
+
+            // Ordenar y tomar los 5 primeros
+            _usersWithFollowersCount.value = usersWithCount
+                .sortedByDescending { it.second } // Ordenar por seguidores (descendente)
+                .take(5) // Tomar solo los 5 primeros
+            _isLoading.value = false
+        }
+    }
+
+    // Obtener los usuarios con más publicaciones en el último día, mes y año
+    fun fetchTopUsersByPosts(filter: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val allItems = itemRepository.getAllItems() // Obtén todas las publicaciones
+            val allUsers = usersRepository.getUsersWithIds() // Obtén todos los usuarios con sus IDs
+
+            // Obtén las fechas de inicio y fin para el período seleccionado
+            val calendar = Calendar.getInstance()
+            val now = Timestamp.now()
+
+            val (startDate, endDate) = when (filter) {
+                "lastDay" -> {
+                    calendar.time = now.toDate()
+                    calendar.add(Calendar.DAY_OF_YEAR, -1)
+                    Pair(Timestamp(calendar.time), now)
+                }
+                "lastMonth" -> {
+                    calendar.time = now.toDate()
+                    calendar.add(Calendar.MONTH, -1)
+                    Pair(Timestamp(calendar.time), now)
+                }
+                "lastYear" -> {
+                    calendar.time = now.toDate()
+                    calendar.add(Calendar.YEAR, -1)
+                    Pair(Timestamp(calendar.time), now)
+                }
+                else -> Pair(now, now)
+            }
+
+            val filteredItems = filterItemsByDateRange(allItems, startDate, endDate)
+            val counts = countItemsByUser(filteredItems, allUsers)
+
+            // Almacenar los resultados en el StateFlow
+            _topUsersByPosts.value = mapOf(filter to counts)
+            _isLoading.value = false
+        }
+    }
+
+    // Función para filtrar publicaciones por rango de fechas
+    private fun filterItemsByDateRange(items: List<Item>, startDate: Timestamp, endDate: Timestamp): List<Item> {
+        return items.filter { item ->
+            item.creationDate >= startDate && item.creationDate <= endDate
+        }
+    }
+
+    // Función para contar publicaciones por usuario y mapear a Users
+    private fun countItemsByUser(items: List<Item>, users: List<Pair<String, Users>>): List<Pair<Users, Int>> {
+        val userMap = users.associate { it.first to it.second } // Mapa de userId a Users
+        return items.groupingBy { it.userId }.eachCount() // Contar publicaciones por userId
+            .mapNotNull { (userId, count) ->
+                userMap[userId]?.let { user -> user to count } // Mapear userId a Users
+            }
+            .sortedByDescending { it.second } // Ordenar por número de publicaciones
+    }
+
+    // Función para obtener los usuarios con más likes
+    fun fetchUsersWithMostLikes() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val allUsers = usersRepository.getUsersWithIds() // Obtener todos los usuarios con sus IDs
+            val allItems = itemRepository.getAllItems() // Obtener todos los items
+            val allComments = commentRepository.getAllComments() // Obtener todos los comentarios
+
+            // Mapa para almacenar el total de likes por usuario
+            val userLikesMap = mutableMapOf<String, Int>()
+
+            // Calcular likes de items
+            allItems.forEach { item ->
+                val userId = item.userId
+                val likes = item.likes
+                userLikesMap[userId] = (userLikesMap.getOrDefault(userId, 0) + likes).toInt()
+            }
+
+            // Calcular likes de comentarios
+            allComments.forEach { comment ->
+                val userId = comment.userId
+                val likes = comment.likes
+                userLikesMap[userId] = userLikesMap.getOrDefault(userId, 0) + likes
+            }
+
+            // Mapear a Users y ordenar por likes
+            val usersWithCounts = allUsers.mapNotNull { (userId, user) ->
+                userLikesMap[userId]?.let { likes -> user to likes }
+            }.sortedByDescending { it.second }
+
+            _usersWithLikes.value = usersWithCounts
+            _isLoading.value = false
         }
     }
 }

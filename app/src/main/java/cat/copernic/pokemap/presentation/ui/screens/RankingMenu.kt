@@ -27,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.utils.LanguageManager
 
 @Composable
-fun RankingMenu() {
+fun RankingMenu(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,20 +50,20 @@ fun RankingMenu() {
             text = "Ranking",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        RankingButton(Icons.Default.ThumbUp, "Mejor valorado")
-        RankingButton(Icons.Default.EmojiEvents, "Más Activo")
-        RankingButton(Icons.Default.Person, "Más seguido")
+        RankingButton(Icons.Default.ThumbUp, LanguageManager.getText("top_rated")) { navController.navigate(AppScreens.RankingLikes.rute) }
+        RankingButton(Icons.Default.EmojiEvents, LanguageManager.getText("most_active")) { navController.navigate(AppScreens.RankingActivo.rute) }
+        RankingButton(Icons.Default.Person, LanguageManager.getText("most_followed")) { navController.navigate(AppScreens.RankingSeguido.rute) }
     }
 }
 
 @Composable
-fun RankingButton(icon: ImageVector, text: String) {
+fun RankingButton(icon: ImageVector, text: String, onClick: () -> Unit) {
     Button(
-        onClick = { /* Acción aquí */ },
+        onClick = { onClick() },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -76,10 +78,4 @@ fun RankingButton(icon: ImageVector, text: String) {
             Text(text, color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewRankingScreen() {
-    RankingMenu()
 }

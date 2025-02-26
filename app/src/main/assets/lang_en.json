@@ -1,7 +1,6 @@
 {
   "home": "Home",
   "profile": "Profile",
-  "rankings": "Rankings",
   "notifications": "Notifications",
   "settings": "Settings",
   "logout": "Logout",
@@ -142,5 +141,9 @@
   "show filters": "Show filters",
   "filter by name": "Filter by name",
   "filter by distance": "Filter by distance",
-  "filter by likes": "Filter by likes"
+  "filter by likes": "Filter by likes",
+
+  "top_rated": "Top Rated",
+  "most_active": "Most Active",
+  "most_followed": "Most Followed"
 }

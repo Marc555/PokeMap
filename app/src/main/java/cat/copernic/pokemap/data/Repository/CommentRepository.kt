@@ -9,6 +9,15 @@ class CommentRepository {
     private val db = FirebaseFirestore.getInstance()
     private val commentCollection = db.collection("comments")
 
+    suspend fun getAllComments(): List<Comment> {
+        return try {
+            commentCollection.get().await().toObjects(Comment::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList() // Error, devuelve una lista vacía
+        }
+    }
+
     suspend fun getComments(itemId: String): List<Comment> {
         return try {
             commentCollection

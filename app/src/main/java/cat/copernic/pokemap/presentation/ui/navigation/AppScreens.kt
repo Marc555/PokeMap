@@ -8,7 +8,10 @@ sealed class AppScreens(val rute: String) {
     object ProfileUid: AppScreens("profile") {
         fun createRoute(userUid: String) = "profileUid/$userUid"
     }
-    object Rankings: AppScreens("rankings")
+    object RankingMenu: AppScreens("rankingMenu")
+    object RankingSeguido: AppScreens("rankingSeguido")
+    object RankingActivo: AppScreens("rankingActivo")
+    object RankingLikes: AppScreens("rankingLikes")
     object Notifications: AppScreens("notifications")
     object Settings: AppScreens("settings")
     object EditProfile: AppScreens("editProfile/{userUid}") {

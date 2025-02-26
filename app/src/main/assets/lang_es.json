@@ -1,7 +1,6 @@
 {
   "home": "Inicio",
   "profile": "Perfil",
-  "rankings": "Clasificaciones",
   "notifications": "Notificaciones",
   "settings": "Configuración",
   "logout": "Cerrar sesión",
@@ -152,5 +151,9 @@
   "show filters": "Mostrar filtros",
   "filter by name": "Filtrar por nombre",
   "filter by distance": "Filtrar por distancia",
-  "filter by likes": "Filtrar por likes"
+  "filter by likes": "Filtrar por likes",
+
+  "top_rated": "Mejor valorado",
+  "most_active": "Más Activo",
+  "most_followed": "Más seguido"
 }

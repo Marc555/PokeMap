@@ -6,12 +6,14 @@ import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.data.DTO.Item
 import cat.copernic.pokemap.data.Repository.CategoryRepository
 import cat.copernic.pokemap.data.Repository.ItemRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 
 class ItemViewModel : ViewModel() {
 

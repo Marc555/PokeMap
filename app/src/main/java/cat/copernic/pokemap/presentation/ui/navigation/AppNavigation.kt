@@ -27,7 +27,10 @@ import cat.copernic.pokemap.presentation.ui.screens.Login
 import cat.copernic.pokemap.presentation.ui.screens.Notifications
 import cat.copernic.pokemap.presentation.ui.screens.OnboardingScreen
 import cat.copernic.pokemap.presentation.ui.screens.Profile
-import cat.copernic.pokemap.presentation.ui.screens.Rankings
+import cat.copernic.pokemap.presentation.ui.screens.RankingActivo
+import cat.copernic.pokemap.presentation.ui.screens.RankingLikes
+import cat.copernic.pokemap.presentation.ui.screens.RankingMenu
+import cat.copernic.pokemap.presentation.ui.screens.RankingSeguido
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.SearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.Settings
@@ -94,7 +97,10 @@ fun AppNavigation() {
                     Profile(navController, userUid)
                 }
                 composable(AppScreens.Notifications.rute) { Notifications(navController) }
-                composable(AppScreens.Rankings.rute) { Rankings(navController) }
+                composable(AppScreens.RankingMenu.rute) { RankingMenu(navController) }
+                composable(AppScreens.RankingSeguido.rute) { RankingSeguido() }
+                composable(AppScreens.RankingActivo.rute) { RankingActivo() }
+                composable(AppScreens.RankingLikes.rute) { RankingLikes() }
                 composable(AppScreens.Settings.rute) { Settings(navController) }
                 composable(AppScreens.Register.rute) { Register(navController) }
                 composable(
