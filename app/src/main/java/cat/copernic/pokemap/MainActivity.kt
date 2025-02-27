@@ -12,12 +12,14 @@ import androidx.fragment.app.FragmentActivity
 import cat.copernic.pokemap.presentation.ui.navigation.AppNavigation //
 import cat.copernic.pokemap.presentation.ui.theme.PokeMapTheme
 import cat.copernic.pokemap.utils.LanguageManager
+import cat.copernic.pokemap.utils.requestLocationPermissions
 import com.google.firebase.FirebaseApp
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT // Lock portrait mode
+        requestLocationPermissions(this)
         FirebaseApp.initializeApp(this)
         // ✅ Initialize and log language on app start
         LanguageManager.setLanguage(this) // ✅ Ensures language is properly initialized

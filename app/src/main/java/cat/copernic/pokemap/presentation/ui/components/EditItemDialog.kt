@@ -59,7 +59,7 @@ fun EditItemDialog(
     item: Item,
     itemViewModel: ItemViewModel,
     onDismiss: () -> Unit,
-    onConfirm: (Item, String) -> Unit
+    onConfirm: (Item, String, Uri?) -> Unit
 ) {
     val customColors = LocalCustomColors.current
 
@@ -164,8 +164,6 @@ fun EditItemDialog(
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
-
                 TextField(
                     value = description,
                     onValueChange = {
@@ -184,8 +182,6 @@ fun EditItemDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )
-
-                Spacer(modifier = Modifier.height(5.dp))
 
                 MapPicker(
                     context = context,
@@ -225,6 +221,8 @@ fun EditItemDialog(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(5.dp))
+
                 // Botón para abrir la cámara
                 Button(
                     onClick = {
@@ -252,37 +250,20 @@ fun EditItemDialog(
                 } else {
                     Button(
                         onClick = {
-                            isUploading = true
-
-                            if (imageUri != null) {
-                                uploadCategoryImage(imageUri!!) { url ->
-                                    val updatedItem = item.copy(
-                                        name = itemName,
-                                        description = description,
-                                        imageUrl = url,
-                                        latitude = selectedLocation.latitude,
-                                        longitude = selectedLocation.longitude
-                                    )
-                                    onConfirm(updatedItem, item.categoryId)
-                                    isUploading = false
-                                }
-                            } else {
-                                val updatedItem = item.copy(
-                                    name = itemName,
-                                    description = description,
-                                    imageUrl = imageUrl,
-                                    latitude = selectedLocation.latitude,
-                                    longitude = selectedLocation.longitude
-                                )
-                                onConfirm(updatedItem, item.categoryId)
-                                isUploading = false
-                            }
+                            val updatedItem = item.copy(
+                                name = itemName,
+                                description = description,
+                                imageUrl = imageUrl,
+                                latitude = selectedLocation.latitude,
+                                longitude = selectedLocation.longitude
+                            )
+                            onConfirm(updatedItem, item.categoryId, imageUri)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = customColors.confirmButton
                         ),
-                        enabled = !isUploading
+                        enabled = itemName.isNotEmpty() && description.isNotEmpty()
                     ) {
                         Text(text = LanguageManager.getText("save"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }

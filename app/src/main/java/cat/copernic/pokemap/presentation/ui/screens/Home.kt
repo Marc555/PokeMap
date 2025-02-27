@@ -200,9 +200,28 @@ fun Home(navController: NavController) {
                 showEditCategoryDialog = false
                 errorMessage = null
             },
-            onConfirm = { updatedCategory ->
-                categoryViewModel.updateCategory(updatedCategory.id, updatedCategory)
-                showEditCategoryDialog = false
+            onConfirm = { updatedCategory, imageUri ->
+                if (nameExistsEdit(updatedCategory.name, categories, updatedCategory.id)) {
+                    errorMessage = LanguageManager.getText("name not available")
+                } else {
+                    if (imageUri == null) {
+                        val category = categoryToEdit!!.copy(
+                            name = updatedCategory.name,
+                            imageUrl = updatedCategory.imageUrl
+                        )
+                        categoryViewModel.updateCategory(categoryToEdit!!.id, category)
+                        showEditCategoryDialog = false
+                    } else {
+                        uploadCategoryImage(imageUri) { url ->
+                            val category = categoryToEdit!!.copy(
+                                name = updatedCategory.name,
+                                imageUrl = url
+                            )
+                            categoryViewModel.updateCategory(categoryToEdit!!.id, category)
+                            showEditCategoryDialog = false
+                        }
+                    }
+                }
             }
         )
     }
