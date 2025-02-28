@@ -18,6 +18,8 @@ import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
@@ -31,8 +33,10 @@ fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String)
     val firebaseAuth = FirebaseAuth.getInstance()
     var isLoading by remember { mutableStateOf(false) }
     val isBiometricEnabled = MyApp.prefs.isBiometricEnabled()
-
+    val signInClient: SignInClient = Identity.getSignInClient(context)
     if (!isBiometricEnabled) return // ✅ Hide button if biometrics are disabled
+
+    val user = FirebaseAuth.getInstance().currentUser
 
     // ✅ Automatically trigger biometrics on screen load
     LaunchedEffect(Unit) {
@@ -62,7 +66,6 @@ fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String)
                             firebaseAuth.signInWithCredential(credential)
                                 .addOnSuccessListener {
                                     Log.d("BiometricAuth", "Firebase sign-in successful! Navigating to Home.")
-
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         isLoading = false
                                         navController.navigate(AppScreens.Home.rute)
@@ -94,7 +97,7 @@ fun BiometricPrompt(navController: NavController, onErrorMessageChange: (String)
                                     isLoading = false
                                     onErrorMessageChange("Biometric login failed: ${e.message}")
                                 }
-                        } else {
+                        }else{
                             Log.e("BiometricAuth", "No stored credentials found.")
                             isLoading = false
                             onErrorMessageChange(LanguageManager.getText("auth biometric error"))

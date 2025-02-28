@@ -89,7 +89,7 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MenuItem(LanguageManager.getText("settings"), "settings", Color(0xFF555555), navController, onClose)
-                    SiginOutItem(context,LanguageManager.getText("logout"), Color(0xFFD32F2F), navController, onClose)
+                    SiginOutItem(LanguageManager.getText("logout"), Color(0xFFD32F2F), navController)
                 }
             }
         }
@@ -169,20 +169,16 @@ fun MenuItem(
 
 @Composable
 fun SiginOutItem(
-    context: Context,
     title: String,
     bgColor: Color,
     navController: NavController,
-    onClose: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onClose()
                 val auth = FirebaseAuth.getInstance()
                 auth.signOut()
-
                 navController.navigate(AppScreens.Login.rute){
                     popUpTo(AppScreens.Login.rute) { inclusive = true }
                 }

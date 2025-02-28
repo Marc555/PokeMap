@@ -1,7 +1,6 @@
 package cat.copernic.pokemap.data.DTO
 
 import com.google.firebase.Timestamp
-
 data class Users(
     val email: String = "",
     val username: String = "",

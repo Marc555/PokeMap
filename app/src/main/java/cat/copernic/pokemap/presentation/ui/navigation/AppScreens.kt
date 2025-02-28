@@ -23,6 +23,7 @@ sealed class AppScreens(val rute: String) {
     object ItemInside: AppScreens("itemInside/{itemId}")
     object ContactForm: AppScreens("contact")
     object Onboarding : AppScreens("onboarding_screen")
+    object ContactMessages : AppScreens("contactMessages")
     object FollowersUsersScreen : AppScreens("followersUsersScreen") {
         fun createRoute(email: String) = "followersUsersScreen/$email"
     }    object FollowingUsersScreen : AppScreens("followingUsersScreen") {

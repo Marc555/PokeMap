@@ -92,8 +92,11 @@
   "auth biometric instructions":"Use fingerprint or face unlock to log in",
   "auth biometric error": "No biometric account found. Please log in manually",
   "login biometric": "Login with Biometrics",
-  "disable biometric": "Disable biometric login",
+  "clean biometric": "Clean biometric credentials",
   "biometric not available" : "You have singed up with a Google account therefore we can't provide you with biometric authentication ",
+  "biometric is enable" : "You have set the biometric authentication ON",
+  "biometric is disable" : "You have set the biometric authentication OFF",
+
 
   "pending notifications": "Pending notifications",
   "viewed notifications": "Viewed notifications",
