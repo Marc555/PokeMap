@@ -29,6 +29,7 @@ import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.data.DTO.Rol
 import cat.copernic.pokemap.presentation.ui.components.BiometricMessage
 import cat.copernic.pokemap.presentation.ui.components.BiometricToggleButton
+import cat.copernic.pokemap.presentation.ui.components.CrashButton
 import cat.copernic.pokemap.presentation.ui.components.LanguageSelector
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import cat.copernic.pokemap.utils.LanguageManager
@@ -117,6 +118,10 @@ fun Settings(navController: NavController) {
                 .fillMaxWidth()
             )
         }
+
+        //this button will throw an error and crash the app (only to be used for dev and testing purposes)
+        //BE CAREFULLY
+        CrashButton()
     }
 }
 
