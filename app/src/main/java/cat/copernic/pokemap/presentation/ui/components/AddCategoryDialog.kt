@@ -14,12 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.presentation.ui.theme.LocalCustomColors
 import cat.copernic.pokemap.utils.LanguageManager
 import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.storage.FirebaseStorage
-import java.util.*
 
 @Composable
 fun AddCategoryDialog(

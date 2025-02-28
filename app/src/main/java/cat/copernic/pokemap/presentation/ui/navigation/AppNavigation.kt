@@ -48,14 +48,10 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val categoryViewModel: CategoryViewModel = viewModel()
     val currentRoute = getCurrentRoute(navController)
-    var showAddCategoryDialog by remember { mutableStateOf(false) }
 
     // List of screens where the menu should NOT be shown
     val hideMenuScreens = listOf("login", "register")
-
-    val showAddCategory = listOf("home")
 
     ModalNavigationDrawer(
         drawerState = drawerState,

@@ -29,7 +29,7 @@ fun EditCategoryDialog(
     category: Category,
     categoryViewModel: CategoryViewModel,
     onDismiss: () -> Unit,
-    onConfirm: (Category) -> Unit
+    onConfirm: (Category, Uri?) -> Unit
 ) {
     val customColors = LocalCustomColors.current
 
@@ -70,7 +70,7 @@ fun EditCategoryDialog(
                 TextField(
                     value = categoryName,
                     onValueChange = {
-                        if (it.length <= 15) { // Límite de 50 caracteres
+                        if (it.length <= 15) { // Límite de 15 caracteres
                             categoryName = it
                         }
                     },
@@ -78,9 +78,6 @@ fun EditCategoryDialog(
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
-                localErrorMessage?.let {
-                    Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
-                }
 
                 // Contador de caracteres
                 Text(
@@ -128,31 +125,17 @@ fun EditCategoryDialog(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = {
-                        isUploading = true
-                        if (nameExistsEdit(category.name, categories, category.id)){
-                            localErrorMessage = "Nombre existe"
-                        } else if (imageUri != null) {
-                            uploadCategoryImage(imageUri!!) { url ->
-                                val updatedCategory = category.copy(
-                                    name = categoryName,
-                                    imageUrl = url
-                                )
-                                onConfirm(updatedCategory)
-                                isUploading = false
-                            }
-                        } else {
-                            val updatedCategory = category.copy(
-                                name = categoryName,
-                                imageUrl = imageUrl
-                            )
-                            isUploading = false
-                        }
+                        val updatedCategory = category.copy(
+                            name = categoryName,
+                            imageUrl = imageUrl
+                        )
+                        onConfirm(updatedCategory, imageUri)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = customColors.confirmButton,
                     ),
-                    enabled = !isUploading
+                    enabled = categoryName.isNotEmpty()
                 ) {
                     Text(text= LanguageManager.getText("save"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }

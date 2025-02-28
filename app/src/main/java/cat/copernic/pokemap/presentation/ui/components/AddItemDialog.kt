@@ -64,18 +64,17 @@ import java.util.UUID
 @Composable
 fun AddItemDialog(
     context: Context,
+    userLocation: Location,
     errorMessage: String? = null,
     onDismiss: () -> Unit,
-    onConfirm: (String, String, Double, Double, String) -> Unit
+    onConfirm: (String, String, Double, Double, Uri) -> Unit
 ) {
     val customColors = LocalCustomColors.current
 
     var itemName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var imageUrl by remember { mutableStateOf<String?>(null) }
     var localErrorMessage by remember { mutableStateOf<String?>(null) }
-    var isUploading by remember { mutableStateOf(false) }
 
     var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
     var photoFile by remember { mutableStateOf<File?>(null) }
@@ -151,8 +150,6 @@ fun AddItemDialog(
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
-
                 TextField(
                     value = description,
                     onValueChange = {
@@ -172,10 +169,8 @@ fun AddItemDialog(
                     modifier = Modifier.align(Alignment.End)
                 )
 
-                Spacer(modifier = Modifier.height(5.dp))
-
                 MapPicker(
-                    context = context,
+                    defaultLocation = LatLng(userLocation.latitude, userLocation.longitude),
                     onLocationSelected = { latLng ->
                         selectedLocation = latLng
                     }
@@ -229,21 +224,17 @@ fun AddItemDialog(
                         imageUri == null -> localErrorMessage = LanguageManager.getText("no image error")
                         selectedLocation == null -> localErrorMessage = LanguageManager.getText("no location error")
                         else -> {
-                            isUploading = true
-                            uploadItemImage(imageUri!!) { url ->
-                                isUploading = false
-                                onConfirm(
-                                    itemName,
-                                    description,
-                                    selectedLocation!!.latitude,
-                                    selectedLocation!!.longitude,
-                                    url
-                                )
-                            }
+                            onConfirm(
+                                itemName,
+                                description,
+                                selectedLocation!!.latitude,
+                                selectedLocation!!.longitude,
+                                imageUri!!
+                            )
                         }
                     }
                 },
-                enabled = itemName.isNotBlank() && description.isNotBlank() && selectedLocation != null && imageUri != null && !isUploading,
+                enabled = itemName.isNotBlank() && description.isNotBlank() && selectedLocation != null && imageUri != null,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = customColors.confirmButton
                 ),
@@ -253,22 +244,6 @@ fun AddItemDialog(
             }
         }
     )
-}
-
-// Función para subir imágenes a Firebase
-fun uploadItemImage(uri: Uri, onSuccess: (String) -> Unit) {
-    val storageRef = FirebaseStorage.getInstance().reference
-    val imageRef = storageRef.child("items/${UUID.randomUUID()}.jpg")
-
-    imageRef.putFile(uri)
-        .addOnSuccessListener {
-            imageRef.downloadUrl.addOnSuccessListener { url ->
-                onSuccess(url.toString())
-            }
-        }
-        .addOnFailureListener {
-            println("Error al subir la imagen: ${it.message}")
-        }
 }
 
 // Función para crear un archivo de imagen en el almacenamiento local
@@ -283,22 +258,15 @@ fun createImageFile(context: Context): File {
 
 @Composable
 fun MapPicker(
-    context: Context,
+    defaultLocation: LatLng?,
     onLocationSelected: (LatLng) -> Unit
 ) {
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val cameraPositionState = rememberCameraPositionState()
-    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
+    var selectedLocation by remember { mutableStateOf(defaultLocation) }
 
-    // Obtener la ubicación actual
-    LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val userLatLng = LatLng(it.latitude, it.longitude)
-                    cameraPositionState.position = CameraPosition.fromLatLngZoom(userLatLng, 20f) // Acercamos más el zoom
-                }
-            }
+    LaunchedEffect(defaultLocation) {
+        defaultLocation?.let {
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 20f)
         }
     }
 
@@ -317,6 +285,7 @@ fun MapPicker(
         }
     }
 }
+
 
 
 
