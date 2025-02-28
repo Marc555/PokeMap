@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -76,6 +77,7 @@ dependencies {
 
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
+
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-firestore-ktx")
@@ -115,4 +117,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:maps-compose:2.11.4")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    //crash
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
