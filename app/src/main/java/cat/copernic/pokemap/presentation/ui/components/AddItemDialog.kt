@@ -141,7 +141,7 @@ fun AddItemDialog(
 
                 // Contador de caracteres
                 Text(
-                    text = "${itemName.length}/50",
+                    text = "${itemName.length}/15",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )

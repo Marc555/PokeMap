@@ -135,8 +135,11 @@
   "profile_image": "Imatge de perfil",
   "friend_code": "Codi d'Amic",
 
+  "gallery": "Galeria",
+  "camera": "Càmera",
+  "save_changes": "Desa canvis",
 
-  "select image": "Selecciona una imatge",
+"select image": "Selecciona una imatge",
   "no image error": "Has de seleccionar una imatge",
   "delete confirmation": "Confirmar eliminació",
   "delete question": "Segur que vols eliminar la categoria, també eliminaras tot el que contingui?",

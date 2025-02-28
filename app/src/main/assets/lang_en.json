@@ -134,6 +134,10 @@
   "profile_image": "Profile picture",
   "friend_code": "Friend Code",
 
+  "gallery": "Gallery",
+  "camera": "Camera",
+  "save_changes": "Save Changes",
+
   "select image": "Select an image",
   "no image error": "Select an image",
   "delete confirmation": "Confirm delete",

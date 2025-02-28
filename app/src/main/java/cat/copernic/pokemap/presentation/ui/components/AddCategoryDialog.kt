@@ -61,7 +61,7 @@ fun AddCategoryDialog(
 
                 // Contador de caracteres
                 Text(
-                    text = "${categoryName.length}/50",
+                    text = "${categoryName.length}/15",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )
