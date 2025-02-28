@@ -9,21 +9,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbDownOffAlt
+import androidx.compose.material.icons.outlined.ThumbUpOffAlt
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +40,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,8 +60,13 @@ import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.presentation.viewModel.UsersViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.copernic.pokemap.R
+import cat.copernic.pokemap.data.DTO.Comment
 import cat.copernic.pokemap.data.DTO.Follow
+import cat.copernic.pokemap.data.DTO.Item
+import cat.copernic.pokemap.data.DTO.Rol
+import cat.copernic.pokemap.presentation.ui.components.ConfirmDeleteDialog
 import cat.copernic.pokemap.presentation.ui.navigation.AppScreens
+import cat.copernic.pokemap.presentation.viewModel.CommentViewModel
 import cat.copernic.pokemap.presentation.viewModel.FollowViewModel
 import com.google.firebase.auth.FirebaseAuth
 import cat.copernic.pokemap.utils.LanguageManager
@@ -65,7 +79,7 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
     val followViewModel: FollowViewModel = viewModel()
 
     val userUid = userUid ?: run {
-        navController.navigate(AppScreens.Login.rute){
+        navController.navigate(AppScreens.Login.rute) {
             popUpTo(AppScreens.Login.rute) { inclusive = true }
         }
         return
@@ -78,11 +92,18 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
         if (userUid != null) {
             FirebaseAuth.getInstance().currentUser?.uid?.let { viewerViewModel.fetchUserByUid(it) }
             profileViewModel.fetchUserByUid(userUid)
+            profileViewModel.fetchPublicationsCount(userUid) // Cargar el número de publicacione
+            profileViewModel.fetchTopRatedItems(userUid) // Cargar items mejor valorados
+            profileViewModel.fetchTopRatedComments(userUid) // Cargar comentarios mejor valorados
         }
     }
 
     val viewer = viewerViewModel.user.value
     val user = profileViewModel.user.value
+
+    val publicationsCount by profileViewModel.publicationsCount.collectAsState()
+    val topRatedItems by profileViewModel.topRatedItems.collectAsState()
+    val topRatedComments by profileViewModel.topRatedComments.collectAsState()
 
     Column(
         modifier = Modifier
@@ -101,7 +122,6 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
             }
         } else {
             if (user != null && viewer != null) {
-
                 // Verificar si el usuario es seguido y actualizar el botón
                 LaunchedEffect(Unit) {
                     followViewModel.checkIfUserXIsFollowedByUserY(user.email, viewer.email)
@@ -145,7 +165,37 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                PublicationsNumber()
+                PublicationsNumber(publicationsCount)
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                ) {
+                    item {
+                        Text(
+                            text = "Top 3 Items",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    items(topRatedItems) { item ->
+                        TopRatedItemCard(item)
+                    }
+
+                    item {
+                        Text(
+                            text = "Top 3 Comentarios",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    items(topRatedComments) { comment ->
+                        TopRatedCommentCard(comment)
+                    }
+                }
             } else {
                 Row(
                     modifier = Modifier
@@ -162,6 +212,148 @@ fun Profile(navController: NavController, userUid: String? = FirebaseAuth.getIns
 }
 
 @Composable
+fun TopRatedItemCard(item: Item) {
+    val imageUrl = item.imageUrl
+    val painter = rememberAsyncImagePainter(model = imageUrl)
+    val fondoTexto = MaterialTheme.colorScheme.surface
+    val colorTexto = MaterialTheme.colorScheme.onSurface
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painter,
+                contentDescription = LanguageManager.getText("image"),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16 / 9f), // Ajuste de la imagen
+                contentScale = ContentScale.Crop
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(fondoTexto) // Fondo de la parte inferior
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = colorTexto, // Color del texto
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Like
+                Icon(
+                    imageVector = Icons.Filled.ThumbUp,
+                    contentDescription = "Like",
+                    tint = Color(0xFF4CAF50)
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(
+                    text = "${item.likes}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Dislike
+                Icon(
+                    imageVector = Icons.Filled.ThumbDown,
+                    contentDescription = "Dislike",
+                    tint = Color(0xFFF44336)
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(
+                    text = "${item.dislikes}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TopRatedCommentCard(
+    comment: Comment,
+) {
+    // Diseño del comentario
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(color = MaterialTheme.colorScheme.background) // El mismo fondo que el background
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.onBackground)
+            .padding(10.dp)
+    ) {
+        // Texto del comentario
+        Text(
+            text = comment.text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Botones de Like y Dislike en la esquina inferior derecha
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            // Like
+            Icon(
+                imageVector = Icons.Filled.ThumbUp,
+                contentDescription = "Like",
+                tint = Color(0xFF4CAF50)
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Text(
+                text = "${comment.likes}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Dislike
+            Icon(
+                imageVector = Icons.Filled.ThumbDown,
+                contentDescription = "Dislike",
+                tint = Color(0xFFF44336)
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Text(
+                text = "${comment.dislikes}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
+@Composable
 fun Nombres(user: Users,
             userUid: String,
             abeeZee: FontFamily = FontFamily(Font(R.font.abeezee)),
@@ -169,7 +361,7 @@ fun Nombres(user: Users,
     Column {
         Text(text = "${user.name} ${user.surname}", fontFamily = abeeZee, fontSize = 25.sp, color = MaterialTheme.colorScheme.onBackground)
         Text(text = "@${user.username}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
-        Text(text = "${user.codeFriend}", fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
+        Text(text = user.codeFriend, fontFamily = abeeZee, fontSize = 23.sp, color = Color.Gray)
         if (userUid == FirebaseAuth.getInstance().currentUser?.uid) {
             IconButton(onClick = onClick) {
                 Icon(imageVector = Icons.Default.Edit, contentDescription = LanguageManager.getText("edit_profile"))
@@ -251,7 +443,7 @@ fun SeguidosSeguidores(followViewModel: FollowViewModel, email: String, navContr
 }
 
 @Composable
-fun PublicationsNumber() {
+fun PublicationsNumber(publicationsCount: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -267,7 +459,7 @@ fun PublicationsNumber() {
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             Text(
-                text = "12",
+                text = "$publicationsCount",
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(3.dp),
             )

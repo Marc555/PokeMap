@@ -1,7 +1,5 @@
 package cat.copernic.pokemap.data.DTO
 
-import com.google.firebase.Timestamp
-
 data class Comment(
     var id: String = "",
     val text: String = "",

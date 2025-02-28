@@ -134,7 +134,7 @@
   "select image": "Select an image",
   "no image error": "Select an image",
   "delete confirmation": "Confirm delete",
-  "delete question": "Are you sure deleting the category?",
+  "delete question": "Are you sure you want to delete the category, will you also delete everything in it?",
   "camera denied acces": "Failed to access to the camera",
   "photo with camera": "Take the photo with the camera",
   "current image": "Current image",

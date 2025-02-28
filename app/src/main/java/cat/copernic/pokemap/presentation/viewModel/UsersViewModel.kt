@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import cat.copernic.pokemap.data.DTO.Comment
 import cat.copernic.pokemap.data.DTO.Item
 import cat.copernic.pokemap.data.DTO.Users
 import cat.copernic.pokemap.data.Repository.CommentRepository
@@ -50,6 +51,15 @@ class UsersViewModel() : ViewModel() {
 
     private val _usersWithLikes = MutableStateFlow<List<Pair<Users, Int>>>(emptyList())
     val usersWithLikes: StateFlow<List<Pair<Users, Int>>> = _usersWithLikes
+
+    private val _topRatedItems = MutableStateFlow<List<Item>>(emptyList())
+    val topRatedItems: StateFlow<List<Item>> = _topRatedItems
+
+    private val _topRatedComments = MutableStateFlow<List<Comment>>(emptyList())
+    val topRatedComments: StateFlow<List<Comment>> = _topRatedComments
+
+    private val _publicationsCount = MutableStateFlow(0)
+    val publicationsCount: StateFlow<Int> = _publicationsCount
 
     init {
         fetchUsers()
@@ -277,6 +287,41 @@ class UsersViewModel() : ViewModel() {
             }.sortedByDescending { it.second }
 
             _usersWithLikes.value = usersWithCounts
+            _isLoading.value = false
+        }
+    }
+
+    // Función para obtener los 3 items mejor valorados del usuario
+    fun fetchTopRatedItems(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val allItems = itemRepository.getAllItems()
+            val userItems = allItems.filter { it.userId == userId }
+            val sortedItems = userItems.sortedByDescending { it.likes }.take(3)
+            _topRatedItems.value = sortedItems
+            _isLoading.value = false
+        }
+    }
+
+    // Función para obtener los 3 comentarios mejor valorados del usuario
+    fun fetchTopRatedComments(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val allComments = commentRepository.getAllComments()
+            val userComments = allComments.filter { it.userId == userId }
+            val sortedComments = userComments.sortedByDescending { it.likes }.take(3)
+            _topRatedComments.value = sortedComments
+            _isLoading.value = false
+        }
+    }
+
+    // Función para obtener el número de publicaciones del usuario
+    fun fetchPublicationsCount(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val allItems = itemRepository.getAllItems()
+            val userItems = allItems.filter { it.userId == userId }
+            _publicationsCount.value = userItems.size
             _isLoading.value = false
         }
     }

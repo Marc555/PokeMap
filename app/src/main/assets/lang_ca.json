@@ -136,7 +136,7 @@
   "select image": "Selecciona una imatge",
   "no image error": "Has de seleccionar una imatge",
   "delete confirmation": "Confirmar eliminació",
-  "delete question": "Segur que vols eliminar la categoria?",
+  "delete question": "Segur que vols eliminar la categoria, també eliminaras tot el que contingui?",
   "camera denied acces": "Permisos de la camara denegats",
   "photo with camera": "Fer la foto amb la camara",
   "current image": "Imatge actual",

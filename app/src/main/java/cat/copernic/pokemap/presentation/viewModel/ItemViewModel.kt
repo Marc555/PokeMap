@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cat.copernic.pokemap.data.DTO.Category
 import cat.copernic.pokemap.data.DTO.Item
 import cat.copernic.pokemap.data.Repository.CategoryRepository
+import cat.copernic.pokemap.data.Repository.CommentRepository
 import cat.copernic.pokemap.data.Repository.ItemRepository
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +20,7 @@ class ItemViewModel : ViewModel() {
 
     private val repository = ItemRepository()
     private val categoryRepository = CategoryRepository()
+    private val commentRepository = CommentRepository()
 
     private val _category = MutableStateFlow<Category?>(null)
     val category = _category.asStateFlow()
@@ -69,6 +71,12 @@ class ItemViewModel : ViewModel() {
     fun deleteItem(id: String, categoryId: String) {
         viewModelScope.launch {
             try {
+                // Borrar todos los comentarios asociados al item
+                val comments = commentRepository.getComments(id)
+                comments.forEach { comment ->
+                    commentRepository.deleteComment(comment.id)
+                }
+
                 repository.deleteItem(id)
                 fetchItems(categoryId)
             } catch (e: Exception) {

@@ -144,7 +144,7 @@
   "select image": "Selecciona una imagen",
   "no image error": "Tienes que seleccionar una imagen",
   "delete confirmation": "Confirmar eliminación",
-  "delete question": "¿Seguro que quieres borrar la categoria?",
+  "delete question": "¿Seguro que quieres borrar la categoría, también borraras todo lo que contenga?",
   "camera denied acces": "No tienes permisos para acceder a la camara",
   "photo with camera": "Hacer la foto con la camara",
   "current image": "Imagen actual",
