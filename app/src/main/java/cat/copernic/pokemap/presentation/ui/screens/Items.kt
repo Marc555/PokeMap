@@ -123,16 +123,16 @@ fun Items(
     var sortOption by remember { mutableStateOf<String>("") } // Opción de ordenación seleccionada
 
     val sortedItems = when (sortOption) {
-        "Ordenar de menor a mayor distancia" ->
+        LanguageManager.getText("sort_distance_asc") ->
             if (userLocation != null) items.sortedBy { calculateDistance(userLocation, it) } else items
-        "Ordenar de mayor a menor distancia" ->
+        LanguageManager.getText("sort_distance_desc") ->
             if (userLocation != null) items.sortedByDescending { calculateDistance(userLocation, it) } else items
-        "Ordenar de menor a mayor numero de likes" -> items.sortedBy { it.likes }
-        "Ordenar de mayor a menor numero de likes" -> items.sortedByDescending { it.likes }
-        "Ordenar de menor a mayor numero de dislikes" -> items.sortedBy { it.dislikes }
-        "Ordenar de mayor a menor numero de dislikes" -> items.sortedByDescending { it.dislikes }
-        "Ordenar por fecha de mayor a menor" -> items.sortedByDescending { it.creationDate }
-        "Ordenar por fecha de menor a mayor" -> items.sortedBy { it.creationDate }
+        LanguageManager.getText("sort_likes_asc") -> items.sortedBy { it.likes }
+        LanguageManager.getText("sort_likes_desc") -> items.sortedByDescending { it.likes }
+        LanguageManager.getText("sort_dislikes_asc") -> items.sortedBy { it.dislikes }
+        LanguageManager.getText("sort_dislikes_desc") -> items.sortedByDescending { it.dislikes }
+        LanguageManager.getText("sort_date_desc") -> items.sortedByDescending { it.creationDate }
+        LanguageManager.getText("sort_date_asc") -> items.sortedBy { it.creationDate }
         else -> items
     }
 
@@ -160,7 +160,11 @@ fun Items(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = { showSortMenu = !showSortMenu }) {
+            // En la función Items
+            IconButton(onClick = {
+                showSortMenu = !showSortMenu
+                if (showSortMenu) showFilters = false  // Si abres el de ordenación, cierra los filtros
+            }) {
                 val icon: ImageVector = if (!showSortMenu) {
                     Icons.Default.Sort
                 } else {
@@ -171,7 +175,10 @@ fun Items(
 
             Spacer(modifier = Modifier.width(8.dp)) // Espacio entre los botones
 
-            IconButton(onClick = { showFilters = !showFilters }) {
+            IconButton(onClick = {
+                showFilters = !showFilters
+                if (showFilters) showSortMenu = false  // Si abres los filtros, cierra el de ordenación
+            }) {
                 val icon: ImageVector = if (!showFilters){
                     Icons.Default.Search
                 } else{
@@ -294,24 +301,16 @@ fun SortOptions(
             .border(1.dp, colorScheme.onBackground.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
             .background(colorScheme.surfaceVariant)
     ) {
-        // Título de la sección
-        Text(
-            text = LanguageManager.getText("sort options"),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = colorScheme.onSurfaceVariant
-            ),
-            modifier = Modifier.padding(8.dp)
-        )
-
         // Opciones de ordenación con botones de estilo moderno
         val sortOptionsList = listOf(
-            "Ordenar de menor a mayor distancia" to Icons.Default.ArrowUpward,
-            "Ordenar de mayor a menor distancia" to Icons.Default.ArrowDownward,
-            "Ordenar de menor a mayor número de likes" to Icons.Default.ThumbUp,
-            "Ordenar de mayor a menor número de likes" to Icons.Default.ThumbDown,
-            "Ordenar por fecha de mayor a menor" to Icons.Default.Today,
-            "Ordenar por fecha de menor a mayor" to Icons.Default.Schedule
+            LanguageManager.getText("sort_distance_asc") to Icons.Default.ArrowUpward,
+            LanguageManager.getText("sort_distance_desc") to Icons.Default.ArrowDownward,
+            LanguageManager.getText("sort_likes_asc") to Icons.Default.ThumbUp,
+            LanguageManager.getText("sort_likes_desc") to Icons.Default.ThumbUp,
+            LanguageManager.getText("sort_dislikes_asc") to Icons.Default.ThumbDown,
+            LanguageManager.getText("sort_dislikes_desc") to Icons.Default.ThumbDown,
+            LanguageManager.getText("sort_date_desc") to Icons.Default.Today,
+            LanguageManager.getText("sort_date_asc") to Icons.Default.Schedule
         )
 
         sortOptionsList.forEach { (option, icon) ->
@@ -388,16 +387,6 @@ fun FilterOptions(
             .border(1.dp, colorScheme.onBackground.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
             .background(colorScheme.surfaceVariant)
     ) {
-        // Título de la sección
-        Text(
-            text = LanguageManager.getText("filter options"),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = colorScheme.onSurfaceVariant
-            ),
-            modifier = Modifier.padding(8.dp)
-        )
-
         // Filtro por nombre
         FilterOptionItem(
             option = LanguageManager.getText("filter by name"),
@@ -408,7 +397,7 @@ fun FilterOptions(
 
         // Filtro por distancia
         val distanceValue = if (minDistance == 0f) {
-            "∞ km" // Mostrar infinito si la distancia es 0
+            "∞" // Mostrar infinito si la distancia es 0
         } else {
             "${minDistance.toInt()} km" // De lo contrario, mostrar la distancia en km
         }
@@ -429,7 +418,7 @@ fun FilterOptions(
             onValueChange = { onMinLikesChange(it.toInt()) },
             icon = Icons.Default.ThumbUp,
             isSlider = true,
-            sliderValue = minLikes.toFloat()
+            sliderValue = minLikes.toFloat()  // Asegurando que se pase como Float al slider
         )
     }
 }
@@ -486,7 +475,7 @@ fun FilterOptionItem(
             )
             Slider(
                 value = sliderValue,
-                onValueChange = { onValueChange(it.toString()) },
+                onValueChange = { onValueChange(it.toInt().toString()) },  // Convertir a String al cambiar el valor
                 valueRange = 0f..1000f,
                 steps = 999,
                 modifier = Modifier.fillMaxWidth(),
@@ -515,7 +504,6 @@ fun FilterOptionItem(
         }
     }
 }
-
 @Composable
 fun ItemsList(
     navController: NavController,

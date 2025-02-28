@@ -153,5 +153,16 @@
 
   "top_rated": "Millor valorat",
   "most_active": "Més Actiu",
-  "most_followed": "Més seguit"
+  "most_followed": "Més seguit",
+
+
+  "sort_distance_asc": "Ordenar per distancia (Acendent)",
+  "sort_distance_desc": "Ordenar per distancia (Desendent)",
+  "sort_likes_asc": "Ordenar per likes (Acendent)",
+  "sort_likes_desc": "Ordenar per likes (Desendent)",
+  "sort_dislikes_asc": "Ordenar per dislikes (Acendent)",
+  "sort_dislikes_desc": "Ordenar per dislikes (Desendent)",
+  "sort_date_desc": "Ordenar per data (Nou primer)",
+  "sort_date_asc": "Ordenar per data (Antic primer)"
+
 }

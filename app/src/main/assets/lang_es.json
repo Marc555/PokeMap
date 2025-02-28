@@ -156,5 +156,17 @@
   "top_rated": "Mejor valorado",
   "most_active": "Más Activo",
   "most_followed": "Más seguido",
-  "filter by likes": "Filtrar por likes minimos"
+  "filter by likes": "Filtrar por likes minimos",
+
+
+  "sort_distance_asc": "Ordenar por distancia (Ascendente)",
+  "sort_distance_desc": "Ordenar por distancia (Descendente)",
+  "sort_likes_asc": "Ordenar poe likes (Ascendente)",
+  "sort_likes_desc": "Ordenar por likes (Descendente)",
+  "sort_dislikes_asc": "Ordenar por dislikes (Ascendente)",
+  "sort_dislikes_desc": "Ordenar por dislikes (Descendente)",
+  "sort_date_desc": "Ordenar por fecha (Nuevo primero)",
+  "sort_date_asc": "Ordenar por fecha (Antiguo primero)"
 }
+
+
