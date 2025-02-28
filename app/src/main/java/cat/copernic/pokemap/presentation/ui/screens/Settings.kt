@@ -118,10 +118,6 @@ fun Settings(navController: NavController) {
                 .fillMaxWidth()
             )
         }
-
-        //this button will throw an error and crash the app (only to be used for dev and testing purposes)
-        //BE CAREFULLY
-        CrashButton()
     }
 }
 
