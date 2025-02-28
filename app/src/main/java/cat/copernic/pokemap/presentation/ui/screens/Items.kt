@@ -123,8 +123,10 @@ fun Items(
     var sortOption by remember { mutableStateOf<String>("") } // Opción de ordenación seleccionada
 
     val sortedItems = when (sortOption) {
-        "Ordenar de menor a mayor distancia" -> items.sortedBy { calculateDistance(userLocation!!, it) }
-        "Ordenar de mayor a menor distancia" -> items.sortedByDescending { calculateDistance(userLocation!!, it) }
+        "Ordenar de menor a mayor distancia" ->
+            if (userLocation != null) items.sortedBy { calculateDistance(userLocation, it) } else items
+        "Ordenar de mayor a menor distancia" ->
+            if (userLocation != null) items.sortedByDescending { calculateDistance(userLocation, it) } else items
         "Ordenar de menor a mayor numero de likes" -> items.sortedBy { it.likes }
         "Ordenar de mayor a menor numero de likes" -> items.sortedByDescending { it.likes }
         "Ordenar de menor a mayor numero de dislikes" -> items.sortedBy { it.dislikes }
@@ -134,11 +136,10 @@ fun Items(
         else -> items
     }
 
-    // Filtrando los items según el texto, distancia y likes
     val filteredItems = sortedItems.filter { item ->
         item.name.contains(filter, ignoreCase = true) &&
-                item.likes >= minLikes
-                && (minDistance == 0f || calculateDistance(userLocation!!, item) <= minDistance)
+                item.likes >= minLikes &&
+                (minDistance == 0f || (userLocation != null && calculateDistance(userLocation, item) <= minDistance))
     }
 
     Column(
