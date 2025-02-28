@@ -148,5 +148,16 @@
   "top_rated": "Top Rated",
   "most_active": "Most Active",
   "most_followed": "Most Followed",
-  "filter by likes": "Filter by min. likes"
+  "filter by likes": "Filter by min. likes",
+
+
+  "sort_distance_asc": "Sort by distance (ascending)",
+  "sort_distance_desc": "Sort by distance (descending)",
+  "sort_likes_asc": "Sort by likes (ascending)",
+  "sort_likes_desc": "Sort by likes (descending)",
+  "sort_dislikes_asc": "Sort by dislikes (ascending)",
+  "sort_dislikes_desc": "Sort by dislikes (descending)",
+  "sort_date_desc": "Sort by date (newest first)",
+  "sort_date_asc": "Sort by date (oldest first)"
+
 }
