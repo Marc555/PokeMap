@@ -1,20 +1,16 @@
 package cat.copernic.pokemap.presentation.ui.navigation
 
-
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
-import cat.copernic.pokemap.MyApp
 import cat.copernic.pokemap.presentation.ui.components.Hamburger
 import cat.copernic.pokemap.presentation.ui.components.DrawerMenu
 import cat.copernic.pokemap.presentation.ui.screens.AdminSearchUsers
@@ -27,7 +23,6 @@ import cat.copernic.pokemap.presentation.ui.screens.Home
 import cat.copernic.pokemap.presentation.ui.screens.ItemInside
 import cat.copernic.pokemap.presentation.ui.screens.Items
 import cat.copernic.pokemap.presentation.ui.screens.Login
-import cat.copernic.pokemap.presentation.ui.screens.Notifications
 import cat.copernic.pokemap.presentation.ui.screens.OnboardingScreen
 import cat.copernic.pokemap.presentation.ui.screens.Profile
 import cat.copernic.pokemap.presentation.ui.screens.RankingActivo
@@ -37,7 +32,6 @@ import cat.copernic.pokemap.presentation.ui.screens.RankingSeguido
 import cat.copernic.pokemap.presentation.ui.screens.Register
 import cat.copernic.pokemap.presentation.ui.screens.SearchUsers
 import cat.copernic.pokemap.presentation.ui.screens.Settings
-import cat.copernic.pokemap.presentation.viewModel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -95,7 +89,6 @@ fun AppNavigation() {
                     val userUid = backStackEntry.arguments?.getString("userUid") ?: ""
                     Profile(navController, userUid)
                 }
-                composable(AppScreens.Notifications.rute) { Notifications(navController) }
                 composable(AppScreens.RankingMenu.rute) { RankingMenu(navController) }
                 composable(AppScreens.RankingSeguido.rute) { RankingSeguido() }
                 composable(AppScreens.RankingActivo.rute) { RankingActivo() }

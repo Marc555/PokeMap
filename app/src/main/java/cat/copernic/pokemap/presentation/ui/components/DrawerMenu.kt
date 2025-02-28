@@ -67,13 +67,6 @@ fun DrawerMenu(onClose: () -> Unit, navController: NavController) {
                 PerfileItem(LanguageManager.getText("profile"), Color(0xFF0060AE), navController, onClose)
                 MenuItem("Ranking", "rankingMenu", Color(0xFF0060AE), navController, onClose)
                 MenuItem(LanguageManager.getText("searchUsers"), "searchUsers", Color(0xFF0060AE), navController, onClose)
-                MenuItem(
-                    LanguageManager.getText("notifications"),
-                    "notifications",
-                    Color(0xFF0060AE),
-                    navController,
-                    onClose
-                )
 
                 // Pushes bottom items to the bottom
                 Spacer(modifier = Modifier.weight(1f).clickable(

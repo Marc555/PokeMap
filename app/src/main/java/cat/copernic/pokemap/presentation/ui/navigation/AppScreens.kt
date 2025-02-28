@@ -12,7 +12,6 @@ sealed class AppScreens(val rute: String) {
     object RankingSeguido: AppScreens("rankingSeguido")
     object RankingActivo: AppScreens("rankingActivo")
     object RankingLikes: AppScreens("rankingLikes")
-    object Notifications: AppScreens("notifications")
     object Settings: AppScreens("settings")
     object EditProfile: AppScreens("editProfile/{userUid}") {
         fun createRoute(userUid: String) = "editProfile/$userUid"

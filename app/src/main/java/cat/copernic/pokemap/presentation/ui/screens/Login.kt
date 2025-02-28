@@ -373,8 +373,7 @@ suspend fun loginWithEmail(
         LanguageManager.setLanguage(context)
     } catch (e: Exception) {
         val errorMsg = e.localizedMessage ?: LanguageManager.getText("login error")
-        onErrorMessageChange("Error: $errorMsg")
-//      onErrorMessageChange("Credenciales Incorectas")
+        onErrorMessageChange("Credenciales Incorectas")
         onLoadingChange(false) // Asegurar que se actualiza el estado
     }
 }
