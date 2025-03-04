@@ -1,41 +1,34 @@
 # PokeMap
 
 ## Índice
-1. Introducción
-2. Descripción del Proyecto
-3. Objetivos de la App
-4. Público Objetivo
-5. Funcionalidades
-6. Pantalla de Login / Registro
-7. Lista de Categorías
-8. Detalle de Categoría
-9. Mapa de Ítems
-10. Requisitos Extra
-11. Documentación Técnica
-12. Requisitos Funcionales por Rol
-    - Administrador
-    - Usuario
-13. Diseño de Base de Datos NoSQL
-14. Programación
-15. Control de Versiones
-16. Demo Video
-17. Portfolio
-18. Informe del Proyecto
-19. FOL
-20. ODS (Objetivos de Desarrollo Sostenible)
-21. Mapa de Empatía
-22. Análisis DAFO
-23. Líneas Futuras
+
+1. Descripción del proyecto
+2. Objetivos de la App
+3. Público Objetivo
+4. Funcionalidades
+   - Pantalla de Login / Registro
+   - Pantalla de Home
+   - Detalle de Categoría
+   - Detalle de Ítem
+   - Ranking
+   - Búsqueda de Usuarios
+   - Perfil de Usuario
+   - Ajustes
+   - Crash Analytics
+5. Requisitos Funcionales por Rol
+6. Arquitectura
+7. Código
 
 ---
 
-## 1. Introducción
-### Descripción del Proyecto
-**PokeMap** es una aplicación diseñada como un foro geolocalizado para jugadores de **Pokémon GO**. Los usuarios podrán compartir ubicaciones clave como nidos, gimnasios, spawn de legendarios y más. Incluye un sistema de seguidores, un buscador avanzado y filtros personalizados.
+## 1. Descripción del Proyecto
+
+**PokeMap** es una aplicación diseñada como un foro geolocalizado para jugadores de **Pokémon GO**. Los usuarios podrán compartir ubicaciones clave como nidos, gimnasios, spawns de legendarios y más. Incluye un sistema de seguidores, un buscador avanzado y filtros personalizados.
 
 ---
 
 ## 2. Objetivos de la App
+
 - Facilitar la localización de puntos de interés de Pokémon GO.
 - Personalizar la experiencia de búsqueda según intereses específicos (Pokémon, gimnasios, etc.).
 - Fomentar la colaboración y la interacción entre jugadores.
@@ -44,6 +37,7 @@
 ---
 
 ## 3. Público Objetivo
+
 - **Edad:** 13-40 años.
 - **Perfil:** Jugadores activos de Pokémon GO.
 - **Intereses:** Eventos, raids, capturas y colaboraciones en el juego.
@@ -52,45 +46,104 @@
 ---
 
 ## 4. Funcionalidades
+
 ### Pantalla de Login / Registro
+
 - Login con usuario y contraseña.
-- Registro con datos completos (usuario, contraseña, equipo, código amigo).
+- Registro con datos completos (usuario, contraseña, equipo, código de amigo).
 - Recuperar contraseña.
 - Login con Google.
 - Login biométrico.
 
-### Lista de Categorías
-- Listado completo de categorías (nidos, gimnasios, spawn legendarios, etc.).
+![Pantalla de Login](https://drive.google.com/uc?export=view&id=1mvHDOIXrrmjH2QvfsBSTCj0vT33CAU8i)
+
+### Menu de Navegación
+
+- Permite navegar entre las diferentes pantallas disponibles.
+- Permite cerrar sesión
+
+![Menu de Navegación](https://drive.google.com/uc?export=view&id=1FIuq7IZ-17UIPRXB8-IP1udyLqCzMoR8)
+
+### Pantalla de Home
+
+- Listado completo de categorías (nidos, gimnasios, spawns de legendarios, etc.).
 - Filtros por nombre.
 - Acceso al detalle de cada categoría.
 - Creación, modificación y eliminación de categorías (solo admin).
 
+![Pantalla de Home](https://drive.google.com/uc?export=view&id=1rca0z9lNdzPUxRK2rHhL5qWK0_eEqkzu)
+![Editar categoría](https://drive.google.com/uc?export=view&id=16tdUCX10GoxOgyb_S3M9UN0CqEWXPnr7)
+
 ### Detalle de Categoría
+
 - Vista completa de una categoría.
 - Listado de ítems asociados.
 - Filtros avanzados de ítems (nombre, distancia, valoración, etc.).
 - Ordenar ítems por distancia, valoración o fecha.
+- Creación de ítems.
+- Modificación y eliminación de ítems (solo creador y admin).
 
-### Mapa de Ítems
-- Mapa interactivo con la ubicación de los ítems.
-- Pinchando en un ítem muestra su información ampliada.
-- Permite crear un nuevo ítem desde la ubicación actual.
+![Detalle de categoría](https://drive.google.com/uc?export=view&id=16_B2iqCENrPqPV7nuwKYiLalEeVjvHUN)
+![Editar item](https://drive.google.com/uc?export=view&id=16x7RUIhEolAzbzBatLtDJpD9AS7SEnLo)
+![Ordenar items](https://drive.google.com/uc?export=view&id=1FL8QTJgHU8lLPhQW3mKwtdU0Jmb8h1Nn)
+
+### Detalle de Ítems
+
+- Al seleccionar un ítem, se muestra su información ampliada (nombre, descripción, valoración, comentarios, etc.).
+- Mapa interactivo con la ubicación del ítem.
+- Permite dejar una valoración del ítem.
+- Permite dejar un comentario sobre el ítem.
+
+![Detalle de items](https://drive.google.com/uc?export=view&id=1o0mRydipOtKtTZ3kKGsdJoHrLAbmas9R)
+
+### Rankings
+
+- Permite visualizar un ranking con los usuarios mejor valorados.
+- Permite visualizar un ranking de los usuarios con más actividad.
+- Permite visualizar un ranking de los usuarios con más seguidores.
+
+![Ranking](https://drive.google.com/uc?export=view&id=1wX900rLMpRfVR8fsv-tR3NiGd-5Cmd-l)
+![Detalle ranking](https://drive.google.com/uc?export=view&id=1-Adya-cAtmUdLOKOUmfqtroYx5dto6TH)
+
+### Búsqueda de Usuarios
+
+- Permite buscar otros usuarios por su nombre de usuario.
+- Permite visualizar la lista completa de usuarios (solo admin).
+
+![Busqueda de usuarios](https://drive.google.com/uc?export=view&id=1kF1hLbUbmSKKYsBUSp_zn6inHBe0flzi)
+![Listado de usuarios](https://drive.google.com/uc?export=view&id=1AKBQUFkj_XsnEfSy9_5L13E7VmY75IMl)
+
+### Perfil de Usuario
+
+- Permite visualizar la información del usuario seleccionado.
+- Permite seguir o dejar de seguir al usuario.
+- Permite visualizar las publicaciones y comentarios más destacados del usuario.
+- Permite que el usuario actualice su información.
+
+![Perfil de usuario](https://drive.google.com/uc?export=view&id=1wSDIgrASqLFSPmFAIzuaTWLf6_3wG10K)
+![Editar perfil de usuario](https://drive.google.com/uc?export=view&id=ID_DE_LA_IMAGEN)
+
+### Ajustes
+
+- Permite configurar el idioma de la aplicación.
+- Permite activar o desactivar la autenticación biométrica.
+- Permite enviar un mensaje a los administradores (solo usuario).
+- Permite leer los mensajes enviados por los usuarios (solo admin).
+
+![Ajustes](https://drive.google.com/uc?export=view&id=1IqLNs4_xURnaltq2QF874xsZfjgyg8Ck)
+
+### Crash Analytics
+
+- Registra los datos cada vez que la aplicación tiene un crash y los almacena en Firebase.
 
 ---
 
-## 5. Requisitos Extra
-- Integración con Google Authentication.
-- Sistema de seguidores (seguir a otros jugadores y ver solo sus publicaciones).
-- Ranking diario de usuarios.
+## 5. Requisitos Funcionales por Rol
 
----
+### Administrador
 
-## 6. Documentación Técnica
-### Requisitos Funcionales por Rol
-
-#### Administrador
 - RF01 - Login y Logout.
-- RF02 - Recuperar contraseña.
+- RF03 - Recuperar contraseña.
 - RF04 - Crear nueva categoría.
 - RF05 - Listar categorías.
 - RF06 - Filtrar categorías.
@@ -111,14 +164,15 @@
 - RF21 - Visualizar valoraciones.
 - RF22 - Modificar ítem.
 - RF23 - Eliminar ítem.
-- RF24 - Eliminar valoración.
 - RF25 - Censurar comentarios.
 - RF26 - Sistema de seguidores.
-- RF27 - Ranking diario de usuarios.
+- RF27 - Ranking de usuarios.
 - RF28 - Autenticación con Google.
 - RF29 - Login biométrico.
+- RF30 - Editar perfil de usuario.
 
-#### Usuario
+### Usuario
+
 - RF01 - Login y Logout.
 - RF02 - Registro.
 - RF03 - Recuperar contraseña.
@@ -140,127 +194,70 @@
 - RF22 - Modificar ítem (si es propietario).
 - RF23 - Eliminar ítem (si es propietario).
 - RF26 - Sistema de seguidores.
-- RF27 - Ranking diario de usuarios.
+- RF27 - Ranking de usuarios.
 - RF28 - Autenticación con Google.
 - RF29 - Login biométrico.
+- RF30 - Editar perfil de usuario.
 
 ---
 
-## 7. Diseño de Base de Datos NoSQL
-- Colección: Categorías
-    - id
-    - nombre
-    - descripción
-    - imagen
-- Colección: Ítems
-    - id
-    - titulo
-    - descripción
-    - categoría_id
-    - autor
-    - fecha_creación
-    - posición_gps
-    - imagen
-    - likes
-    - dislikes
-- Colección: Usuarios
-    - id
-    - nombre
-    - usuario
-    - email
-    - código_amigo
-    - equipo
-    - seguidores (array)
-- Colección: Valoraciones
-    - id
-    - ítem_id
-    - usuario_id
-    - fecha
-    - comentario
-    - valoración (like/dislike)
+## 6. Arquitectura
+
+- **Categorías:**
+  - id
+  - nombre
+  - imagen
+- **Ítems:**
+  - id
+  - nombre
+  - descripción
+  - fecha\_creación
+  - likes
+  - dislikes
+  - id\_usuario
+  - id\_categoria
+  - latitud
+  - longitud
+  - like\_por
+  - dislike\_por
+- **Comentarios:**
+  - id
+  - texto
+  - likes
+  - dislikes
+  - like\_por
+  - dislike\_por
+  - id\_usuario
+  - id\_item
+- **Usuarios:**
+  - email
+  - nombre\_usuario
+  - nombre
+  - apellido
+  - codigo\_amigo
+  - imagen
+  - lenguaje
+  - ultimo\_login
+  - rol
+- **Seguimiento:**
+  - id
+  - seguido
+  - seguidor
+- **Contacto:**
+  - nombre
+  - correo\_de
+  - correo\_para
+  - asunto
+  - descripción
+  - imagen
+  - leído
+  - id\_documento
+  - fecha
 
 ---
 
-## 8. Programación
-- Repositorio: [GitLab - PokeMap](https://gitlab.com/MarcCristobal/museumizeme.git)
+## 7. Código
+
+- Repositorio: [GitLab - PokeMap](https://gitlab.com/abp-3/pokemap.git)
 
 ---
-
-## 9. Control de Versiones
-- Git con flujo GitFlow.
-- Versiones documentadas en el repositorio.
-
----
-
-## 10. Demo Video
-- [Ver demo](https://drive.google.com/file/d/148zpKYE2kepvQhclXB21EGVkBQbuLB_H/view?usp=sharing)
-
----
-
-## 11. Portfolio
-- [Ver portfolio](https://github.com/MarcCristobal)
-
----
-
-## 12. Informe del Proyecto
-- [Ver informe](https://drive.google.com/file/d/1Qscoz9I8gjjt4vVKhfPxFvuruXnLPtmK/view?usp=sharing)
-
----
-
-## 13. FOL
-- Documentación de formación y orientación laboral vinculada al proyecto.
-
----
-
-## 14. ODS (Objetivos de Desarrollo Sostenible)
-- **4. Educación de calidad:** Promover el aprendizaje colaborativo sobre el entorno del juego.
-- **10. Reducción de desigualdades:** Democratizar el acceso a la información relevante sobre el juego.
-
----
-
-## 15. Mapa de Empatía
-### Usuario
-- **Nombre:** Entrenador Pokémon GO.
-- **Edad:** 13-40 años.
-- **Experiencia:** Jugador activo.
-- **Necesidad:** Información rápida y actualizada sobre ubicaciones clave.
-
-### Pensamientos y sentimientos
-- Curiosidad por encontrar nuevos Pokémon y ubicaciones.
-- Frustración por información desactualizada o inexacta.
-
-### Vistas
-- Espera una app sencilla y directa.
-- Desea mapas claros y filtros efectivos.
-
-### Acciones
-- Comparte ubicaciones y experiencias.
-- Utiliza la app para planificar rutas de juego.
-
----
-
-## 16. DAFO
-### Fortalezas
-- Geolocalización.
-- Filtros avanzados.
-- Comunidad activa.
-
-### Debilidades
-- Dependencia de geolocalización.
-- Información dependiente de usuarios.
-
-### Oportunidades
-- Expansión internacional.
-- Integración con redes sociales.
-
-### Amenazas
-- Competencia.
-- Cambios en políticas de privacidad.
-
----
-
-## 17. Líneas Futuras
-- Mejoras en la UI/UX.
-- Notificaciones personalizadas.
-- Función de favoritos.
-- Soporte multilingüe.
