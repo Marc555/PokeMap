@@ -55,14 +55,14 @@
 - Login con Google.
 - Login biométrico.
 
-<img src="https://drive.google.com/uc?export=view&id=1mvHDOIXrrmjH2QvfsBSTCj0vT33CAU8i" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1mvHDOIXrrmjH2QvfsBSTCj0vT33CAU8i" width="200">
 
 ### Menu de Navegación
 
 - Permite navegar entre las diferentes pantallas disponibles.
 - Permite cerrar sesión
 
-<img src="https://drive.google.com/uc?export=view&id=1FIuq7IZ-17UIPRXB8-IP1udyLqCzMoR8" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1FIuq7IZ-17UIPRXB8-IP1udyLqCzMoR8" width="200">
 
 ### Pantalla de Home
 
@@ -71,8 +71,8 @@
 - Acceso al detalle de cada categoría.
 - Creación, modificación y eliminación de categorías (solo admin).
 
-<img src="https://drive.google.com/uc?export=view&id=1rca0z9lNdzPUxRK2rHhL5qWK0_eEqkzu" width="300">
-<img src="https://drive.google.com/uc?export=view&id=16tdUCX10GoxOgyb_S3M9UN0CqEWXPnr7" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1rca0z9lNdzPUxRK2rHhL5qWK0_eEqkzu" width="200">
+<img src="https://drive.google.com/uc?export=view&id=16tdUCX10GoxOgyb_S3M9UN0CqEWXPnr7" width="200">
 
 ### Detalle de Categoría
 
@@ -83,9 +83,9 @@
 - Creación de ítems.
 - Modificación y eliminación de ítems (solo creador y admin).
 
-<img src="https://drive.google.com/uc?export=view&id=16_B2iqCENrPqPV7nuwKYiLalEeVjvHUN" width="300">
-<img src="https://drive.google.com/uc?export=view&id=16x7RUIhEolAzbzBatLtDJpD9AS7SEnLo" width="300">
-<img src="https://drive.google.com/uc?export=view&id=1FL8QTJgHU8lLPhQW3mKwtdU0Jmb8h1Nn" width="300">
+<img src="https://drive.google.com/uc?export=view&id=16_B2iqCENrPqPV7nuwKYiLalEeVjvHUN" width="200">
+<img src="https://drive.google.com/uc?export=view&id=16x7RUIhEolAzbzBatLtDJpD9AS7SEnLo" width="200">
+<img src="https://drive.google.com/uc?export=view&id=1FL8QTJgHU8lLPhQW3mKwtdU0Jmb8h1Nn" width="200">
 
 ### Detalle de Ítems
 
@@ -94,7 +94,7 @@
 - Permite dejar una valoración del ítem.
 - Permite dejar un comentario sobre el ítem.
 
-<img src="https://drive.google.com/uc?export=view&id=1o0mRydipOtKtTZ3kKGsdJoHrLAbmas9R" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1o0mRydipOtKtTZ3kKGsdJoHrLAbmas9R" width="200">
 
 ### Rankings
 
@@ -102,16 +102,16 @@
 - Permite visualizar un ranking de los usuarios con más actividad.
 - Permite visualizar un ranking de los usuarios con más seguidores.
 
-<img src="https://drive.google.com/uc?export=view&id=1wX900rLMpRfVR8fsv-tR3NiGd-5Cmd-l" width="300">
-<img src="https://drive.google.com/uc?export=view&id=1-Adya-cAtmUdLOKOUmfqtroYx5dto6TH" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1wX900rLMpRfVR8fsv-tR3NiGd-5Cmd-l" width="200">
+<img src="https://drive.google.com/uc?export=view&id=1-Adya-cAtmUdLOKOUmfqtroYx5dto6TH" width="200">
 
 ### Búsqueda de Usuarios
 
 - Permite buscar otros usuarios por su nombre de usuario.
 - Permite visualizar la lista completa de usuarios (solo admin).
 
-<img src="https://drive.google.com/uc?export=view&id=1kF1hLbUbmSKKYsBUSp_zn6inHBe0flzi" width="300">
-<img src="https://drive.google.com/uc?export=view&id=1AKBQUFkj_XsnEfSy9_5L13E7VmY75IMl" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1kF1hLbUbmSKKYsBUSp_zn6inHBe0flzi" width="200">
+<img src="https://drive.google.com/uc?export=view&id=1AKBQUFkj_XsnEfSy9_5L13E7VmY75IMl" width="200">
 
 ### Perfil de Usuario
 
@@ -120,8 +120,8 @@
 - Permite visualizar las publicaciones y comentarios más destacados del usuario.
 - Permite que el usuario actualice su información.
 
-<img src="https://drive.google.com/uc?export=view&id=1wSDIgrASqLFSPmFAIzuaTWLf6_3wG10K" width="300">
-<img src="https://drive.google.com/uc?export=view&id=ID_DE_LA_IMAGEN" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1wSDIgrASqLFSPmFAIzuaTWLf6_3wG10K" width="200">
+<img src="https://drive.google.com/uc?export=view&id=ID_DE_LA_IMAGEN" width="200">
 
 ### Ajustes
 
@@ -130,7 +130,7 @@
 - Permite enviar un mensaje a los administradores (solo usuario).
 - Permite leer los mensajes enviados por los usuarios (solo admin).
 
-<img src="https://drive.google.com/uc?export=view&id=1IqLNs4_xURnaltq2QF874xsZfjgyg8Ck" width="300">
+<img src="https://drive.google.com/uc?export=view&id=1IqLNs4_xURnaltq2QF874xsZfjgyg8Ck" width="200">
 
 ### Crash Analytics
 
