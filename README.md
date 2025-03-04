@@ -121,7 +121,7 @@
 - Permite que el usuario actualice su información.
 
 <img src="https://drive.google.com/uc?export=view&id=1wSDIgrASqLFSPmFAIzuaTWLf6_3wG10K" width="200">
-<img src="https://drive.google.com/uc?export=view&id=ID_DE_LA_IMAGEN" width="200">
+<img src="https://drive.google.com/uc?export=view&id=1CqYJx7s3F88SXSdc88RynVarTMheD9a3" width="200">
 
 ### Ajustes
 
