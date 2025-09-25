@@ -22,6 +22,7 @@
 ---
 
 ## 1. Descripción del Proyecto
+Proyecto academico.
 
 **PokeMap** es una aplicación diseñada como un foro geolocalizado para jugadores de **Pokémon GO**. Los usuarios podrán compartir ubicaciones clave como nidos, gimnasios, spawns de legendarios y más. Incluye un sistema de seguidores, un buscador avanzado y filtros personalizados.
 
